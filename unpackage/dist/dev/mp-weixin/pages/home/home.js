@@ -1,6 +1,14 @@
 "use strict";
 const common_vendor = require("../../common/vendor.js");
 const _sfc_main = {};
+if (!Array) {
+  const _easycom_infoCard2 = common_vendor.resolveComponent("infoCard");
+  _easycom_infoCard2();
+}
+const _easycom_infoCard = () => "../../components/infoCard/infoCard2.js";
+if (!Math) {
+  _easycom_infoCard();
+}
 function _sfc_render(_ctx, _cache) {
   return {};
 }

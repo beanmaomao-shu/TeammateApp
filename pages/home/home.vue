@@ -1,7 +1,9 @@
 <template>
 	<view class="homeLayout">
 		<view class="infoCard">
-			<view class="card"></view>
+			<infoCard>
+				<template #name>马晓楠</template>
+			</infoCard>
 			<view class="functionCard"></view>
 		</view>
 		<view class="adBanner"></view>

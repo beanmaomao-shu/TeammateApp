@@ -4,7 +4,7 @@
 			"path": "pages/teammateHall/teammateHall",
 			"style": {
 				"navigationBarTitleText": "组队大厅"
-			}
+				}
 		},
 		{
 			"path" : "pages/seminarRoom/seminarRoom",
@@ -19,6 +19,14 @@
 			"style" : 
 			{
 				"navigationBarTitleText" : "个人中心",
+				"enablePullDownRefresh" : false
+			}
+		},
+		{
+			"path" : "components/infoCard/infoCard",
+			"style" : 
+			{
+				"navigationBarTitleText" : "组件测试",
 				"enablePullDownRefresh" : false
 			}
 		}
@@ -51,7 +59,7 @@
 				"text":"个人中心",
 				"iconPath": "./static/images/Home.png",
 				"selectedIconPath": "./static/images/opt-Home.png"
-			},
-		],
+			}
+		]
 	}
 }

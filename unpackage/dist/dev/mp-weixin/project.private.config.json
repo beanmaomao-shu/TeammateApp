@@ -3,5 +3,25 @@
   "projectname": "T",
   "setting": {
     "compileHotReLoad": true
+  },
+  "condition": {
+    "miniprogram": {
+      "list": [
+        {
+          "name": "components/infoCard/infoCard",
+          "pathName": "components/infoCard/infoCard",
+          "query": "",
+          "launchMode": "default",
+          "scene": null
+        },
+        {
+          "name": "pages/teammateHall/teammateHall",
+          "pathName": "pages/teammateHall/teammateHall",
+          "query": "",
+          "launchMode": "default",
+          "scene": null
+        }
+      ]
+    }
   }
 }

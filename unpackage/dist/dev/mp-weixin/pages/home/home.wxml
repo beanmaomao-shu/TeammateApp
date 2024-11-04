@@ -1,1 +1,1 @@
-<view class="homeLayout"><view class="infoCard"><view class="card"></view><view class="functionCard"></view></view><view class="adBanner"></view><view class="functionalList"></view></view>
+<view class="homeLayout"><view class="infoCard"><info-card u-s="{{['name']}}" u-i="b63698c6-0" bind:__l="__l"><view slot="name">马晓楠</view></info-card><view class="functionCard"></view></view><view class="adBanner"></view><view class="functionalList"></view></view>

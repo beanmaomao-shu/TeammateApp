@@ -2,7 +2,8 @@
   "pages": [
     "pages/teammateHall/teammateHall",
     "pages/seminarRoom/seminarRoom",
-    "pages/home/home"
+    "pages/home/home",
+    "components/infoCard/infoCard"
   ],
   "window": {
     "navigationBarTextStyle": "black",
