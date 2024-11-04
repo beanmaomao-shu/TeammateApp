@@ -1,0 +1,16 @@
+<template>
+	<view class="teammateLayout">
+		<view class="search"></view>
+		<view class="banner"></view>
+		<view class="teammateList"></view>
+		<view class="issue"></view>
+	</view>
+</template>
+
+<script>
+	
+</script>
+
+<style lang="scss" scoped>
+	
+</style>

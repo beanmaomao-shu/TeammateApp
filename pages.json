@@ -1,17 +1,57 @@
 {
 	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
 		{
-			"path": "pages/index/index",
+			"path": "pages/teammateHall/teammateHall",
 			"style": {
-				"navigationBarTitleText": "uni-app"
+				"navigationBarTitleText": "组队大厅"
+			}
+		},
+		{
+			"path" : "pages/seminarRoom/seminarRoom",
+			"style" : 
+			{
+				"navigationBarTitleText" : "研讨室",
+				"enablePullDownRefresh" : false
+			}
+		},
+		{
+			"path" : "pages/home/home",
+			"style" : 
+			{
+				"navigationBarTitleText" : "个人中心",
+				"enablePullDownRefresh" : false
 			}
 		}
 	],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
-		"navigationBarTitleText": "uni-app",
-		"navigationBarBackgroundColor": "#F8F8F8",
+		"navigationBarTitleText": "Teammate",
+		"navigationBarBackgroundColor": "#fff",
 		"backgroundColor": "#F8F8F8"
 	},
-	"uniIdRouter": {}
+	"uniIdRouter": {},
+	"tabBar": {
+		"color": "#7600FF",
+		"selectedColor": "#D43030",
+		"list": [
+			{
+				"pagePath": "pages/teammateHall/teammateHall",
+				"text":"组队大厅",
+				"iconPath": "./static/images/search.png",
+				"selectedIconPath": "./static/images/opt-search.png"
+			},
+			{
+				"pagePath": "pages/seminarRoom/seminarRoom",
+				"text":"研讨室",
+				"iconPath": "./static/images/comment.png",
+				"selectedIconPath": "./static/images/opt-comment.png"
+			},
+			{
+				"pagePath": "pages/home/home",
+				"text":"个人中心",
+				"iconPath": "./static/images/Home.png",
+				"selectedIconPath": "./static/images/opt-Home.png"
+			},
+		],
+	}
 }

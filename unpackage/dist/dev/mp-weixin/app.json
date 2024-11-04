@@ -1,12 +1,38 @@
 {
   "pages": [
-    "pages/index/index"
+    "pages/teammateHall/teammateHall",
+    "pages/seminarRoom/seminarRoom",
+    "pages/home/home"
   ],
   "window": {
     "navigationBarTextStyle": "black",
-    "navigationBarTitleText": "uni-app",
-    "navigationBarBackgroundColor": "#F8F8F8",
+    "navigationBarTitleText": "Teammate",
+    "navigationBarBackgroundColor": "#fff",
     "backgroundColor": "#F8F8F8"
+  },
+  "tabBar": {
+    "color": "#7600FF",
+    "selectedColor": "#D43030",
+    "list": [
+      {
+        "pagePath": "pages/teammateHall/teammateHall",
+        "text": "组队大厅",
+        "iconPath": "./static/images/search.png",
+        "selectedIconPath": "./static/images/opt-search.png"
+      },
+      {
+        "pagePath": "pages/seminarRoom/seminarRoom",
+        "text": "研讨室",
+        "iconPath": "./static/images/comment.png",
+        "selectedIconPath": "./static/images/opt-comment.png"
+      },
+      {
+        "pagePath": "pages/home/home",
+        "text": "个人中心",
+        "iconPath": "./static/images/Home.png",
+        "selectedIconPath": "./static/images/opt-Home.png"
+      }
+    ]
   },
   "usingComponents": {}
 }
