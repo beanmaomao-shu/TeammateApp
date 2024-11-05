@@ -53,6 +53,7 @@
 		height: 200rpx;
 		background-image: url('../../static/images/personnel_card.png');
 		background-repeat: no-repeat;
+		background-size: cover;
 		display: flex;
 		align-items: center;
 		margin: 0 auto;
