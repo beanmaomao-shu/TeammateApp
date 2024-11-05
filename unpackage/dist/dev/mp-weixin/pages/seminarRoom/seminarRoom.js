@@ -7,7 +7,7 @@ if (!Array) {
   (_easycom_uni_segmented_control2 + _easycom_infoCard2 + _component_uni_section)();
 }
 const _easycom_uni_segmented_control = () => "../../uni_modules/uni-segmented-control/components/uni-segmented-control/uni-segmented-control.js";
-const _easycom_infoCard = () => "../../components/infoCard/infoCard2.js";
+const _easycom_infoCard = () => "../../components/infoCard/infoCard.js";
 if (!Math) {
   (_easycom_uni_segmented_control + _easycom_infoCard)();
 }

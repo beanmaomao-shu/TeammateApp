@@ -23,7 +23,7 @@
 			}
 		},
 		{
-			"path" : "components/infoCard/infoCard",
+			"path" : "components/teamInfo/teamInfo",
 			"style" : 
 			{
 				"navigationBarTitleText" : "组件测试",

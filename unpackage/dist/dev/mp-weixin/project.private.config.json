@@ -8,6 +8,13 @@
     "miniprogram": {
       "list": [
         {
+          "name": "components/teamInfo/teamInfo",
+          "pathName": "components/teamInfo/teamInfo",
+          "query": "",
+          "launchMode": "default",
+          "scene": null
+        },
+        {
           "name": "components/infoCard/infoCard",
           "pathName": "components/infoCard/infoCard",
           "query": "",

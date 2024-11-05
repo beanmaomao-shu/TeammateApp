@@ -66,24 +66,24 @@
 	.tabControl{
 		.content{
 			.empty{
-				width: 390px;
-				height: 631px;
+				width: 780rpx;
+				height: 1262rpx;
 				position: relative;
 				.box{
-					width: 165px;
-					height: 165px;
+					width: 330rpx;
+					height: 330rpx;
 					position: absolute;
-					left: calc(50% - 82.5px);
-					top: calc(50% - 165px);
+					left: calc(50% - 165rpx);
+					top: calc(50% - 330rpx);
 				}
 				.bg{
-					width: 390px;
-					height: 631px;
+					width: 780rpx;
+					height: 1262rpx;
 					position: absolute;
 				}
 			}
 			.teamList{
-				margin-top: 24px;
+				margin-top: 48rpx;
 			}
 		}
 	}

@@ -5,7 +5,7 @@ if (!Array) {
   const _easycom_infoCard2 = common_vendor.resolveComponent("infoCard");
   _easycom_infoCard2();
 }
-const _easycom_infoCard = () => "../../components/infoCard/infoCard2.js";
+const _easycom_infoCard = () => "../../components/infoCard/infoCard.js";
 if (!Math) {
   _easycom_infoCard();
 }

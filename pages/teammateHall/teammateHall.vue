@@ -52,39 +52,39 @@
 
 <style lang="scss" scoped>
 	.search{
-		width: 350px;
-		height: 34px;
-		border: 2px solid #AC33C1;
+		width: 700rpx;
+		height: 68rpx;
+		border: 4rpx solid #AC33C1;
 		display: flex;
 		justify-content: center;
 		align-items: center;
 		margin: 0 auto;
-		border-radius: 20px;
+		border-radius: 40rpx;
 		input{
-			width: 284px;
-			height: 34px;
-			padding-left: 10px;
+			width: 568rpx;
+			height: 68rpx;
+			padding-left: 20rpx;
 		}
 		.searchButton{
-			width: 66px;
-			height: 34px;
+			width: 132rpx;
+			height: 68rpx;
 			background-color: #F1E6FF;
-			border-radius: 0 20px 20px 0;
+			border-radius: 0 40rpx 40rpx 0;
 			display: flex;
 			justify-content: center;
 			align-items: center;
 			image{
-				width: 24px;
-				height: 24px;
+				width: 48rpx;
+				height: 48rpx;
 			}
 		}
 	}
 	.banner{
-		margin-top: 23px;
+		margin-top: 46rpx;
 		swiper{
 			background-color: #fff;
-			width: 350px;
-			height: 238px;
+			width: 700rpx;
+			height: 476rpx;
 			margin: 0 auto;
 			swiper-item{
 				image{

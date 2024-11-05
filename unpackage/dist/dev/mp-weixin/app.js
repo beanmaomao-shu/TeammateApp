@@ -5,7 +5,7 @@ if (!Math) {
   "./pages/teammateHall/teammateHall.js";
   "./pages/seminarRoom/seminarRoom.js";
   "./pages/home/home.js";
-  "./components/infoCard/infoCard.js";
+  "./components/teamInfo/teamInfo.js";
 }
 const _sfc_main = {
   onLaunch: function() {

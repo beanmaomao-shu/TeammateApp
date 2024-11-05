@@ -23,44 +23,35 @@
 /* 垂直间距 */
 /* 透明度 */
 /* 文章场景相关 */
-.search.data-v-305e4dd3 {
+.teamInfo.data-v-9fbcd1e2 {
   width: 700rpx;
-  height: 68rpx;
-  border: 4rpx solid #AC33C1;
+  height: 140rpx;
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 0 auto;
-  border-radius: 40rpx;
+  background-color: orange;
 }
-.search input.data-v-305e4dd3 {
-  width: 568rpx;
-  height: 68rpx;
-  padding-left: 20rpx;
+.teamInfo .teamImg image.data-v-9fbcd1e2 {
+  width: 150rpx;
+  height: 100rpx;
 }
-.search .searchButton.data-v-305e4dd3 {
-  width: 132rpx;
-  height: 68rpx;
-  background-color: #F1E6FF;
-  border-radius: 0 40rpx 40rpx 0;
+.teamInfo .mainInfo .avatars.data-v-9fbcd1e2 {
   display: flex;
-  justify-content: center;
   align-items: center;
 }
-.search .searchButton image.data-v-305e4dd3 {
+.teamInfo .mainInfo .avatars image.data-v-9fbcd1e2 {
   width: 48rpx;
   height: 48rpx;
+  margin-right: 10rpx;
 }
-.banner.data-v-305e4dd3 {
-  margin-top: 46rpx;
+.teamInfo .mainInfo .avatars image.data-v-9fbcd1e2:first-child {
+  margin-left: 20rpx;
 }
-.banner swiper.data-v-305e4dd3 {
-  background-color: #fff;
-  width: 700rpx;
-  height: 476rpx;
-  margin: 0 auto;
+.teamInfo .mainInfo .matchName.data-v-9fbcd1e2 {
+  font-size: 32rpx;
+  margin-left: 20rpx;
 }
-.banner swiper swiper-item image.data-v-305e4dd3 {
-  width: 100%;
-  height: 100%;
+.teamInfo .mainInfo .teamName.data-v-9fbcd1e2 {
+  font-size: 32rpx;
+  margin-left: 20rpx;
 }
