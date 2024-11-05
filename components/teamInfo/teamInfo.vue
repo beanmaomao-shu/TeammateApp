@@ -25,12 +25,12 @@
 				一战成名队
 			</view>
 			<view class="avatars">
+				<img src="../../static/images/avatar3.png" alt="" />
+				<img src="../../static/images/avatar1.png" alt="" />
 				<img src="../../static/images/avatar.png" alt="" />
+				<img src="../../static/images/avatar3.png" alt="" />
 				<img src="../../static/images/avatar.png" alt="" />
-				<img src="../../static/images/avatar.png" alt="" />
-				<img src="../../static/images/avatar.png" alt="" />
-				<img src="../../static/images/avatar.png" alt="" />
-				<img src="../../static/images/avatar.png" alt="" />
+				<img src="../../static/images/avatar2.png" alt="" />
 			</view>
 		</view>
 		
@@ -47,11 +47,15 @@
 		height: 140rpx;
 		display: flex;
 		justify-content: center;
-		align-items: center;
-		background-color: orange;
+		overflow: hidden;
+		margin: 0 auto;
+		border: 1rpx solid lightgray;
+		box-shadow: 0 2rpx 8rpx;
+		margin-bottom: 10rpx;
 		.teamImg{
+			margin: 10rpx 0;
 			image{
-				width: 150rpx;
+				width: 180rpx;
 				height: 100rpx;
 			}
 		}
@@ -73,7 +77,8 @@
 					margin-left: 20rpx;
 				}
 				.teamName{
-					font-size: 32rpx;
+					font-size: 24rpx;
+					margin:5rpx 0  ;
 					margin-left: 20rpx;
 				}
 			}

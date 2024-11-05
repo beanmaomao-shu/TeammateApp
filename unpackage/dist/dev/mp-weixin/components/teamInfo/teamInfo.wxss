@@ -28,11 +28,17 @@
   height: 140rpx;
   display: flex;
   justify-content: center;
-  align-items: center;
-  background-color: orange;
+  overflow: hidden;
+  margin: 0 auto;
+  border: 1rpx solid lightgray;
+  box-shadow: 0 2rpx 8rpx;
+  margin-bottom: 10rpx;
+}
+.teamInfo .teamImg.data-v-9fbcd1e2 {
+  margin: 10rpx 0;
 }
 .teamInfo .teamImg image.data-v-9fbcd1e2 {
-  width: 150rpx;
+  width: 180rpx;
   height: 100rpx;
 }
 .teamInfo .mainInfo .avatars.data-v-9fbcd1e2 {
@@ -52,6 +58,7 @@
   margin-left: 20rpx;
 }
 .teamInfo .mainInfo .teamName.data-v-9fbcd1e2 {
-  font-size: 32rpx;
+  font-size: 24rpx;
+  margin: 5rpx 0;
   margin-left: 20rpx;
 }

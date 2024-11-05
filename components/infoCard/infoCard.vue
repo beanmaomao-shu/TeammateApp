@@ -8,12 +8,16 @@
 				<view class="name">
 					<slot name="name"></slot>
 				</view>
+				<!-- 研讨室 -->
 				<view class="identity" v-if="isLeader">
 					<view class="content">团队长</view>
 				</view>
 				<view class="identity" v-if="!isLeader">
 					<view class="content">团队员</view>
 				</view>
+				<!-- <view class="audit" v-if="isaudited">审核中</view>
+				<view class="audit" v-if="!isaudited">已加入</view> --> -->
+				<!-- 个人中心 -->
 				<!-- <view class="authentication" v-if="isauthenticated">
 					<image class="authenImg" src="../../static/images/认证.png" mode="aspectFill"></image>
 					<view class="content">已认证</view>
@@ -21,9 +25,8 @@
 				<view class="authentication" v-if="!isauthenticated">
 					<image class="authenImg" src="../../static/images/认证.png" mode="aspectFill"></image>
 					<view class="content">未认证</view>
-				</view>
-				<view class="audit" v-if="isaudited">审核中</view>
-				<view class="audit" v-if="!isaudited">已加入</view> -->
+				</view> -->
+				
 			</view>
 		</view>
 	</view>
