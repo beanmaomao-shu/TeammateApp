@@ -15,10 +15,10 @@ function _sfc_render(_ctx, _cache) {
     b: common_vendor.o((...args) => _ctx.clearInput && _ctx.clearInput(...args)),
     c: common_vendor.f(10, (item, k0, i0) => {
       return {
-        a: "57c2c5dd-0-" + i0
+        a: "ce5e1149-0-" + i0
       };
     })
   };
 }
-const MiniProgramPage = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["render", _sfc_render], ["__file", "D:/TeammataApp/teammateapp/pages/searchDetail/searchDetail.vue"]]);
+const MiniProgramPage = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["render", _sfc_render], ["__scopeId", "data-v-ce5e1149"], ["__file", "D:/TeammataApp/teammateapp/pages/searchDetail/searchDetail.vue"]]);
 wx.createPage(MiniProgramPage);

@@ -7,6 +7,9 @@ if (!Math) {
   "./pages/home/home.js";
   "./components/teamInfo/teamInfo.js";
   "./pages/searchDetail/searchDetail.js";
+  "./pages/moreDetail/moreDetail.js";
+  "./pages/connect/connect.js";
+  "./pages/newsCenter/newsCenter.js";
 }
 const _sfc_main = {
   onLaunch: function() {

@@ -37,6 +37,30 @@
 				"navigationBarTitleText" : "搜索组队",
 				"enablePullDownRefresh" : false
 			}
+		},
+		{
+			"path" : "pages/moreDetail/moreDetail",
+			"style" : 
+			{
+				"navigationBarTitleText" : "更多组队",
+				"enablePullDownRefresh" : false
+			}
+		},
+		{
+			"path" : "pages/connect/connect",
+			"style" : 
+			{
+				"navigationBarTitleText" : "联系方式",
+				"enablePullDownRefresh" : false
+			}
+		},
+		{
+			"path" : "pages/newsCenter/newsCenter",
+			"style" : 
+			{
+				"navigationBarTitleText" : "信息中心",
+				"enablePullDownRefresh" : false
+			}
 		}
 	],
 	"globalStyle": {
@@ -45,7 +69,13 @@
 		"navigationBarBackgroundColor": "#fff",
 		"backgroundColor": "#F8F8F8",
 		"usingComponents": {
-			"vant-button":"/wxcomponents/dist/button/index"
+			"van-popup":"/wxcomponents/dist/popup/index",
+			"van-button":"/wxcomponents/dist/button/index",
+			"van-cell":"/wxcomponents/dist/cell/index",
+			"van-notice-bar":"/wxcomponents/dist/notice-bar/index",
+			"van-dropdown-menu":"/wxcomponents/dist/dropdown-menu/index",
+			"van-dropdown-item":"/wxcomponents/dist/dropdown-item/index"
+			
 		}
 	},
 	"uniIdRouter": {},

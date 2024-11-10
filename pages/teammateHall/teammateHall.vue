@@ -8,7 +8,15 @@
 					<image src="../../static/images/搜索.png" mode=""></image>
 				</button>
 			</view>
-		</view>
+		</view> 
+		<van-notice-bar 
+			scrollable
+			color="#AC33C1"
+			background="#F1E6FF"
+		>
+			2024年第十四届亚太地区大学生数学建模竞赛(以下简称“竞赛”)是由中国国际科技促进会物联网工作委员会和北京图象图形学学会联合主办的亚太地区大学生学科类竞赛，竞赛由亚太地区大学生数学建模竞赛组委会负责组织，欢迎各高等院校按照竞赛章程及有关规定组织同学报名参赛。 
+			2023年第十三届亚太地区大学生数学建模竞赛共有9700支队伍969所高校2万7千多名学生报名参赛。参赛高校覆盖北京大学、清华大学、浙江大学、同济大学、上海交通大学、复旦大学、四川大学、大连理工大学等全部的39所985高校和114所211高校。除中国大陆高校外本次竞赛还有数十所国外高校参赛。
+		</van-notice-bar>
 		<view class="banner">
 			<swiper class="swiper" 
 			circular 
@@ -57,7 +65,7 @@
 			<teamInfo v-for="item in 10"></teamInfo>
 		</view>
 		<view class="issue">
-			
+		
 		</view>
 	</view>
 </template>
@@ -67,15 +75,15 @@
 	//搜索框跳转搜索详细页面
 	const navigateToDetail=() =>{
 		uni.redirectTo({
-			url: '../pages/teamInfo/teamInfo'
+			url: '../searchDetail/searchDetail'
 		});
 	}
 	//更多信息跳转搜索详细页面
-	// const navigateToMore=() =>{
-	// 	uni.redirectTo({
-	// 		url:'components/teamInfo/teamInfo'
-	// 	});
-	// }
+	const navigateToMore=() =>{
+		uni.redirectTo({
+			url:'../moreDetail/moreDetail'
+		});
+	}
 </script>
 
 <style lang="scss" scoped>
@@ -108,8 +116,9 @@
 				}
 			}
 		}
+		
 		.banner{
-			margin-top: 46rpx;
+			margin-top: 23rpx;
 			margin-bottom: 48rpx;
 			swiper{
 				background-color: #fff;

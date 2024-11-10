@@ -17,7 +17,7 @@
 	
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 	.search{
 		width: 700rpx;
 		height: 68rpx;

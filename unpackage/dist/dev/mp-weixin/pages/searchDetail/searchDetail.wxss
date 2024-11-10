@@ -23,7 +23,7 @@
 /* 垂直间距 */
 /* 透明度 */
 /* 文章场景相关 */
-.search {
+.search.data-v-ce5e1149 {
   width: 700rpx;
   height: 68rpx;
   border: 4rpx solid #AC33C1;
@@ -34,12 +34,12 @@
   border-radius: 40rpx;
   margin-bottom: 46rpx;
 }
-.search input {
+.search input.data-v-ce5e1149 {
   width: 568rpx;
   height: 68rpx;
   padding-left: 20rpx;
 }
-.search .searchButton {
+.search .searchButton.data-v-ce5e1149 {
   width: 132rpx;
   height: 68rpx;
   background-color: #F1E6FF;
@@ -48,7 +48,7 @@
   justify-content: center;
   align-items: center;
 }
-.search .searchButton image {
+.search .searchButton image.data-v-ce5e1149 {
   width: 48rpx;
   height: 48rpx;
 }

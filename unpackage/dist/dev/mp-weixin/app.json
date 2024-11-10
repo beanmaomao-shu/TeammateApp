@@ -4,8 +4,19 @@
     "pages/seminarRoom/seminarRoom",
     "pages/home/home",
     "components/teamInfo/teamInfo",
-    "pages/searchDetail/searchDetail"
+    "pages/searchDetail/searchDetail",
+    "pages/moreDetail/moreDetail",
+    "pages/connect/connect",
+    "pages/newsCenter/newsCenter"
   ],
+  "usingComponents": {
+    "van-popup": "/wxcomponents/dist/popup/index",
+    "van-button": "/wxcomponents/dist/button/index",
+    "van-cell": "/wxcomponents/dist/cell/index",
+    "van-notice-bar": "/wxcomponents/dist/notice-bar/index",
+    "van-dropdown-menu": "/wxcomponents/dist/dropdown-menu/index",
+    "van-dropdown-item": "/wxcomponents/dist/dropdown-item/index"
+  },
   "window": {
     "navigationBarTextStyle": "black",
     "navigationBarTitleText": "Teammate",
@@ -35,6 +46,5 @@
         "selectedIconPath": "./static/images/opt-Home.png"
       }
     ]
-  },
-  "usingComponents": {}
+  }
 }
