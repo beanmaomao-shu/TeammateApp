@@ -1,0 +1,1 @@
+<view class="searchDetail"><view class="search"><input value="{{a}}" bindinput="{{b}}" type="text" focus placeholder="搜索在线赛事组队信息"/><view><button class="searchButton"><image src="/static/images/搜索.png" mode=""></image></button></view></view><team-info wx:for="{{c}}" wx:for-item="item" u-i="{{item.a}}" bind:__l="__l"></team-info></view>

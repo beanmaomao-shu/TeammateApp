@@ -8,6 +8,20 @@
     "miniprogram": {
       "list": [
         {
+          "name": "pages/teammateHall/teammateHall",
+          "pathName": "pages/teammateHall/teammateHall",
+          "query": "",
+          "launchMode": "default",
+          "scene": null
+        },
+        {
+          "name": "pages/searchDetail/searchDetail",
+          "pathName": "pages/searchDetail/searchDetail",
+          "query": "",
+          "launchMode": "default",
+          "scene": null
+        },
+        {
           "name": "components/teamInfo/teamInfo",
           "pathName": "components/teamInfo/teamInfo",
           "query": "",
@@ -17,13 +31,6 @@
         {
           "name": "components/infoCard/infoCard",
           "pathName": "components/infoCard/infoCard",
-          "query": "",
-          "launchMode": "default",
-          "scene": null
-        },
-        {
-          "name": "pages/teammateHall/teammateHall",
-          "pathName": "pages/teammateHall/teammateHall",
           "query": "",
           "launchMode": "default",
           "scene": null

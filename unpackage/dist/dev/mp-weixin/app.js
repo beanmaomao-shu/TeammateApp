@@ -6,6 +6,7 @@ if (!Math) {
   "./pages/seminarRoom/seminarRoom.js";
   "./pages/home/home.js";
   "./components/teamInfo/teamInfo.js";
+  "./pages/searchDetail/searchDetail.js";
 }
 const _sfc_main = {
   onLaunch: function() {

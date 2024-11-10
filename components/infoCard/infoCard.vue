@@ -16,7 +16,7 @@
 					<view class="content">团队员</view>
 				</view>
 				<!-- <view class="audit" v-if="isaudited">审核中</view>
-				<view class="audit" v-if="!isaudited">已加入</view> --> -->
+				<view class="audit" v-if="!isaudited">已加入</view> --> 
 				<!-- 个人中心 -->
 				<!-- <view class="authentication" v-if="isauthenticated">
 					<image class="authenImg" src="../../static/images/认证.png" mode="aspectFill"></image>

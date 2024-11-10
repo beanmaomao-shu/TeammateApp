@@ -29,13 +29,24 @@
 				"navigationBarTitleText" : "组件测试",
 				"enablePullDownRefresh" : false
 			}
+		},
+		{
+			"path" : "pages/searchDetail/searchDetail",
+			"style" : 
+			{
+				"navigationBarTitleText" : "搜索组队",
+				"enablePullDownRefresh" : false
+			}
 		}
 	],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "Teammate",
 		"navigationBarBackgroundColor": "#fff",
-		"backgroundColor": "#F8F8F8"
+		"backgroundColor": "#F8F8F8",
+		"usingComponents": {
+			"vant-button":"/wxcomponents/dist/button/index"
+		}
 	},
 	"uniIdRouter": {},
 	"tabBar": {

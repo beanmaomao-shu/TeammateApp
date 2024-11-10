@@ -2,9 +2,11 @@
 	<view class="teammateLayout">
 		<!-- 搜索框 -->
 		<view class="search">
-			<input type="text" focus placeholder="搜索在线赛事组队"/>
-			<view class="searchButton">
-				<image src="../../static/images/搜索.png" mode=""></image>
+			<input :value="inputClearValue" @input="clearInput" type="text" focus placeholder="搜索在线赛事组队信息"/>
+			<view>
+				<button class="searchButton"  @click="navigateToDetail">
+					<image src="../../static/images/搜索.png" mode=""></image>
+				</button>
 			</view>
 		</view>
 		<view class="banner">
@@ -46,20 +48,13 @@
 					<!-- <uni-icons type="fire"></uni-icons> -->
 					<text >正在组队</text>
 				</view>
-				<view class="right">
+				<view class="right" @click="navigateToMore">
 					<text>更多</text>
 					<image src="../../static/images/more.png" mode=""></image>
 				</view>
 			</view>
 			<dash Color="#F1E6FF" Width="700rpx" Height="8rpx"></dash>
-			<teamInfo></teamInfo>
-			<teamInfo></teamInfo>
-			<teamInfo></teamInfo>
-			<teamInfo></teamInfo>
-			<teamInfo></teamInfo>
-			<teamInfo></teamInfo>
-			<teamInfo></teamInfo>
-			<teamInfo></teamInfo>
+			<teamInfo v-for="item in 10"></teamInfo>
 		</view>
 		<view class="issue">
 			
@@ -67,8 +62,20 @@
 	</view>
 </template>
 
-<script>
-
+<script setup>
+	import {ref} from 'vue';
+	//搜索框跳转搜索详细页面
+	const navigateToDetail=() =>{
+		uni.redirectTo({
+			url: '../pages/teamInfo/teamInfo'
+		});
+	}
+	//更多信息跳转搜索详细页面
+	// const navigateToMore=() =>{
+	// 	uni.redirectTo({
+	// 		url:'components/teamInfo/teamInfo'
+	// 	});
+	// }
 </script>
 
 <style lang="scss" scoped>
