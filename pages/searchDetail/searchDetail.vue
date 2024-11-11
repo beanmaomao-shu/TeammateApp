@@ -9,7 +9,7 @@
 				</button>
 			</view>
 		</view>
-		<teamInfo v-for="item in 10"></teamInfo>
+		<teamInfo v-for="(item,index) in 10" :key="index"></teamInfo>
 	</view>
 </template>
 

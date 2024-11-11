@@ -4,7 +4,7 @@
 		<view class="search">
 			<input :value="inputClearValue" @input="clearInput" type="text" focus placeholder="搜索在线赛事组队信息"/>
 			<view>
-				<button class="searchButton"  @click="navigateToDetail">
+				<button class="searchButton"  @click="(()=>{navigateToDetail();searchInfo()})">
 					<image src="../../static/images/搜索.png" mode=""></image>
 				</button>
 			</view>
@@ -62,7 +62,7 @@
 				</view>
 			</view>
 			<dash Color="#F1E6FF" Width="700rpx" Height="8rpx"></dash>
-			<teamInfo v-for="item in 10"></teamInfo>
+			<teamInfo v-for="(item,index) in 10" :key="index"></teamInfo>
 		</view>
 		<view class="issue">
 		
@@ -83,6 +83,10 @@
 		uni.redirectTo({
 			url:'../moreDetail/moreDetail'
 		});
+	}
+	//搜索组队信息
+	const searchInfo=()=>{
+		// 这里处理输入框的逻辑
 	}
 </script>
 

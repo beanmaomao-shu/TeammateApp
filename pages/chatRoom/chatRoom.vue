@@ -1,4 +1,4 @@
-<<template>
+<template>
   <view class="chat-page">
     <!-- 头部信息卡 -->
     <view class="header">

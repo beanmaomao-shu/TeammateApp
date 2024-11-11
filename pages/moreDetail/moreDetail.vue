@@ -8,7 +8,7 @@
 			  <van-dropdown-item v-model="teamRegion" :options="option3" title="组队赛区"/>
 			</van-dropdown-menu>
 		</view>
-		<teamInfo v-for="item in 10"></teamInfo>
+		<teamInfo  v-for="(item,index) in 10" :key="index"></teamInfo>
 	</view>
 </template>
 

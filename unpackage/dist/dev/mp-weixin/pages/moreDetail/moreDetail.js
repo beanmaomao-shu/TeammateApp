@@ -63,14 +63,15 @@ const _sfc_main = {
         h: common_vendor.p({
           activeColor: "red"
         }),
-        i: common_vendor.f(10, (item, k0, i0) => {
+        i: common_vendor.f(10, (item, index, i0) => {
           return {
-            a: "c2e090e7-5-" + i0
+            a: index,
+            b: "c2e090e7-5-" + i0
           };
         })
       };
     };
   }
 };
-const MiniProgramPage = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["__scopeId", "data-v-c2e090e7"], ["__file", "D:/TeammataApp/teammateapp/pages/moreDetail/moreDetail.vue"]]);
+const MiniProgramPage = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["__scopeId", "data-v-c2e090e7"], ["__file", "C:/Users/黎翠儿/Documents/GitHub/TeammateApp/pages/moreDetail/moreDetail.vue"]]);
 wx.createPage(MiniProgramPage);
