@@ -11,12 +11,18 @@
 					@clickItem="onClickItem" />
 				</view>
 				<view class="content">
+					<!-- 创建的团队 -->
 					<view v-if="current === 0">
-						<view class="enterTeam empty" v-if="isemptyenterteam">
+						<view class="createTeam empty" v-if="isemptycreateteam">
 							<image class="bg" src="../../static/images/background.png" mode=""></image>
-							<image class="box" src="../../static/images/default.png" mode=""></image>
+							<image class="box" src="../../static/images/default.png" mode="">
+							<view class="font">
+								你还没有创建任何团队呢~
+							</view>
+							</image>
+							
 						</view>
-						<view class="enterTeam" v-if="!isemptyenterteam">
+						<view class="createTeam" v-if="!isemptycreateteam">
 							<view class="teamList">
 								<infoCard>
 									<template #name>马晓楠</template>
@@ -24,16 +30,29 @@
 							</view>
 						</view>
 					</view>
+					<!-- 加入的团队 -->
 					<view v-if="current === 1">
-						<view class="createTeam empty" v-if="isemptycreateteam">
+						<view class="enterTeam empty" v-if="!isemptyenterteam">
 							<image class="bg" src="../../static/images/background.png" mode=""></image>
-							<image class="box" src="../../static/images/default.png" mode=""></image>
+							<image class="box" src="../../static/images/default.png" mode="">
+								<view class="font">
+									你还没有加入任何团队呢~
+								</view>
+								
+							</image>
+							
 						</view>
-						<view class="createTeam">
-							<view class="teamList" v-if="!isemptycreateteam">
-								<infoCard>
-									<template #name>马晓楠</template>
-								</infoCard>
+						<view class="enterTeam">
+							<view class="teamList" v-if="isemptyenterteam">
+								<navigator url="/pages/chatRoom/chatRoom" class="team">
+									<infoCard>
+										<template #name>马晓楠</template>
+									</infoCard>
+									<view class="enterButton">
+										>> 进入研讨室
+									</view>
+								</navigator>
+								
 							</view>
 						</view>
 					</view>
@@ -58,8 +77,8 @@
 		}
 	}
 	//选项卡内容
-	const isemptyenterteam=ref(false)
-	const isemptycreateteam=ref(true)
+	const isemptyenterteam=ref(true)
+	const isemptycreateteam=ref(false)
 </script>
 
 <style lang="scss" scoped>
@@ -69,22 +88,49 @@
 				width: 390px;
 				height: 631px;
 				position: relative;
+			.createTeam{
+				position: relative;
+             		}
+			
 				.box{
 					width: 165px;
 					height: 165px;
 					position: absolute;
 					left: calc(50% - 82.5px);
 					top: calc(50% - 165px);
+					.font{
+						font-size: 32rpx;
+						color: #fff;
+						text-align: center;
+						margin-top: 10rpx;
+						position: fixed;
+						z-index: 999;
+					}
 				}
 				.bg{
 					width: 390px;
 					height: 631px;
 					position: absolute;
+					
 				}
+				
 			}
 			.teamList{
 				margin-top: 24px;
 			}
 		}
+	}
+	.enterTeam{
+		.team{
+			position: relative;
+			.enterButton{
+				font-size: 32rpx;
+			position: absolute;
+			bottom: 30rpx;
+			right: 70rpx;
+				color: #fff;
+			}
+		}
+		
 	}
 </style>

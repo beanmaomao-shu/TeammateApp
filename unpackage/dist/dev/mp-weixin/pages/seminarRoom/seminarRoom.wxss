@@ -28,12 +28,23 @@
   height: 631px;
   position: relative;
 }
+.tabControl .content .empty .createTeam.data-v-779b4231 {
+  position: relative;
+}
 .tabControl .content .empty .box.data-v-779b4231 {
   width: 165px;
   height: 165px;
   position: absolute;
   left: calc(50% - 82.5px);
   top: calc(50% - 165px);
+}
+.tabControl .content .empty .box .font.data-v-779b4231 {
+  font-size: 32rpx;
+  color: #fff;
+  text-align: center;
+  margin-top: 10rpx;
+  position: fixed;
+  z-index: 999;
 }
 .tabControl .content .empty .bg.data-v-779b4231 {
   width: 390px;
@@ -42,4 +53,14 @@
 }
 .tabControl .content .teamList.data-v-779b4231 {
   margin-top: 24px;
+}
+.enterTeam .team.data-v-779b4231 {
+  position: relative;
+}
+.enterTeam .team .enterButton.data-v-779b4231 {
+  font-size: 32rpx;
+  position: absolute;
+  bottom: 30rpx;
+  right: 70rpx;
+  color: #fff;
 }

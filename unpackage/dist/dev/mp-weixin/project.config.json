@@ -18,7 +18,7 @@
     }
   },
   "compileType": "miniprogram",
-  "libVersion": "3.6.3",
+  "libVersion": "3.6.2",
   "appid": "touristappid",
   "projectname": "T",
   "condition": {

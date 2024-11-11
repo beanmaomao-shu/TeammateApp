@@ -29,6 +29,14 @@
 				"navigationBarTitleText" : "组件测试",
 				"enablePullDownRefresh" : false
 			}
+		},
+		{
+			"path" : "pages/chatRoom/chatRoom",
+			"style" : 
+			{
+				"navigationBarTitleText" : "研讨室",
+				"enablePullDownRefresh" : false
+			}
 		}
 	],
 	"globalStyle": {

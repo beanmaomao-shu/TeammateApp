@@ -3,7 +3,8 @@
     "pages/teammateHall/teammateHall",
     "pages/seminarRoom/seminarRoom",
     "pages/home/home",
-    "components/infoCard/infoCard"
+    "components/infoCard/infoCard",
+    "pages/chatRoom/chatRoom"
   ],
   "window": {
     "navigationBarTextStyle": "black",
