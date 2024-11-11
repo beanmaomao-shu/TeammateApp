@@ -5,8 +5,12 @@ if (!Math) {
   "./pages/teammateHall/teammateHall.js";
   "./pages/seminarRoom/seminarRoom.js";
   "./pages/home/home.js";
-  "./components/infoCard/infoCard.js";
+  "./components/teamInfo/teamInfo.js";
   "./pages/chatRoom/chatRoom.js";
+  "./pages/searchDetail/searchDetail.js";
+  "./pages/moreDetail/moreDetail.js";
+  "./pages/connect/connect.js";
+  "./pages/newsCenter/newsCenter.js";
 }
 const _sfc_main = {
   onLaunch: function() {

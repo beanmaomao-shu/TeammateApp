@@ -7652,6 +7652,7 @@ exports._export_sfc = _export_sfc;
 exports.createSSRApp = createSSRApp;
 exports.e = e;
 exports.f = f;
+exports.index = index;
 exports.n = n;
 exports.o = o;
 exports.p = p;

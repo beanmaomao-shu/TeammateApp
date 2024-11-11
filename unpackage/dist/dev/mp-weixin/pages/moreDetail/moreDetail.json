@@ -1,0 +1,8 @@
+{
+  "navigationBarTitleText": "更多组队",
+  "enablePullDownRefresh": false,
+  "usingComponents": {
+    "dash": "../../components/dash/dash",
+    "team-info": "../../components/teamInfo/teamInfo"
+  }
+}

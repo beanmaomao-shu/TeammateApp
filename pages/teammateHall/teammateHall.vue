@@ -2,11 +2,21 @@
 	<view class="teammateLayout">
 		<!-- 搜索框 -->
 		<view class="search">
-			<input type="text" focus placeholder="搜索在线赛事组队"/>
-			<view class="searchButton">
-				<image src="../../static/images/搜索.png" mode=""></image>
+			<input :value="inputClearValue" @input="clearInput" type="text" focus placeholder="搜索在线赛事组队信息"/>
+			<view>
+				<button class="searchButton"  @click="navigateToDetail">
+					<image src="../../static/images/搜索.png" mode=""></image>
+				</button>
 			</view>
-		</view>
+		</view> 
+		<van-notice-bar 
+			scrollable
+			color="#AC33C1"
+			background="#F1E6FF"
+		>
+			2024年第十四届亚太地区大学生数学建模竞赛(以下简称“竞赛”)是由中国国际科技促进会物联网工作委员会和北京图象图形学学会联合主办的亚太地区大学生学科类竞赛，竞赛由亚太地区大学生数学建模竞赛组委会负责组织，欢迎各高等院校按照竞赛章程及有关规定组织同学报名参赛。 
+			2023年第十三届亚太地区大学生数学建模竞赛共有9700支队伍969所高校2万7千多名学生报名参赛。参赛高校覆盖北京大学、清华大学、浙江大学、同济大学、上海交通大学、复旦大学、四川大学、大连理工大学等全部的39所985高校和114所211高校。除中国大陆高校外本次竞赛还有数十所国外高校参赛。
+		</van-notice-bar>
 		<view class="banner">
 			<swiper class="swiper" 
 			circular 
@@ -38,60 +48,119 @@
 				</swiper-item>
 			</swiper>
 		</view>
-		<view class="teammateList"></view>
+		<!-- 分割线 -->
+		<dash Color="#E5E5E5" Width="780rpx" Height="10rpx"></dash>
+		<view class="teammateList">
+			<view class="listHead">
+				<view class="left">
+					<!-- <uni-icons type="fire"></uni-icons> -->
+					<text >正在组队</text>
+				</view>
+				<view class="right" @click="navigateToMore">
+					<text>更多</text>
+					<image src="../../static/images/more.png" mode=""></image>
+				</view>
+			</view>
+			<dash Color="#F1E6FF" Width="700rpx" Height="8rpx"></dash>
+			<teamInfo v-for="item in 10"></teamInfo>
+		</view>
 		<view class="issue">
-			
+		
 		</view>
 	</view>
 </template>
 
-<script>
-	import{ref,reactive} from 'vue'
-	
+<script setup>
+	import {ref} from 'vue';
+	//搜索框跳转搜索详细页面
+	const navigateToDetail=() =>{
+		uni.redirectTo({
+			url: '../searchDetail/searchDetail'
+		});
+	}
+	//更多信息跳转搜索详细页面
+	const navigateToMore=() =>{
+		uni.redirectTo({
+			url:'../moreDetail/moreDetail'
+		});
+	}
 </script>
 
 <style lang="scss" scoped>
-	.search{
-		width: 350px;
-		height: 34px;
-		border: 2px solid #AC33C1;
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		margin: 0 auto;
-		border-radius: 20px;
-		input{
-			width: 284px;
-			height: 34px;
-			padding-left: 10px;
-		}
-		.searchButton{
-			width: 66px;
-			height: 34px;
-			background-color: #F1E6FF;
-			border-radius: 0 20px 20px 0;
+	.teammateLayout{
+		.search{
+			width: 700rpx;
+			height: 68rpx;
+			border: 4rpx solid #AC33C1;
 			display: flex;
 			justify-content: center;
 			align-items: center;
-			image{
-				width: 24px;
-				height: 24px;
-			}
-		}
-	}
-	.banner{
-		margin-top: 23px;
-		swiper{
-			background-color: #fff;
-			width: 350px;
-			height: 238px;
 			margin: 0 auto;
-			swiper-item{
+			border-radius: 40rpx;
+			input{
+				width: 568rpx;
+				height: 68rpx;
+				padding-left: 20rpx;
+			}
+			.searchButton{
+				width: 132rpx;
+				height: 68rpx;
+				background-color: #F1E6FF;
+				border-radius: 0 40rpx 40rpx 0;
+				display: flex;
+				justify-content: center;
+				align-items: center;
 				image{
-					width: 100%;
-					height: 100%;
+					width: 48rpx;
+					height: 48rpx;
 				}
 			}
 		}
+		
+		.banner{
+			margin-top: 23rpx;
+			margin-bottom: 48rpx;
+			swiper{
+				background-color: #fff;
+				width: 700rpx;
+				height: 476rpx;
+				margin: 0 auto;
+				swiper-item{
+					image{
+						width: 100%;
+						height: 100%;
+					}
+				}
+			}
+		}
+		.teammateList{
+			width: 700rpx;
+			margin: 0 auto;
+			.listHead{
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				.left{
+					display: flex;
+					justify-content: center;
+					align-items: center;
+					width: 200rpgx;
+					height: 54rpx;
+				}
+				.right{
+					display: flex;
+					justify-content: center;
+					align-items: center;
+					width: 96rpgx;
+					height: 54rpx;
+					image{
+						width: 32rpx;
+						height: 32rpx;
+					}
+				}
+			}
+		}
+		
 	}
+	
 </style>

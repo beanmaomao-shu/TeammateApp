@@ -23,7 +23,7 @@
 			}
 		},
 		{
-			"path" : "components/infoCard/infoCard",
+			"path" : "components/teamInfo/teamInfo",
 			"style" : 
 			{
 				"navigationBarTitleText" : "组件测试",
@@ -37,13 +37,55 @@
 				"navigationBarTitleText" : "研讨室",
 				"enablePullDownRefresh" : false
 			}
+		},
+			{
+				"path" : "pages/searchDetail/searchDetail",
+			   "style" : 
+			{
+				"navigationBarTitleText" : "搜索组队",
+				"enablePullDownRefresh" : false
+			}
+		},
+		{
+			"path" : "pages/moreDetail/moreDetail",
+			"style" : 
+			{
+				"navigationBarTitleText" : "更多组队",
+				"enablePullDownRefresh" : false
+			}
+		},
+		{
+			"path" : "pages/connect/connect",
+			"style" : 
+			{
+				"navigationBarTitleText" : "联系方式",
+				"enablePullDownRefresh" : false
+			}
+		},
+		{
+			"path" : "pages/newsCenter/newsCenter",
+			"style" : 
+			{
+				"navigationBarTitleText" : "信息中心",
+
+				"enablePullDownRefresh" : false
+			}
 		}
 	],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "Teammate",
 		"navigationBarBackgroundColor": "#fff",
-		"backgroundColor": "#F8F8F8"
+		"backgroundColor": "#F8F8F8",
+		"usingComponents": {
+			"van-popup":"/wxcomponents/dist/popup/index",
+			"van-button":"/wxcomponents/dist/button/index",
+			"van-cell":"/wxcomponents/dist/cell/index",
+			"van-notice-bar":"/wxcomponents/dist/notice-bar/index",
+			"van-dropdown-menu":"/wxcomponents/dist/dropdown-menu/index",
+			"van-dropdown-item":"/wxcomponents/dist/dropdown-item/index"
+			
+		}
 	},
 	"uniIdRouter": {},
 	"tabBar": {

@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "联系方式",
+  "enablePullDownRefresh": false,
+  "usingComponents": {
+    "dash": "../../components/dash/dash"
+  }
+}

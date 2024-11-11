@@ -1,4 +1,7 @@
 {
   "navigationBarTitleText": "组队大厅",
-  "usingComponents": {}
+  "usingComponents": {
+    "dash": "../../components/dash/dash",
+    "team-info": "../../components/teamInfo/teamInfo"
+  }
 }

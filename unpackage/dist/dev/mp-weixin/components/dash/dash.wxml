@@ -1,0 +1,1 @@
+<view class="dash" style="{{'background-color:' + a + ';' + ('width:' + b) + ';' + ('height:' + c)}}"></view>
