@@ -1,50 +1,11 @@
 {
   "description": "项目私有配置文件。此文件中的内容将覆盖 project.config.json 中的相同字段。项目的改动优先同步到此文件中。详见文档：https://developers.weixin.qq.com/miniprogram/dev/devtools/projectconfig.html",
-  "projectname": "T",
-  "setting": {
-    "compileHotReLoad": true
-  },
   "condition": {
     "miniprogram": {
       "list": [
         {
-          "name": "pages/connect/connect",
-          "pathName": "pages/connect/connect",
-          "query": "",
-          "launchMode": "default",
-          "scene": null
-        },
-        {
           "name": "pages/moreDetail/moreDetail",
           "pathName": "pages/moreDetail/moreDetail",
-          "query": "",
-          "launchMode": "default",
-          "scene": null
-        },
-        {
-          "name": "pages/teammateHall/teammateHall",
-          "pathName": "pages/teammateHall/teammateHall",
-          "query": "",
-          "launchMode": "default",
-          "scene": null
-        },
-        {
-          "name": "pages/searchDetail/searchDetail",
-          "pathName": "pages/searchDetail/searchDetail",
-          "query": "",
-          "launchMode": "default",
-          "scene": null
-        },
-        {
-          "name": "components/teamInfo/teamInfo",
-          "pathName": "components/teamInfo/teamInfo",
-          "query": "",
-          "launchMode": "default",
-          "scene": null
-        },
-        {
-          "name": "components/infoCard/infoCard",
-          "pathName": "components/infoCard/infoCard",
           "query": "",
           "launchMode": "default",
           "scene": null

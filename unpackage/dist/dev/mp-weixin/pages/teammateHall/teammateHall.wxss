@@ -40,7 +40,7 @@
 }
 .teammateLayout .search .searchButton.data-v-305e4dd3 {
   width: 132rpx;
-  height: 68rpx;
+  height: 60rpx;
   background-color: #F1E6FF;
   border-radius: 0 40rpx 40rpx 0;
   display: flex;
@@ -80,6 +80,11 @@
   align-items: center;
   width: 200rpgx;
   height: 54rpx;
+}
+.teammateLayout .teammateList .listHead .left image.data-v-305e4dd3 {
+  width: 48rpx;
+  height: 48rpx;
+  margin-right: 16rpx;
 }
 .teammateLayout .teammateList .listHead .right.data-v-305e4dd3 {
   display: flex;

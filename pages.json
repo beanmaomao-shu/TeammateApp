@@ -83,8 +83,8 @@
 			"van-cell":"/wxcomponents/dist/cell/index",
 			"van-notice-bar":"/wxcomponents/dist/notice-bar/index",
 			"van-dropdown-menu":"/wxcomponents/dist/dropdown-menu/index",
-			"van-dropdown-item":"/wxcomponents/dist/dropdown-item/index"
-			
+			"van-dropdown-item":"/wxcomponents/dist/dropdown-item/index",
+			"van-switch":"/wxcomponents/dist/switch/index"
 		}
 	},
 	"uniIdRouter": {},

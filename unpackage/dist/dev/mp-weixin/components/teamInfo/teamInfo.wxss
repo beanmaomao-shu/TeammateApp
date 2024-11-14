@@ -26,39 +26,63 @@
 .teamInfo.data-v-9fbcd1e2 {
   width: 700rpx;
   height: 140rpx;
-  display: flex;
-  justify-content: center;
-  overflow: hidden;
   margin: 0 auto;
   border: 1rpx solid lightgray;
   box-shadow: 0 2rpx 8rpx;
   margin-bottom: 10rpx;
+  position: relative;
 }
-.teamInfo .teamImg.data-v-9fbcd1e2 {
-  margin: 10rpx 0;
+.teamInfo .matchImg.data-v-9fbcd1e2 {
+  position: absolute;
+  left: 12rpx;
+  top: 9rpx;
 }
-.teamInfo .teamImg image.data-v-9fbcd1e2 {
+.teamInfo .matchImg image.data-v-9fbcd1e2 {
   width: 180rpx;
   height: 100rpx;
 }
-.teamInfo .mainInfo .avatars.data-v-9fbcd1e2 {
+.teamInfo .mainInfo.data-v-9fbcd1e2 {
+  position: absolute;
+  left: 200rpx;
+  top: 9rpx;
+}
+.teamInfo .mainInfo .bottom.data-v-9fbcd1e2 {
   display: flex;
   align-items: center;
 }
-.teamInfo .mainInfo .avatars image.data-v-9fbcd1e2 {
+.teamInfo .mainInfo .bottom .avatars.data-v-9fbcd1e2 {
+  display: flex;
+  align-items: center;
+}
+.teamInfo .mainInfo .bottom .avatars image.data-v-9fbcd1e2 {
   width: 48rpx;
   height: 48rpx;
   margin-right: 10rpx;
 }
-.teamInfo .mainInfo .avatars image.data-v-9fbcd1e2:first-child {
+.teamInfo .mainInfo .bottom .avatars image.data-v-9fbcd1e2:first-child {
   margin-left: 20rpx;
+}
+.teamInfo .mainInfo .bottom .goChat navigator.data-v-9fbcd1e2 {
+  display: flex;
+  font-size: 24rpx;
+  color: #808080;
+}
+.teamInfo .mainInfo .bottom .goChat navigator image.data-v-9fbcd1e2 {
+  width: 32rpx;
+  height: 32rpx;
 }
 .teamInfo .mainInfo .matchName.data-v-9fbcd1e2 {
   font-size: 32rpx;
   margin-left: 20rpx;
 }
 .teamInfo .mainInfo .teamName.data-v-9fbcd1e2 {
+  display: flex;
   font-size: 24rpx;
   margin: 5rpx 0;
   margin-left: 20rpx;
+  color: #AC33C1;
+}
+.teamInfo .mainInfo .teamName image.data-v-9fbcd1e2 {
+  width: 32rpx;
+  height: 32rpx;
 }

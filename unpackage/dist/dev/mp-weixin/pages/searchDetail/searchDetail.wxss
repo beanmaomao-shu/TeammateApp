@@ -41,7 +41,7 @@
 }
 .search .searchButton.data-v-ce5e1149 {
   width: 132rpx;
-  height: 68rpx;
+  height: 60rpx;
   background-color: #F1E6FF;
   border-radius: 0 40rpx 40rpx 0;
   display: flex;

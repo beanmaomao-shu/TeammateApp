@@ -2,7 +2,10 @@
 	<view class="searchDetail">
 		<!-- 搜索框 -->
 		<view class="search">
-			<input :value="inputClearValue" @input="clearInput" type="text" focus placeholder="搜索在线赛事组队信息"/>
+			<input 
+			v-model="dataFromSourcePage"
+			placeholder="搜索在线赛事组队信息"
+			type="text"/>
 			<view>
 				<button class="searchButton" >
 					<image src="../../static/images/搜索.png" mode=""></image>
@@ -14,7 +17,15 @@
 </template>
 
 <script setup>
-	
+import {onLoad} from "@dcloudio/uni-app";
+import {ref} from 'vue';
+
+const dataFromSourcePage = ref('');
+
+onLoad((options) => {
+  dataFromSourcePage.value = options.value;
+  // 可以在这里对传递过来的数据进行处理
+});
 </script>
 
 <style lang="scss" scoped>
@@ -35,7 +46,7 @@
 		}
 		.searchButton{
 			width: 132rpx;
-			height: 68rpx;
+			height: 60rpx;
 			background-color: #F1E6FF;
 			border-radius: 0 40rpx 40rpx 0;
 			display: flex;

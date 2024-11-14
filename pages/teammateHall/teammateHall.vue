@@ -2,13 +2,16 @@
 	<view class="teammateLayout">
 		<!-- 搜索框 -->
 		<view class="search">
-			<input :value="inputClearValue" @input="clearInput" type="text" focus placeholder="搜索在线赛事组队信息"/>
-			<view>
-				<button class="searchButton"  @click="(()=>{navigateToDetail();searchInfo()})">
-					<image src="../../static/images/搜索.png" mode=""></image>
-				</button>
+			<input 
+			v-model="inputValue"
+			type="text" 
+			placeholder="搜索在线赛事组队信息"
+			/>
+			<view class="searchButton"  @click="(()=>{navigateToDetail();searchInfo()})">
+				<image src="../../static/images/搜索.png" mode=""></image>
 			</view>
 		</view> 
+		<!-- 通知栏 -->
 		<van-notice-bar 
 			scrollable
 			color="#AC33C1"
@@ -17,6 +20,7 @@
 			2024年第十四届亚太地区大学生数学建模竞赛(以下简称“竞赛”)是由中国国际科技促进会物联网工作委员会和北京图象图形学学会联合主办的亚太地区大学生学科类竞赛，竞赛由亚太地区大学生数学建模竞赛组委会负责组织，欢迎各高等院校按照竞赛章程及有关规定组织同学报名参赛。 
 			2023年第十三届亚太地区大学生数学建模竞赛共有9700支队伍969所高校2万7千多名学生报名参赛。参赛高校覆盖北京大学、清华大学、浙江大学、同济大学、上海交通大学、复旦大学、四川大学、大连理工大学等全部的39所985高校和114所211高校。除中国大陆高校外本次竞赛还有数十所国外高校参赛。
 		</van-notice-bar>
+		<!-- 轮播图 -->
 		<view class="banner">
 			<swiper class="swiper" 
 			circular 
@@ -25,26 +29,8 @@
 			:autoplay="true" 
 			:interval="3000"
 			:duration="500">
-				<swiper-item>
+				<swiper-item v-for="(item,index) in 10" :key="index">
 					<image src="../../static/images/match1.png" mode="widthFix"></image>
-				</swiper-item>
-				<swiper-item>
-					<image src="../../static/images/match2.png" mode="widthFix"></image>
-				</swiper-item>
-				<swiper-item>
-					<image src="../../static/images/match3.png" mode="widthFix"></image>
-				</swiper-item>
-				<swiper-item>
-					<image src="../../static/images/match4.png" mode="widthFix"></image>
-				</swiper-item>
-				<swiper-item>
-					<image src="../../static/images/match5.png" mode="widthFix"></image>
-				</swiper-item>
-				<swiper-item>
-					<image src="../../static/images/match6.png" mode="widthFix"></image>
-				</swiper-item>
-				<swiper-item>
-					<image src="../../static/images/match7.png" mode="widthFix"></image>
 				</swiper-item>
 			</swiper>
 		</view>
@@ -53,12 +39,14 @@
 		<view class="teammateList">
 			<view class="listHead">
 				<view class="left">
-					<!-- <uni-icons type="fire"></uni-icons> -->
+					<image src="../../static/images/people.png" mode=""></image>
 					<text >正在组队</text>
 				</view>
-				<view class="right" @click="navigateToMore">
-					<text>更多</text>
-					<image src="../../static/images/more.png" mode=""></image>
+				<view class="right">
+					<navigator url="/pages/moreDetail/moreDetail" class="moreDetail">
+						<text>更多</text>
+						<image src="../../static/images/more.png" mode=""></image>
+					</navigator>
 				</view>
 			</view>
 			<dash Color="#F1E6FF" Width="700rpx" Height="8rpx"></dash>
@@ -72,21 +60,35 @@
 
 <script setup>
 	import {ref} from 'vue';
+	import { useRouter } from 'vue-router';
+	
+	const inputValue=ref('');
+	const router = useRouter();
+	
+	
 	//搜索框跳转搜索详细页面
 	const navigateToDetail=() =>{
-		uni.redirectTo({
-			url: '../searchDetail/searchDetail'
-		});
-	}
-	//更多信息跳转搜索详细页面
-	const navigateToMore=() =>{
-		uni.redirectTo({
-			url:'../moreDetail/moreDetail'
-		});
+		if(inputValue.value==''){
+			uni.showToast({
+				title: '请输入搜索内容',
+				icon: 'error'
+			});
+		}
+		else{
+			uni.redirectTo({
+				url: `../searchDetail/searchDetail?value=${inputValue.value}`,
+			});
+			inputValue.value = '';
+		}
+		
 	}
 	//搜索组队信息
-	const searchInfo=()=>{
+	const searchInfo=async()=>{
 		// 这里处理输入框的逻辑
+	}
+	//获取banner图片
+	const getBanner=async()=>{
+		// 这里处理获取轮播图图片的逻辑
 	}
 </script>
 
@@ -108,7 +110,7 @@
 			}
 			.searchButton{
 				width: 132rpx;
-				height: 68rpx;
+				height: 60rpx;
 				background-color: #F1E6FF;
 				border-radius: 0 40rpx 40rpx 0;
 				display: flex;
@@ -150,6 +152,11 @@
 					align-items: center;
 					width: 200rpgx;
 					height: 54rpx;
+					image{
+						width: 48rpx;
+						height: 48rpx;
+						margin-right: 16rpx;
+					}
 				}
 				.right{
 					display: flex;

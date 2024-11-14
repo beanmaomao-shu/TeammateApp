@@ -2,38 +2,109 @@
 const common_vendor = require("../../common/vendor.js");
 if (!Array) {
   const _easycom_dash2 = common_vendor.resolveComponent("dash");
-  const _component_van_dropdown_item = common_vendor.resolveComponent("van-dropdown-item");
-  const _component_van_dropdown_menu = common_vendor.resolveComponent("van-dropdown-menu");
+  const _easycom_wei_dropdown_menu2 = common_vendor.resolveComponent("wei-dropdown-menu");
   const _easycom_teamInfo2 = common_vendor.resolveComponent("teamInfo");
-  (_easycom_dash2 + _component_van_dropdown_item + _component_van_dropdown_menu + _easycom_teamInfo2)();
+  (_easycom_dash2 + _easycom_wei_dropdown_menu2 + _easycom_teamInfo2)();
 }
 const _easycom_dash = () => "../../components/dash/dash.js";
+const _easycom_wei_dropdown_menu = () => "../../uni_modules/wei-dropdown-menu/components/wei-dropdown-menu/wei-dropdown-menu.js";
 const _easycom_teamInfo = () => "../../components/teamInfo/teamInfo2.js";
 if (!Math) {
-  (_easycom_dash + _easycom_teamInfo)();
+  (_easycom_dash + _easycom_wei_dropdown_menu + _easycom_teamInfo)();
 }
 const _sfc_main = {
   __name: "moreDetail",
   setup(__props) {
-    const recentMatch = common_vendor.ref(0);
-    const matchCategory = common_vendor.ref(0);
-    const teamRegion = common_vendor.ref(0);
-    const option1 = common_vendor.ref([
-      { text: "2024年第十四届APMCM亚太地区大学生数学建模竞赛", value: 0 },
-      { text: "CCF CAT第六届中国计算机应用技术大赛", value: 1 },
-      { text: "“天柱山杯”安徽省第六届徽文化国际传播翻译大赛", value: 2 }
+    const recentMatchValue = common_vendor.ref({});
+    const matchCategoryValue = common_vendor.ref({});
+    common_vendor.ref({});
+    const changeMatch = (e) => {
+      console.log(e.value.recentMatch);
+    };
+    const changeCategory = (e) => {
+      console.log(e.value.matchCategory);
+    };
+    const changeRegion = (e) => {
+      console.log(e.value.teamRegion);
+    };
+    const recentMatchData = common_vendor.ref([
+      {
+        name: "recentMatch",
+        title: "近期比赛",
+        options: [
+          {
+            label: "APMCM亚太大学生数学建模竞赛",
+            value: "0",
+            tip: "显示在最右边的提示"
+          },
+          {
+            label: "CCF CAT中国计算机应用技术大赛",
+            value: "1",
+            tip: "显示在最右边的提示"
+          },
+          {
+            label: "“天柱山杯”国际传播翻译大赛",
+            value: "2",
+            tip: "显示在最右边的提示"
+          }
+        ]
+      }
     ]);
-    const option2 = common_vendor.ref([
-      { text: "工科", value: 0 },
-      { text: "理科", value: 1 },
-      { text: "文学", value: 2 },
-      { text: "外语", value: 3 },
-      { text: "媒体", value: 4 }
+    const matchCategoryData = common_vendor.ref([
+      {
+        name: "matchCategory",
+        title: "比赛类别",
+        options: [
+          {
+            label: "工科",
+            value: "0",
+            tip: "显示在最右边的提示"
+          },
+          {
+            label: "理科",
+            value: "1",
+            tip: "显示在最右边的提示"
+          },
+          {
+            label: "文学",
+            value: "2",
+            tip: "显示在最右边的提示"
+          },
+          {
+            label: "外语",
+            value: "3",
+            tip: "显示在最右边的提示"
+          },
+          {
+            label: "媒体",
+            value: "4",
+            tip: "显示在最右边的提示"
+          }
+        ]
+      }
     ]);
-    const option3 = common_vendor.ref([
-      { text: "广州", value: 0 },
-      { text: "佛山", value: 1 },
-      { text: "深圳", value: 2 }
+    const teamRegionData = common_vendor.ref([
+      {
+        name: "teamRegion",
+        title: "组队赛区",
+        options: [
+          {
+            label: "广东",
+            value: "0",
+            tip: "显示在最右边的提示"
+          },
+          {
+            label: "上海",
+            value: "1",
+            tip: "显示在最右边的提示"
+          },
+          {
+            label: "湖南",
+            value: "2",
+            tip: "显示在最右边的提示"
+          }
+        ]
+      }
     ]);
     return (_ctx, _cache) => {
       return {
@@ -42,31 +113,25 @@ const _sfc_main = {
           Width: "780rpx",
           Height: "10rpx"
         }),
-        b: common_vendor.o(($event) => recentMatch.value = $event),
+        b: common_vendor.o(changeMatch),
         c: common_vendor.p({
-          options: option1.value,
-          title: "近期比赛",
-          modelValue: recentMatch.value
+          data: recentMatchData.value,
+          value: recentMatchValue.value
         }),
-        d: common_vendor.o(($event) => matchCategory.value = $event),
+        d: common_vendor.o(changeCategory),
         e: common_vendor.p({
-          options: option2.value,
-          title: "比赛类别",
-          modelValue: matchCategory.value
+          data: matchCategoryData.value,
+          value: matchCategoryValue.value
         }),
-        f: common_vendor.o(($event) => teamRegion.value = $event),
+        f: common_vendor.o(changeRegion),
         g: common_vendor.p({
-          options: option3.value,
-          title: "组队赛区",
-          modelValue: teamRegion.value
+          data: teamRegionData.value,
+          value: _ctx.teamRegionValue
         }),
-        h: common_vendor.p({
-          activeColor: "red"
-        }),
-        i: common_vendor.f(10, (item, index, i0) => {
+        h: common_vendor.f(10, (item, index, i0) => {
           return {
             a: index,
-            b: "c2e090e7-5-" + i0
+            b: "c2e090e7-4-" + i0
           };
         })
       };

@@ -1,36 +1,37 @@
 <template>
-	<!-- <view class="teamInfo">
-		<view class="teamImg">
-			<slot name="teamImg"></slot>
-		</view>
-		<view class="matchName">
-			<slot name="matchName"></slot>
-		</view>
-		<view class="teamName">
-			<slot name="teamName"></slot>
-		</view>
-		<view class="avatars">
-			<slot name="avatars"></slot>
-		</view>
-	</view> -->
+	<!-- 点击卡片跳转组队信息详情页 -->
+	<!-- <navigator url="/pages"></navigator> -->
 	<view class="teamInfo">
-		<view class="teamImg">
+			<!--比赛图片 -->
+		<view class="matchImg">
 			<image src="../../static/images/match16.png" mode="widthFix"></image>
 		</view>
 		<view class="mainInfo">
+			<!-- 比赛名 -->
 			<view class="matchName">
 				2024全国大学生数学模型竞赛
 			</view>
+			<!-- 队名 -->
 			<view class="teamName">
-				一战成名队
+				<image src="../../static/images/队伍.png" mode=""></image>
+				<p>一战成名队</p>
 			</view>
-			<view class="avatars">
-				<img src="../../static/images/avatar3.png" alt="" />
-				<img src="../../static/images/avatar1.png" alt="" />
-				<img src="../../static/images/avatar.png" alt="" />
-				<img src="../../static/images/avatar3.png" alt="" />
-				<img src="../../static/images/avatar.png" alt="" />
-				<img src="../../static/images/avatar2.png" alt="" />
+			<!-- 头像列表//研讨室跳转 -->
+			<view class="bottom">
+				<view class="avatars">
+					<img src="../../static/images/avatar3.png" alt="" />
+					<img src="../../static/images/avatar1.png" alt="" />
+					<img src="../../static/images/avatar.png" alt="" />
+					<img src="../../static/images/avatar3.png" alt="" />
+					<img src="../../static/images/avatar.png" alt="" />
+					<img src="../../static/images/avatar2.png" alt="" />
+				</view>
+				<view class="goChat">
+					<navigator url="/pages/chatRoom/chatRoom">
+						<image src="../../static/images/trending.png" mode=""></image>
+						<p>一起讨论></p>
+					</navigator>
+				</view>
 			</view>
 		</view>
 		
@@ -45,42 +46,66 @@
 	.teamInfo{
 		width: 700rpx;
 		height: 140rpx;
-		display: flex;
-		justify-content: center;
-		overflow: hidden;
 		margin: 0 auto;
 		border: 1rpx solid lightgray;
 		box-shadow: 0 2rpx 8rpx;
 		margin-bottom: 10rpx;
-		.teamImg{
-			margin: 10rpx 0;
+		position: relative;
+		.matchImg{
+			position: absolute;
+			left: 12rpx;
+			top: 9rpx;
 			image{
 				width: 180rpx;
 				height: 100rpx;
 			}
 		}
 		.mainInfo{
-			.avatars{
-					display: flex;
-					align-items: center;
-					image{
-						width: 48rpx;
-						height: 48rpx;
-						margin-right: 10rpx;
-						&:first-child{
-							margin-left: 20rpx;
+			position: absolute;
+			left: 200rpx;
+			top: 9rpx;
+			.bottom{
+				display: flex;
+				align-items: center;
+				.avatars{
+						display: flex;
+						align-items: center;
+						image{
+							width: 48rpx;
+							height: 48rpx;
+							margin-right: 10rpx;
+							&:first-child{
+								margin-left: 20rpx;
+							}
 						}
+				}
+				.goChat{
+					navigator{
+						display: flex;
+						image{
+							width: 32rpx;
+							height: 32rpx;
+						}
+						font-size: 24rpx;
+						color: #808080;
 					}
 				}
-				.matchName{
-					font-size: 32rpx;
-					margin-left: 20rpx;
+			}
+			.matchName{
+				font-size: 32rpx;
+				margin-left: 20rpx;
+			}
+			.teamName{
+				display: flex;
+				image{
+					width: 32rpx;
+					height: 32rpx;
 				}
-				.teamName{
 					font-size: 24rpx;
 					margin:5rpx 0  ;
 					margin-left: 20rpx;
-				}
+					color: #AC33C1;
+			}
 			}
 		}
 	

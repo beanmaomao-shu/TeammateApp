@@ -14,34 +14,46 @@ if (!Math) {
 const _sfc_main = {
   __name: "teammateHall",
   setup(__props) {
+    const inputValue = common_vendor.ref("");
+    common_vendor.useRouter();
     const navigateToDetail = () => {
-      common_vendor.index.redirectTo({
-        url: "../searchDetail/searchDetail"
-      });
+      if (inputValue.value == "") {
+        common_vendor.index.showToast({
+          title: "请输入搜索内容",
+          icon: "error"
+        });
+      } else {
+        common_vendor.index.redirectTo({
+          url: `../searchDetail/searchDetail?value=${inputValue.value}`
+        });
+        inputValue.value = "";
+      }
     };
-    const navigateToMore = () => {
-      common_vendor.index.redirectTo({
-        url: "../moreDetail/moreDetail"
-      });
+    const searchInfo = async () => {
     };
     return (_ctx, _cache) => {
       return {
-        a: _ctx.inputClearValue,
-        b: common_vendor.o((...args) => _ctx.clearInput && _ctx.clearInput(...args)),
+        a: inputValue.value,
+        b: common_vendor.o(($event) => inputValue.value = $event.detail.value),
         c: common_vendor.o(() => {
           navigateToDetail();
+          searchInfo();
         }),
         d: common_vendor.p({
           scrollable: true,
           color: "#AC33C1",
           background: "#F1E6FF"
         }),
-        e: common_vendor.p({
+        e: common_vendor.f(10, (item, index, i0) => {
+          return {
+            a: index
+          };
+        }),
+        f: common_vendor.p({
           Color: "#E5E5E5",
           Width: "780rpx",
           Height: "10rpx"
         }),
-        f: common_vendor.o(navigateToMore),
         g: common_vendor.p({
           Color: "#F1E6FF",
           Width: "700rpx",
