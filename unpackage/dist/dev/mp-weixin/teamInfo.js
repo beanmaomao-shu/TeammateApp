@@ -1,8 +1,17 @@
 "use strict";
+const common_assets = require("./common/assets.js");
 const common_vendor = require("./common/vendor.js");
 const _sfc_main = {};
 function _sfc_render(_ctx, _cache) {
-  return {};
+  return {
+    a: common_assets._imports_0$4,
+    b: common_assets._imports_1$4,
+    c: common_assets._imports_2$2,
+    d: common_assets._imports_0$2,
+    e: common_assets._imports_1$4,
+    f: common_assets._imports_0$2,
+    g: common_assets._imports_4$2
+  };
 }
-const MiniProgramPage = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["render", _sfc_render], ["__scopeId", "data-v-9fbcd1e2"], ["__file", "C:/Users/黎翠儿/Documents/GitHub/TeammateApp/components/teamInfo/teamInfo.vue"]]);
+const MiniProgramPage = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["render", _sfc_render], ["__scopeId", "data-v-9fbcd1e2"]]);
 exports.MiniProgramPage = MiniProgramPage;

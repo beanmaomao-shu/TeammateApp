@@ -1,5 +1,4 @@
 "use strict";
-const common_vendor = require("../../common/vendor.js");
 const _sfc_main = {
   __name: "dash",
   props: {
@@ -17,5 +16,4 @@ const _sfc_main = {
     };
   }
 };
-const Component = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["__file", "C:/Users/黎翠儿/Documents/GitHub/TeammateApp/components/dash/dash.vue"]]);
-wx.createComponent(Component);
+wx.createComponent(_sfc_main);

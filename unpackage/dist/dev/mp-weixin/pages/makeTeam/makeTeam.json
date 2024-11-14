@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "发布组队",
+  "enablePullDownRefresh": false,
+  "usingComponents": {
+    "uni-badge": "../../uni_modules/uni-badge/components/uni-badge/uni-badge",
+    "uni-data-select": "../../uni_modules/uni-data-select/components/uni-data-select/uni-data-select",
+    "uni-file-picker": "../../uni_modules/uni-file-picker/components/uni-file-picker/uni-file-picker"
+  }
+}

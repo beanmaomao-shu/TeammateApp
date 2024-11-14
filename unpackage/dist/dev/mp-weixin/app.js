@@ -7,6 +7,7 @@ if (!Math) {
   "./pages/home/home.js";
   "./components/teamInfo/teamInfo.js";
   "./pages/chatRoom/chatRoom.js";
+  "./pages/makeTeam/makeTeam.js";
   "./pages/searchDetail/searchDetail.js";
   "./pages/moreDetail/moreDetail.js";
   "./pages/connect/connect.js";
@@ -23,9 +24,8 @@ const _sfc_main = {
     console.log("App Hide");
   }
 };
-const App = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["__file", "C:/Users/黎翠儿/Documents/GitHub/TeammateApp/App.vue"]]);
 function createApp() {
-  const app = common_vendor.createSSRApp(App);
+  const app = common_vendor.createSSRApp(_sfc_main);
   return {
     app
   };

@@ -38,6 +38,14 @@
 				"enablePullDownRefresh" : false
 			}
 		},
+		{
+			"path" : "pages/makeTeam/makeTeam",
+			"style" : 
+			{
+				"navigationBarTitleText" : "发布组队",
+				"enablePullDownRefresh" : false
+			}
+		},
 			{
 				"path" : "pages/searchDetail/searchDetail",
 			   "style" : 
@@ -67,7 +75,6 @@
 			"style" : 
 			{
 				"navigationBarTitleText" : "信息中心",
-
 				"enablePullDownRefresh" : false
 			}
 		}

@@ -1,5 +1,6 @@
 "use strict";
 const common_vendor = require("../../common/vendor.js");
+const common_assets = require("../../common/assets.js");
 if (!Array) {
   const _component_van_notice_bar = common_vendor.resolveComponent("van-notice-bar");
   const _easycom_dash2 = common_vendor.resolveComponent("dash");
@@ -24,38 +25,53 @@ const _sfc_main = {
         url: "../moreDetail/moreDetail"
       });
     };
+    const toMakeTeam = () => {
+      common_vendor.index.redirectTo({
+        url: "../makeTeam/makeTeam"
+      });
+    };
     return (_ctx, _cache) => {
       return {
         a: _ctx.inputClearValue,
         b: common_vendor.o((...args) => _ctx.clearInput && _ctx.clearInput(...args)),
-        c: common_vendor.o(() => {
+        c: common_assets._imports_0,
+        d: common_vendor.o(() => {
           navigateToDetail();
         }),
-        d: common_vendor.p({
+        e: common_vendor.p({
           scrollable: true,
           color: "#AC33C1",
           background: "#F1E6FF"
         }),
-        e: common_vendor.p({
+        f: common_assets._imports_1,
+        g: common_assets._imports_5,
+        h: common_assets._imports_3,
+        i: common_assets._imports_4,
+        j: common_assets._imports_5$1,
+        k: common_assets._imports_6,
+        l: common_assets._imports_7,
+        m: common_vendor.p({
           Color: "#E5E5E5",
           Width: "780rpx",
           Height: "10rpx"
         }),
-        f: common_vendor.o(navigateToMore),
-        g: common_vendor.p({
+        n: common_assets._imports_8,
+        o: common_vendor.o(navigateToMore),
+        p: common_vendor.p({
           Color: "#F1E6FF",
           Width: "700rpx",
           Height: "8rpx"
         }),
-        h: common_vendor.f(10, (item, index, i0) => {
+        q: common_vendor.f(10, (item, index, i0) => {
           return {
             a: index,
             b: "305e4dd3-3-" + i0
           };
-        })
+        }),
+        r: common_vendor.o(toMakeTeam)
       };
     };
   }
 };
-const MiniProgramPage = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["__scopeId", "data-v-305e4dd3"], ["__file", "C:/Users/黎翠儿/Documents/GitHub/TeammateApp/pages/teammateHall/teammateHall.vue"]]);
+const MiniProgramPage = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["__scopeId", "data-v-305e4dd3"]]);
 wx.createPage(MiniProgramPage);
