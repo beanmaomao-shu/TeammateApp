@@ -1,5 +1,6 @@
 "use strict";
 const common_vendor = require("../../common/vendor.js");
+const common_assets = require("../../common/assets.js");
 const _sfc_main = {};
 if (!Array) {
   const _easycom_dash2 = common_vendor.resolveComponent("dash");
@@ -17,19 +18,22 @@ function _sfc_render(_ctx, _cache) {
       Width: "780rpx",
       Height: "10rpx"
     }),
-    b: common_vendor.p({
+    b: common_assets._imports_0$3,
+    c: common_vendor.p({
       center: true,
       title: "拨打电话",
       isLink: true,
       value: "(空)"
     }),
-    c: common_vendor.p({
+    d: common_assets._imports_1$3,
+    e: common_vendor.p({
       center: true,
       title: "添加微信",
       isLink: true,
       value: "(空)"
     }),
-    d: common_vendor.p({
+    f: common_assets._imports_2$1,
+    g: common_vendor.p({
       center: true,
       title: "浏览名片",
       isLink: true,
@@ -37,5 +41,5 @@ function _sfc_render(_ctx, _cache) {
     })
   };
 }
-const MiniProgramPage = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["render", _sfc_render], ["__scopeId", "data-v-ea8c7664"], ["__file", "C:/Users/黎翠儿/Documents/GitHub/TeammateApp/pages/connect/connect.vue"]]);
+const MiniProgramPage = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["render", _sfc_render], ["__scopeId", "data-v-ea8c7664"]]);
 wx.createPage(MiniProgramPage);

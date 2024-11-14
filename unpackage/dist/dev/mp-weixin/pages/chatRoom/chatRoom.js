@@ -1,5 +1,6 @@
 "use strict";
 const common_vendor = require("../../common/vendor.js");
+const common_assets = require("../../common/assets.js");
 if (!Array) {
   const _easycom_infoCard2 = common_vendor.resolveComponent("infoCard");
   const _easycom_uni_icons2 = common_vendor.resolveComponent("uni-icons");
@@ -38,15 +39,17 @@ const _sfc_main = {
           return common_vendor.e({
             a: item.type == 1
           }, item.type == 1 ? {
-            b: common_vendor.t(item.text),
-            c: common_vendor.t(item.time)
+            b: common_assets._imports_0$2,
+            c: common_vendor.t(item.text),
+            d: common_vendor.t(item.time)
           } : {}, {
-            d: item.type == 2
+            e: item.type == 2
           }, item.type == 2 ? {
-            e: common_vendor.t(item.text),
-            f: common_vendor.t(item.time)
+            f: common_vendor.t(item.text),
+            g: common_vendor.t(item.time),
+            h: common_assets._imports_0$2
           } : {}, {
-            g: index
+            i: index
           });
         }),
         b: common_vendor.o([($event) => message.value = $event.detail.value, handleInput]),
@@ -92,5 +95,5 @@ const _sfc_main = {
     };
   }
 };
-const MiniProgramPage = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["__scopeId", "data-v-9b186cfb"], ["__file", "C:/Users/黎翠儿/Documents/GitHub/TeammateApp/pages/chatRoom/chatRoom.vue"]]);
+const MiniProgramPage = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["__scopeId", "data-v-9b186cfb"]]);
 wx.createPage(MiniProgramPage);

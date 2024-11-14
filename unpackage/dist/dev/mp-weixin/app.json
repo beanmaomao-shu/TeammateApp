@@ -5,6 +5,7 @@
     "pages/home/home",
     "components/teamInfo/teamInfo",
     "pages/chatRoom/chatRoom",
+    "pages/makeTeam/makeTeam",
     "pages/searchDetail/searchDetail",
     "pages/moreDetail/moreDetail",
     "pages/connect/connect",

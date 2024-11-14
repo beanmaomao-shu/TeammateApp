@@ -53,7 +53,9 @@
 			<teamInfo v-for="(item,index) in 10" :key="index"></teamInfo>
 		</view>
 		<view class="issue">
-		
+		<button @click="toMakeTeam">
+			组队
+		</button>
 		</view>
 	</view>
 </template>
@@ -86,9 +88,11 @@
 	const searchInfo=async()=>{
 		// 这里处理输入框的逻辑
 	}
-	//获取banner图片
-	const getBanner=async()=>{
-		// 这里处理获取轮播图图片的逻辑
+	//跳转到组队页面
+	const toMakeTeam=()=>{
+		uni.redirectTo({
+			url:"../makeTeam/makeTeam"
+		})
 	}
 </script>
 
@@ -170,6 +174,23 @@
 					}
 				}
 			}
+		}
+		
+	}
+	.issue{
+		position: fixed;
+		right: 30rpx;
+		bottom: 100rpx;
+		border-radius: 20%;
+		width: 130rpx;
+		height: 50rpx;
+		text-align: center;
+		line-height: 50rpx;
+		button{
+			color: #fff;
+		 background: linear-gradient(90deg, #6c5ce7, rgba(224, 217, 255, 0.8));
+			border-radius: 30rpx;
+			border: 2rpx solid #fff;
 		}
 		
 	}
