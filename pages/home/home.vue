@@ -3,26 +3,31 @@
 		<!-- 头像板块 -->
 		<view class="infoCard">
 			<view class="peopleCard">
-					<image src="../../static/images/avatar.png" mode="aspectFill"></image>
-					<view class="name">
+				<infoCard>
+					<template #name>
 						鸭鸭
-						<image src="../../static/images/认证.png" mode="aspectFill"></image>
-					</view>
+					</template>
+				</infoCard>
 			</view>
 			<view class="functionCard">
+				
 				<view class="box">
 					<image  src="../../static/images/编辑.png" mode="aspectFill"></image>
 					<view class="font">编辑名片</view>
 				</view>
-		<view class="box">
-			<image  src="../../static/images/info_center.png" mode="aspectFill"></image>
-			<view class="font">信息中心</view>
-		</view>
-		
-		<view class="box">
-			<image  src="../../static/images/tongxunlu.png" mode="aspectFill"></image>
-			<view class="font">联系方式</view>
-		</view>
+				<navigator url="/pages/newsCenter/newsCenter">
+					<view class="box">
+						<image  src="../../static/images/info_center.png" mode="aspectFill"></image>
+						<view class="font">信息中心</view>
+					</view>
+				</navigator>
+				<navigator url="/pages/connect/connect">
+					<view class="box">
+						<image  src="../../static/images/tongxunlu.png" mode="aspectFill"></image>
+						<view class="font">联系方式</view>
+					</view>
+				</navigator>
+				
 			</view>
 		</view>
 		
@@ -80,41 +85,21 @@
 	background-color: #e5e5e5;
 	//头部样式
 	.infoCard{
-		height: 380rpx;
+		height: 300rpx;
 		width: 100%;
 	    background-color: #fff;
 		//头像
 		.peopleCard{
-			display: flex;
-			align-items: center;
-			height: 280rpx;
+			margin-top: 42rpx;
 			background-color: #fff;
-			image{
-				padding-left: 60rpx;
-				width: 100rpx;
-				height: 100rpx;
-			}
-			.name{
-				font-size: 32rpx;
-				padding-left: 35rpx;
-				color: #f2c688;
-				image{
-					padding-left: 20rpx;
-					width: 30rpx;
-					height: 30rpx;
-					
-				}
-			}
-			
 		}	
 		//头像下方功能卡
 		.functionCard{
 			display: flex;
 			align-items: center;
-			padding-top: 30rpx;
+			padding: 30rpx 0;
 			.box{
 				display: flex;
-			
 				align-items: center;
 				margin-left: 70rpx;
 				image{

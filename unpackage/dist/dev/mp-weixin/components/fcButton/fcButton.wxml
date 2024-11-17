@@ -1,0 +1,1 @@
+<view class="fcButton data-v-a91f18cb"><image class="data-v-a91f18cb" src="{{a}}" alt=""></image><view class="title data-v-a91f18cb">{{b}}</view><view class="signal data-v-a91f18cb" style="{{'color:' + c}}">></view></view>

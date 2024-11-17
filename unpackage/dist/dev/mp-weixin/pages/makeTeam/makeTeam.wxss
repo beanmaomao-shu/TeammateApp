@@ -111,3 +111,14 @@
 .layout .require .detail.data-v-f62f500a {
   padding-top: 20rpx;
 }
+.layout .box.data-v-f62f500a {
+  width: 360rpx;
+  height: 70rpx;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  display: flex;
+  justify-content: left;
+  align-items: center;
+}
+.layout .box uni-data-picker.data-v-f62f500a {
+  width: 100%;
+}

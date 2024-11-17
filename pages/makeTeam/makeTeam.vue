@@ -71,23 +71,45 @@
 		<uni-badge class="uni-badge-left-margin" text="6" :customStyle="{background: '#8707ff'}"/>. 组队要求
 		<view class="detail">
 			时间 :
+			<view class="box">
+				<uni-datetime-picker
+					type="date"
+					:value="single"
+					@change="logTime"
+				/>
+			</view>
 		</view>
 		<view class="detail">
 			地点 :
+			<view class="box" @click="getMapLocation">
+				<uni-icons type="map-pin-ellipse" size="20"></uni-icons>
+				<p>{{address}}</p>
+			</view>
 		</view>
 		<view class="detail">
 			限制人数 :
+			<view class="box">
+			<uni-data-picker
+				v-model="numbers"
+				:localdata="items"
+				popup-title="请选择组队人数"
+				@change="logNum"
+				  >
+			 </uni-data-picker>
+			 </view>
 		</view>
-		
+		<view class="fcButton"></view>
+		<view class="publish" @click="publish">
+			<fcButton img-src='/static/images/发布.png' Title="发布组队" Color="#6B57FE"></fcButton>
+		</view>
 	</view>
 </view>
-
 </view>
-
 </template>
 
 <script setup>
-import {ref} from 'vue'
+import {ref} from 'vue';
+import {onLoad} from "@dcloudio/uni-app";
 const imageStyles = ref({
       width: 90,
       height: 90,
@@ -113,6 +135,144 @@ const imageStyles = ref({
 		{value:"3",name:"92高校"},
 		{value:"4",name:"研究生"},
 	])
+	
+	// 搜索选择人数
+	const numbers=ref();
+	const items=ref([
+	            {
+	              text: "0",
+	              value: 0
+	            },
+	            {
+	              text: "1",
+	              value: 1
+	            },
+	            {
+	              text: "2",
+	              value: 2
+	            },
+	            {
+	              text: "3",
+	              value: 3
+	            },
+	            {
+	              text: "4",
+	              value: 4
+	            },
+	            {
+	              text: "5",
+	              value: 5
+	            },
+	            {
+	              text: "6",
+	              value: 6
+	            },
+	            {
+	              text: "7",
+	              value: 7
+	            },
+	            {
+	              text: "8",
+	              value: 8
+	            },
+	            {
+	              text: "9",
+	              value: 9
+	            },
+	            {
+	              text: "10",
+	              value: 10
+	            }
+	         ])
+	const logNum=()=>{
+		console.log(numbers.value)
+	};
+	//截止时间 
+	const single=ref();
+	const logTime=(e)=>{
+		single.value = e;
+		console.log(e);
+	}
+	
+	//搜索选择地址
+	const address=ref('定位您的位置');
+	const getMapLocation=()=>{
+		uni.chooseLocation({
+			success:(res)=> {
+				// 将获取到的地址信息存储
+				address.value = res.name
+			},
+			fail:()=>{
+				// 如果用uni.chooseLocation没有获取到地理位置，则需要获取当前的授权信息，判断是否有地理授权信息
+				uni.getSetting({ //获取用户的当前设置
+					success: (res) => {
+						var status = res.authSetting;
+						if(!status['scope.userLocation']){
+						// 如果授权信息中没有地理位置的授权，则需要弹窗提示用户需要授权地理信息
+							uni.showModal({ //显示模态弹窗，可以只有一个确定按钮，也可以同时有确定和取消按钮。
+								title:"是否授权当前位置",
+								content:"需要获取您的地理位置，请确认授权，否则地图功能将无法使用",
+								success:(tip)=>{
+									if(tip.confirm){ 
+									// 如果用户同意授权地理信息，则打开授权设置页面，判断用户的操作
+										uni.openSetting({ //调起客户端小程序设置界面，返回用户设置的操作结果
+											success:(data)=>{
+											// 如果用户授权了地理信息在，则提示授权成功
+												if(data.authSetting['scope.userLocation']===true){
+													uni.showToast({
+														title:"授权成功",
+														icon:"success",
+														duration:1000
+													})
+													// 授权成功后，然后再次chooseLocation获取信息
+													uni.chooseLocation({
+														success: (res) => {
+															// 将获取到的地址信息存储
+															address.value = res.address
+														}
+													})
+												}else{
+													uni.showToast({
+														title:"授权失败",
+														icon:"none",
+														duration:1000
+													})
+												}
+											}
+										})
+									}
+								}
+							})
+						}
+					},
+					fail: (res) => {
+						uni.showToast({
+							title:"调用授权窗口失败",
+							icon:"none",
+							duration:1000
+						})
+					}
+				})
+			}
+		})
+	}
+	
+	//发布组队信息
+	const publish=async()=>{
+		// 提示发布成功
+		uni.showToast({
+			title:"发布成功",
+			icon:"success",
+			duration:500
+		})
+		//返回首页
+		setTimeout(()=>{
+			uni.switchTab({
+				url:"/pages/teammateHall/teammateHall"
+			})
+		},1000)
+		
+	}
 </script>
 
 <style lang="scss" scoped>
@@ -209,6 +369,16 @@ const imageStyles = ref({
 			padding-top: 20rpx;
 		}
 	}
-	
+	.box{
+		width: 360rpx;
+		height: 70rpx;
+		box-shadow:0 4px 8px rgba(0, 0, 0, 0.2);
+		display: flex;
+		justify-content: left;
+		align-items: center;
+		uni-data-picker{
+			width: 100%;
+		}
+	}
 }
 </style>

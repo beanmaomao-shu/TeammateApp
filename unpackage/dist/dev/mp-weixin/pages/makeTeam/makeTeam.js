@@ -4,13 +4,21 @@ if (!Array) {
   const _easycom_uni_badge2 = common_vendor.resolveComponent("uni-badge");
   const _easycom_uni_data_select2 = common_vendor.resolveComponent("uni-data-select");
   const _easycom_uni_file_picker2 = common_vendor.resolveComponent("uni-file-picker");
-  (_easycom_uni_badge2 + _easycom_uni_data_select2 + _easycom_uni_file_picker2)();
+  const _easycom_uni_datetime_picker2 = common_vendor.resolveComponent("uni-datetime-picker");
+  const _easycom_uni_icons2 = common_vendor.resolveComponent("uni-icons");
+  const _easycom_uni_data_picker2 = common_vendor.resolveComponent("uni-data-picker");
+  const _easycom_fcButton2 = common_vendor.resolveComponent("fcButton");
+  (_easycom_uni_badge2 + _easycom_uni_data_select2 + _easycom_uni_file_picker2 + _easycom_uni_datetime_picker2 + _easycom_uni_icons2 + _easycom_uni_data_picker2 + _easycom_fcButton2)();
 }
 const _easycom_uni_badge = () => "../../uni_modules/uni-badge/components/uni-badge/uni-badge.js";
 const _easycom_uni_data_select = () => "../../uni_modules/uni-data-select/components/uni-data-select/uni-data-select.js";
 const _easycom_uni_file_picker = () => "../../uni_modules/uni-file-picker/components/uni-file-picker/uni-file-picker.js";
+const _easycom_uni_datetime_picker = () => "../../uni_modules/uni-datetime-picker/components/uni-datetime-picker/uni-datetime-picker.js";
+const _easycom_uni_icons = () => "../../uni_modules/uni-icons/components/uni-icons/uni-icons.js";
+const _easycom_uni_data_picker = () => "../../uni_modules/uni-data-picker/components/uni-data-picker/uni-data-picker.js";
+const _easycom_fcButton = () => "../../components/fcButton/fcButton.js";
 if (!Math) {
-  (_easycom_uni_badge + _easycom_uni_data_select + _easycom_uni_file_picker)();
+  (_easycom_uni_badge + _easycom_uni_data_select + _easycom_uni_file_picker + _easycom_uni_datetime_picker + _easycom_uni_icons + _easycom_uni_data_picker + _easycom_fcButton)();
 }
 const _sfc_main = {
   __name: "makeTeam",
@@ -38,6 +46,130 @@ const _sfc_main = {
       { value: "3", name: "92高校" },
       { value: "4", name: "研究生" }
     ]);
+    const numbers = common_vendor.ref();
+    const items = common_vendor.ref([
+      {
+        text: "0",
+        value: 0
+      },
+      {
+        text: "1",
+        value: 1
+      },
+      {
+        text: "2",
+        value: 2
+      },
+      {
+        text: "3",
+        value: 3
+      },
+      {
+        text: "4",
+        value: 4
+      },
+      {
+        text: "5",
+        value: 5
+      },
+      {
+        text: "6",
+        value: 6
+      },
+      {
+        text: "7",
+        value: 7
+      },
+      {
+        text: "8",
+        value: 8
+      },
+      {
+        text: "9",
+        value: 9
+      },
+      {
+        text: "10",
+        value: 10
+      }
+    ]);
+    const logNum = () => {
+      console.log(numbers.value);
+    };
+    const single = common_vendor.ref();
+    const logTime = (e) => {
+      single.value = e;
+      console.log(e);
+    };
+    const address = common_vendor.ref("定位您的位置");
+    const getMapLocation = () => {
+      common_vendor.index.chooseLocation({
+        success: (res) => {
+          address.value = res.name;
+        },
+        fail: () => {
+          common_vendor.index.getSetting({
+            //获取用户的当前设置
+            success: (res) => {
+              var status = res.authSetting;
+              if (!status["scope.userLocation"]) {
+                common_vendor.index.showModal({
+                  //显示模态弹窗，可以只有一个确定按钮，也可以同时有确定和取消按钮。
+                  title: "是否授权当前位置",
+                  content: "需要获取您的地理位置，请确认授权，否则地图功能将无法使用",
+                  success: (tip) => {
+                    if (tip.confirm) {
+                      common_vendor.index.openSetting({
+                        //调起客户端小程序设置界面，返回用户设置的操作结果
+                        success: (data) => {
+                          if (data.authSetting["scope.userLocation"] === true) {
+                            common_vendor.index.showToast({
+                              title: "授权成功",
+                              icon: "success",
+                              duration: 1e3
+                            });
+                            common_vendor.index.chooseLocation({
+                              success: (res2) => {
+                                address.value = res2.address;
+                              }
+                            });
+                          } else {
+                            common_vendor.index.showToast({
+                              title: "授权失败",
+                              icon: "none",
+                              duration: 1e3
+                            });
+                          }
+                        }
+                      });
+                    }
+                  }
+                });
+              }
+            },
+            fail: (res) => {
+              common_vendor.index.showToast({
+                title: "调用授权窗口失败",
+                icon: "none",
+                duration: 1e3
+              });
+            }
+          });
+        }
+      });
+    };
+    const publish = async () => {
+      common_vendor.index.showToast({
+        title: "发布成功",
+        icon: "success",
+        duration: 500
+      });
+      setTimeout(() => {
+        common_vendor.index.switchTab({
+          url: "/pages/teammateHall/teammateHall"
+        });
+      }, 1e3);
+    };
     return (_ctx, _cache) => {
       return {
         a: common_vendor.p({
@@ -101,10 +233,34 @@ const _sfc_main = {
           customStyle: {
             background: "#8707ff"
           }
-        })
+        }),
+        n: common_vendor.o(logTime),
+        o: common_vendor.p({
+          type: "date",
+          value: single.value
+        }),
+        p: common_vendor.p({
+          type: "map-pin-ellipse",
+          size: "20"
+        }),
+        q: common_vendor.t(address.value),
+        r: common_vendor.o(getMapLocation),
+        s: common_vendor.o(logNum),
+        t: common_vendor.o(($event) => numbers.value = $event),
+        v: common_vendor.p({
+          localdata: items.value,
+          ["popup-title"]: "请选择组队人数",
+          modelValue: numbers.value
+        }),
+        w: common_vendor.p({
+          ["img-src"]: "/static/images/发布.png",
+          Title: "发布组队",
+          Color: "#6B57FE"
+        }),
+        x: common_vendor.o(publish)
       };
     };
   }
 };
-const MiniProgramPage = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["__scopeId", "data-v-f62f500a"]]);
+const MiniProgramPage = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["__scopeId", "data-v-f62f500a"], ["__file", "C:/Users/黎翠儿/Documents/GitHub/TeammateApp/pages/makeTeam/makeTeam.vue"]]);
 wx.createPage(MiniProgramPage);

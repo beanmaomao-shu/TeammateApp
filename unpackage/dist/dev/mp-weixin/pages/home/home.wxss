@@ -29,35 +29,18 @@
   background-color: #e5e5e5;
 }
 .homeLayout .infoCard.data-v-07e72d3c {
-  height: 380rpx;
+  height: 300rpx;
   width: 100%;
   background-color: #fff;
 }
 .homeLayout .infoCard .peopleCard.data-v-07e72d3c {
-  display: flex;
-  align-items: center;
-  height: 280rpx;
+  margin-top: 42rpx;
   background-color: #fff;
-}
-.homeLayout .infoCard .peopleCard image.data-v-07e72d3c {
-  padding-left: 60rpx;
-  width: 100rpx;
-  height: 100rpx;
-}
-.homeLayout .infoCard .peopleCard .name.data-v-07e72d3c {
-  font-size: 32rpx;
-  padding-left: 35rpx;
-  color: #f2c688;
-}
-.homeLayout .infoCard .peopleCard .name image.data-v-07e72d3c {
-  padding-left: 20rpx;
-  width: 30rpx;
-  height: 30rpx;
 }
 .homeLayout .infoCard .functionCard.data-v-07e72d3c {
   display: flex;
   align-items: center;
-  padding-top: 30rpx;
+  padding: 30rpx 0;
 }
 .homeLayout .infoCard .functionCard .box.data-v-07e72d3c {
   display: flex;

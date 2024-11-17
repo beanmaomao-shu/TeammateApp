@@ -1,45 +1,49 @@
 <template>
 	<!-- 点击卡片跳转组队信息详情页 -->
-	<!-- <navigator url="/pages"></navigator> -->
 	<view class="teamInfo">
+		<navigator url="/pages/teamDetail/teamDetail?value=${props.btn}">
 			<!--比赛图片 -->
-		<view class="matchImg">
-			<image src="../../static/images/match16.png" mode="widthFix"></image>
-		</view>
-		<view class="mainInfo">
-			<!-- 比赛名 -->
-			<view class="matchName">
-				2024全国大学生数学模型竞赛
+			<view class="matchImg">
+				<image src="../../static/images/match16.png" mode="widthFix"></image>
 			</view>
-			<!-- 队名 -->
-			<view class="teamName">
-				<image src="../../static/images/队伍.png" mode=""></image>
-				<p>一战成名队</p>
-			</view>
-			<!-- 头像列表//研讨室跳转 -->
-			<view class="bottom">
-				<view class="avatars">
-					<img src="../../static/images/avatar3.png" alt="" />
-					<img src="../../static/images/avatar1.png" alt="" />
-					<img src="../../static/images/avatar.png" alt="" />
-					<img src="../../static/images/avatar3.png" alt="" />
-					<img src="../../static/images/avatar.png" alt="" />
-					<img src="../../static/images/avatar2.png" alt="" />
+			<view class="mainInfo">
+				<!-- 比赛名 -->
+				<view class="matchName">
+					2024全国大学生数学模型竞赛
 				</view>
-				<view class="goChat">
-					<navigator url="/pages/chatRoom/chatRoom">
-						<image src="../../static/images/trending.png" mode=""></image>
-						<p>一起讨论></p>
-					</navigator>
+				<!-- 队名 -->
+				<view class="teamName">
+					<image src="../../static/images/队伍.png" mode=""></image>
+					<p>一战成名队</p>
+				</view>
+				<!-- 头像列表//研讨室跳转 -->
+				<view class="bottom">
+					<view class="avatars">
+						<img src="../../static/images/avatar3.png" alt="" />
+						<img src="../../static/images/avatar1.png" alt="" />
+						<img src="../../static/images/avatar.png" alt="" />
+						<img src="../../static/images/avatar3.png" alt="" />
+						<img src="../../static/images/avatar.png" alt="" />
+						<img src="../../static/images/avatar2.png" alt="" />
+					</view>
+					<view class="goChat">
+						<navigator url="/pages/chatRoom/chatRoom">
+							<image src="../../static/images/trending.png" mode=""></image>
+							<p>一起讨论></p>
+						</navigator>
+					</view>
 				</view>
 			</view>
-		</view>
-		
+		</navigator>
 	</view>
 </template>
 
 <script setup>
-	
+	const props=defineProps({
+		btn:{
+			type:String,
+		}
+	})
 </script>
 
 <style lang="scss" scoped>

@@ -8,7 +8,7 @@
     "urlCheck": false,
     "es6": true,
     "postcss": false,
-    "minified": false,
+    "minified": true,
     "newFeature": true,
     "bigPackageSizeSupport": true,
     "babelSetting": {
@@ -19,7 +19,7 @@
   },
   "compileType": "miniprogram",
   "libVersion": "3.6.2",
-  "appid": "touristappid",
+  "appid": "wxc99881a55ee63f8d",
   "projectname": "T",
   "condition": {
     "search": {

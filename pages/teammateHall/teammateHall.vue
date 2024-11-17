@@ -53,9 +53,9 @@
 			<teamInfo v-for="(item,index) in 10" :key="index"></teamInfo>
 		</view>
 		<view class="issue">
-		<button @click="toMakeTeam">
-			组队
-		</button>
+			<button @click="toMakeTeam">
+				组队
+			</button>
 		</view>
 	</view>
 </template>

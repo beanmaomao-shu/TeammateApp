@@ -4,6 +4,55 @@
     "miniprogram": {
       "list": [
         {
+          "name": "pages/makeTeam/makeTeam",
+          "pathName": "pages/makeTeam/makeTeam",
+          "query": "",
+          "launchMode": "default",
+          "scene": null
+        },
+        {
+          "name": "pages/teamDetail/teamDetail",
+          "pathName": "pages/teamDetail/teamDetail",
+          "query": "",
+          "launchMode": "default",
+          "scene": null
+        },
+        {
+          "name": "pages/teamDetail/teamDetail",
+          "pathName": "pages/teamDetail/teamDetail",
+          "query": "",
+          "launchMode": "default",
+          "scene": null
+        },
+        {
+          "name": "pages/teammateHall/teammateHall",
+          "pathName": "pages/teammateHall/teammateHall",
+          "query": "",
+          "launchMode": "default",
+          "scene": null
+        },
+        {
+          "name": "pages/test/test",
+          "pathName": "pages/test/test",
+          "query": "",
+          "launchMode": "default",
+          "scene": null
+        },
+        {
+          "name": "pages/connect/connect",
+          "pathName": "pages/connect/connect",
+          "query": "",
+          "launchMode": "default",
+          "scene": null
+        },
+        {
+          "name": "pages/home/home",
+          "pathName": "pages/home/home",
+          "query": "",
+          "launchMode": "default",
+          "scene": null
+        },
+        {
           "name": "pages/moreDetail/moreDetail",
           "pathName": "pages/moreDetail/moreDetail",
           "query": "",
