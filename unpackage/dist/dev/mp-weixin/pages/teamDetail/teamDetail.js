@@ -134,9 +134,14 @@ const _sfc_main = {
       });
     };
     common_vendor.ref("");
-    const toPage = () => {
+    const toChatPage = () => {
       common_vendor.index.navigateTo({
         url: "/pages/chatRoom/chatRoom"
+      });
+    };
+    const toInvitePage = () => {
+      common_vendor.index.navigateTo({
+        url: "/pages/inviteMate/inviteMate"
       });
     };
     return (_ctx, _cache) => {
@@ -215,7 +220,23 @@ const _sfc_main = {
           Title: "一起讨论",
           Color: "#F3705A"
         }),
-        w: common_vendor.o(toPage)
+        w: common_vendor.o(toChatPage),
+        x: common_vendor.p({
+          ["img-src"]: "/static/images/退出队伍.png",
+          Title: "退出队伍",
+          Color: "#D43030"
+        }),
+        y: common_vendor.p({
+          ["img-src"]: "/static/images/发送邀请.png",
+          Title: "发送邀请",
+          Color: "#FF5733"
+        }),
+        z: common_vendor.o(toInvitePage),
+        A: common_vendor.p({
+          ["img-src"]: "/static/images/解散队伍.png",
+          Title: "解散队伍",
+          Color: "#FF8D1A"
+        })
       };
     };
   }

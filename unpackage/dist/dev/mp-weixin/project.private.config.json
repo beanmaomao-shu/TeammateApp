@@ -4,6 +4,13 @@
     "miniprogram": {
       "list": [
         {
+          "name": "pages/inviteMate/inviteMate",
+          "pathName": "pages/inviteMate/inviteMate",
+          "query": "",
+          "launchMode": "default",
+          "scene": null
+        },
+        {
           "name": "pages/makeTeam/makeTeam",
           "pathName": "pages/makeTeam/makeTeam",
           "query": "",

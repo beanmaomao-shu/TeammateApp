@@ -13,6 +13,7 @@ if (!Math) {
   "./pages/connect/connect.js";
   "./pages/newsCenter/newsCenter.js";
   "./pages/teamDetail/teamDetail.js";
+  "./pages/inviteMate/inviteMate.js";
 }
 const _sfc_main = {
   onLaunch: function() {

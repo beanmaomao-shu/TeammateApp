@@ -7261,6 +7261,13 @@ const pages = [
       navigationBarTitleText: "组队详情",
       enablePullDownRefresh: false
     }
+  },
+  {
+    path: "pages/inviteMate/inviteMate",
+    style: {
+      navigationBarTitleText: "邀请组队",
+      enablePullDownRefresh: false
+    }
   }
 ];
 const globalStyle = {

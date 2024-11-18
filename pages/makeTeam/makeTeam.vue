@@ -100,9 +100,9 @@
 		</view>
 		<view class="fcButton"></view>
 		<view class="publish" @click="publish">
-			<fcButton img-src='/static/images/发布.png' Title="发布组队" Color="#6B57FE"></fcButton>
 		</view>
 	</view>
+	<fcButton img-src='/static/images/发布.png' Title="发布组队" Color="#6B57FE"></fcButton>
 </view>
 </view>
 </template>

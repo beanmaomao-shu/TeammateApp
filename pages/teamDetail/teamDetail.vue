@@ -84,12 +84,14 @@
 		</view>
 		<view class="btnArea">
 			<fcButton img-src='/static/images/申请加入.png' Title="申请加入" Color="#FF5733"></fcButton>
-			<view class="enter" @click="toPage">
+			<view class="enter" @click="toChatPage">
 				<fcButton img-src='/static/images/一起讨论.png' Title="一起讨论" Color="#F3705A"></fcButton>
 			</view>
-<!-- 			<fcButton img-src='/static/images/退出队伍.png' Title="退出队伍" Color="#D43030"></fcButton>
-			<fcButton img-src='/static/images/发送邀请.png' Title="发送邀请" Color="#FF5733"></fcButton>
-			<fcButton img-src='/static/images/解散队伍.png' Title="解散队伍" Color="#FF8D1A"></fcButton> -->
+			<fcButton img-src='/static/images/退出队伍.png' Title="退出队伍" Color="#D43030"></fcButton>
+			<view class="enter" @click="toInvitePage">
+				<fcButton img-src='/static/images/发送邀请.png' Title="发送邀请" Color="#FF5733"></fcButton>
+			</view>
+			<fcButton img-src='/static/images/解散队伍.png' Title="解散队伍" Color="#FF8D1A"></fcButton>
 		</view>
 	</view>
 </template>
@@ -219,9 +221,14 @@
 	
 	//跳转按钮
 	const dataFromSourcePage = ref('');
-	const toPage=()=>{
+	const toChatPage=()=>{
 		uni.navigateTo({
 			url: '/pages/chatRoom/chatRoom'
+		})
+	}
+	const toInvitePage=()=>{
+		uni.navigateTo({
+			url: '/pages/inviteMate/inviteMate'
 		})
 	}
 </script>
