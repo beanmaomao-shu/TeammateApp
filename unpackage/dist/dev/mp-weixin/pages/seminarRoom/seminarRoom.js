@@ -39,14 +39,24 @@ const _sfc_main = {
         d: isemptycreateteam.value
       }, isemptycreateteam.value ? {} : {}, {
         e: !isemptycreateteam.value
-      }, !isemptycreateteam.value ? {} : {}) : {}, {
-        f: current.value === 1
+      }, !isemptycreateteam.value ? {
+        f: common_vendor.p({
+          toValue: "c",
+          cValue: "a"
+        })
+      } : {}) : {}, {
+        g: current.value === 1
       }, current.value === 1 ? common_vendor.e({
-        g: !isemptyenterteam.value
+        h: !isemptyenterteam.value
       }, !isemptyenterteam.value ? {} : {}, {
-        h: isemptyenterteam.value
-      }, isemptyenterteam.value ? {} : {}) : {}, {
-        i: common_vendor.p({
+        i: isemptyenterteam.value
+      }, isemptyenterteam.value ? {
+        j: common_vendor.p({
+          toValue: "b",
+          cValue: "b"
+        })
+      } : {}) : {}, {
+        k: common_vendor.p({
           title: "实心标签",
           type: "line"
         })

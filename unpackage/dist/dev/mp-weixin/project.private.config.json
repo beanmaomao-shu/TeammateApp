@@ -4,6 +4,13 @@
     "miniprogram": {
       "list": [
         {
+          "name": "pages/seminarRoom/seminarRoom",
+          "pathName": "pages/seminarRoom/seminarRoom",
+          "query": "",
+          "launchMode": "default",
+          "scene": null
+        },
+        {
           "name": "pages/inviteMate/inviteMate",
           "pathName": "pages/inviteMate/inviteMate",
           "query": "",

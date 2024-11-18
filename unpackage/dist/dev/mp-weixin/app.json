@@ -11,7 +11,8 @@
     "pages/connect/connect",
     "pages/newsCenter/newsCenter",
     "pages/teamDetail/teamDetail",
-    "pages/inviteMate/inviteMate"
+    "pages/inviteMate/inviteMate",
+    "pages/test/test"
   ],
   "usingComponents": {
     "van-popup": "/wxcomponents/dist/popup/index",

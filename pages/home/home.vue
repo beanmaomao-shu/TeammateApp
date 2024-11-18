@@ -3,7 +3,7 @@
 		<!-- 头像板块 -->
 		<view class="infoCard">
 			<view class="peopleCard">
-				<infoCard>
+				<infoCard cValue='c'>
 					<template #name>
 						鸭鸭
 					</template>
@@ -41,7 +41,7 @@
 		<!-- 功能模块 -->
 		<view class="functionalList">
 			<button class="function">
-				<image src="../../static/images/enter.png" mode="aspectFill"></image>
+				<image src="../../static/images/enter.png" mode="aspectFill" style="width: 35rpx;height: 35rpx;"></image>
 				<view class="font">
 					将Temmate小程序加入到我的小程序中
 				</view>
@@ -109,6 +109,7 @@
 				.font{
 					font-size: 24rpx;
 					margin-left: 10rpx;
+					font-weight: bold;
 				}
 			}
 			

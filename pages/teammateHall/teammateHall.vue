@@ -50,7 +50,7 @@
 				</view>
 			</view>
 			<dash Color="#F1E6FF" Width="700rpx" Height="8rpx"></dash>
-			<teamInfo v-for="(item,index) in 10" :key="index"></teamInfo>
+			<teamInfo v-for="(item,index) in 10" :key="index" toValue='a'></teamInfo>
 		</view>
 		<view class="issue">
 			<button @click="toMakeTeam">

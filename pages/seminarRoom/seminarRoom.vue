@@ -24,9 +24,14 @@
 						</view>
 						<view class="createTeam" v-if="!isemptycreateteam">
 							<view class="teamList">
-								<infoCard>
-									<template #name>马晓楠</template>
-								</infoCard>
+								<navigator url="/pages/chatRoom/chatRoom" class="team">
+									<infoCard toValue='c' cValue='a'>
+										<template #name>马晓楠</template>
+									</infoCard>
+									<view class="enterButton">
+										>> 进入研讨室
+									</view>
+								</navigator>
 							</view>
 						</view>
 					</view>
@@ -45,7 +50,7 @@
 						<view class="enterTeam">
 							<view class="teamList" v-if="isemptyenterteam">
 								<navigator url="/pages/chatRoom/chatRoom" class="team">
-									<infoCard>
+									<infoCard toValue='b' cValue='b'>
 										<template #name>马晓楠</template>
 									</infoCard>
 									<view class="enterButton">
@@ -121,6 +126,19 @@
 		}
 	}
 	.enterTeam{
+		.team{
+			position: relative;
+			.enterButton{
+				font-size: 32rpx;
+			position: absolute;
+			bottom: 30rpx;
+			right: 70rpx;
+				color: #fff;
+			}
+		}
+		
+	}
+	.createTeam{
 		.team{
 			position: relative;
 			.enterButton{

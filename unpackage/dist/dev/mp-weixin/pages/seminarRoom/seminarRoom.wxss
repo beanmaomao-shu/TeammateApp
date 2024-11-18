@@ -64,3 +64,13 @@
   right: 70rpx;
   color: #fff;
 }
+.createTeam .team.data-v-779b4231 {
+  position: relative;
+}
+.createTeam .team .enterButton.data-v-779b4231 {
+  font-size: 32rpx;
+  position: absolute;
+  bottom: 30rpx;
+  right: 70rpx;
+  color: #fff;
+}

@@ -61,6 +61,7 @@
   align-items: center;
   font-size: 24rpx;
   margin: 0 auto;
+  margin-top: 10rpx;
 }
 .info .infoGroup .audit.data-v-d0ce716f {
   width: 104rpx;
@@ -72,15 +73,18 @@
   justify-content: center;
   align-items: center;
   border-radius: 20rpx;
+  margin-top: 10rpx;
 }
-.info .infoGroup .authentication.data-v-d0ce716f {
-  font-size: 24rpx;
+.info .infoGroup .authentication .content.data-v-d0ce716f {
   display: flex;
   justify-content: center;
   align-items: center;
+  font-size: 24rpx;
   color: #fff;
+  margin-top: 10rpx;
 }
-.info .infoGroup .authentication .authenImg.data-v-d0ce716f {
+.info .infoGroup .authentication .content .authenImg.data-v-d0ce716f {
   width: 32rpx;
   height: 32rpx;
+  margin-right: 10rpx;
 }

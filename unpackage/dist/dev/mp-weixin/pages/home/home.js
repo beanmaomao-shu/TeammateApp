@@ -10,7 +10,11 @@ if (!Math) {
   _easycom_infoCard();
 }
 function _sfc_render(_ctx, _cache) {
-  return {};
+  return {
+    a: common_vendor.p({
+      cValue: "c"
+    })
+  };
 }
 const MiniProgramPage = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["render", _sfc_render], ["__scopeId", "data-v-07e72d3c"], ["__file", "C:/Users/黎翠儿/Documents/GitHub/TeammateApp/pages/home/home.vue"]]);
 wx.createPage(MiniProgramPage);

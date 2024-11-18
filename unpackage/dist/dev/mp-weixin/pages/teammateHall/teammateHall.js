@@ -70,7 +70,10 @@ const _sfc_main = {
             b: "305e4dd3-3-" + i0
           };
         }),
-        i: common_vendor.o(toMakeTeam)
+        i: common_vendor.p({
+          toValue: "a"
+        }),
+        j: common_vendor.o(toMakeTeam)
       };
     };
   }

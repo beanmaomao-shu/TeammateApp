@@ -3,13 +3,20 @@ const common_vendor = require("./common/vendor.js");
 const _sfc_main = {
   __name: "teamInfo",
   props: {
-    btn: {
+    toValue: {
       type: String
     }
   },
   setup(__props) {
+    const props = __props;
+    const centerValue = common_vendor.ref("");
+    common_vendor.onLoad(() => {
+      centerValue.value = props.toValue;
+    });
     return (_ctx, _cache) => {
-      return {};
+      return {
+        a: `/pages/teamDetail/teamDetail?toPageValue=${centerValue.value}`
+      };
     };
   }
 };

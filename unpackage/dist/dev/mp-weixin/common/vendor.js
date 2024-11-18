@@ -7268,6 +7268,13 @@ const pages = [
       navigationBarTitleText: "邀请组队",
       enablePullDownRefresh: false
     }
+  },
+  {
+    path: "pages/test/test",
+    style: {
+      navigationBarTitleText: "",
+      enablePullDownRefresh: false
+    }
   }
 ];
 const globalStyle = {

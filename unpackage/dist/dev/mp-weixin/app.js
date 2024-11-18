@@ -14,6 +14,7 @@ if (!Math) {
   "./pages/newsCenter/newsCenter.js";
   "./pages/teamDetail/teamDetail.js";
   "./pages/inviteMate/inviteMate.js";
+  "./pages/test/test.js";
 }
 const _sfc_main = {
   onLaunch: function() {
