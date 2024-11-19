@@ -1,5 +1,6 @@
 "use strict";
 const common_vendor = require("../../common/vendor.js");
+const common_assets = require("../../common/assets.js");
 const _sfc_main = {
   __name: "infoCard",
   props: {
@@ -19,12 +20,13 @@ const _sfc_main = {
   setup(__props) {
     return (_ctx, _cache) => {
       return common_vendor.e({
-        a: __props.isLeader
+        a: common_assets._imports_0$3,
+        b: __props.isLeader
       }, __props.isLeader ? {} : {}, {
-        b: !__props.isLeader
+        c: !__props.isLeader
       }, !__props.isLeader ? {} : {});
     };
   }
 };
-const Component = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["__scopeId", "data-v-d0ce716f"], ["__file", "C:/Users/黎翠儿/Documents/GitHub/TeammateApp/components/infoCard/infoCard.vue"]]);
+const Component = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["__scopeId", "data-v-d0ce716f"]]);
 wx.createComponent(Component);

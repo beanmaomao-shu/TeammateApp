@@ -74,5 +74,5 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
     d: $props.styleType === "text" ? "" : $props.activeColor
   };
 }
-const Component = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["render", _sfc_render], ["__scopeId", "data-v-86aa1171"], ["__file", "C:/Users/黎翠儿/Documents/GitHub/TeammateApp/uni_modules/uni-segmented-control/components/uni-segmented-control/uni-segmented-control.vue"]]);
+const Component = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["render", _sfc_render], ["__scopeId", "data-v-86aa1171"]]);
 wx.createComponent(Component);

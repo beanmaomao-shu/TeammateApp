@@ -25,15 +25,19 @@
 /* 文章场景相关 */
 .layout.data-v-f62f500a {
   width: 100%;
-  height: 100%;
+  margin: 0 auto;
 }
 .layout .choose.data-v-f62f500a {
   padding-top: 30rpx;
   width: 700rpx;
   height: 100rpx;
-  padding-left: 20rpx;
+  padding-left: 40rpx;
+}
+.layout .choose .font.data-v-f62f500a {
+  padding-left: 0rpx;
 }
 .layout .inputContainer.data-v-f62f500a {
+  margin-left: calc(50% - 250rpx);
   margin-top: 10rpx;
   width: 480rpx;
   height: 73rpx;
@@ -61,6 +65,7 @@
 .layout .font.data-v-f62f500a {
   font-size: 32rpx;
   padding-left: 20rpx;
+  padding-top: 10rpx;
   color: #333;
 }
 .layout .avatar.data-v-f62f500a {
@@ -68,37 +73,49 @@
   width: 100%;
   height: 300rpx;
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  border-bottom: 1px solid #eee;
 }
 .layout .avatar .getImg.data-v-f62f500a {
+  margin-left: 80rpx;
+  padding-top: 20rpx;
   width: 300rpx;
   height: 100rpx;
 }
 .layout .name.data-v-f62f500a {
   width: 100%;
   height: 170rpx;
+  border-bottom: 1px solid #eee;
 }
 .layout .slogan.data-v-f62f500a {
   width: 100%;
   height: 170rpx;
+  border-bottom: 1px solid #eee;
 }
 .layout .rate.data-v-f62f500a {
   width: 100%;
-  height: 150rpx;
+  height: 170rpx;
+  padding-left: 20rpx;
+  border-bottom: 1px solid #eee;
 }
 .layout .rate .list.data-v-f62f500a {
+  padding-top: 40rpx;
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  margin-left: -30rpx;
 }
 .layout .description.data-v-f62f500a {
   width: 100%;
-  height: 270rpx;
+  height: 300rpx;
+  border-bottom: 1px solid #eee;
 }
 .layout .description textarea.data-v-f62f500a {
   padding-left: 10rpx;
   padding-top: 10rpx;
   margin-top: 20rpx;
-  margin-left: 20rpx;
+  margin-left: calc(50% - 270rpx);
   width: 500rpx;
   height: 180rpx;
   border: 1px solid #818CF8;
@@ -109,7 +126,9 @@
   height: 250rpx;
 }
 .layout .require .detail.data-v-f62f500a {
-  padding-top: 20rpx;
+  padding: 20rpx;
+  border-bottom: 1px solid #eee;
+  padding-top: 10rpx;
 }
 .layout .box.data-v-f62f500a {
   width: 360rpx;
@@ -118,7 +137,20 @@
   display: flex;
   justify-content: left;
   align-items: center;
+  margin-top: 10rpx;
 }
 .layout .box uni-data-picker.data-v-f62f500a {
   width: 100%;
+}
+.layout .btn.data-v-f62f500a {
+  width: 400rpx;
+  height: 140rpx;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.layout .btn .publish.data-v-f62f500a {
+  width: 400rpx;
+  height: 80rpx;
+  margin-bottom: 40rpx;
 }

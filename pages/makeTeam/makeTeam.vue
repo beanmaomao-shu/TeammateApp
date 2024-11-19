@@ -1,11 +1,9 @@
 <template>
 <view class="layout">
-	
-	
 	<!-- 选择比赛 -->
 	<view class="choose">
 		<view class="font">
-			<uni-badge class="uni-badge-left-margin" text="+" type="primary" />
+			<uni-badge class="uni-badge-left-margin" text="+" type="primary"/>
 			选择 比赛
 		</view>
 		
@@ -21,7 +19,7 @@
 		<uni-badge class="uni-badge-left-margin" text="1" :customStyle="{background: '#8707ff'}"/>. 上传队伍图标
 	</view>
 	<view class="getImg">
-		<uni-file-picker limit="1" title="从相册中选择"	fileMediatype="image" :image-styles="imageStyles"></uni-file-picker>
+		<uni-file-picker limit="1" title=""	fileMediatype="image" :image-styles="imageStyles"></uni-file-picker>
 </view>
 </view>
 <!-- 2队伍名称 -->
@@ -47,7 +45,7 @@
 <!-- 4报名类别-->
 <view class="rate">
 	<uni-badge class="uni-badge-left-margin" text="4" type="primary"
-						:customStyle="{background: '#8707ff'}" />
+						:customStyle="{background: '#8707ff'}" />. 请选择比赛组别
 		<view class="list">
 			<radio-group @change="radioChange">
 				<label style="padding-left: 20rpx;" v-for="(item, index) in rates" :key="item.value" >
@@ -70,7 +68,7 @@
 	<view class="font">
 		<uni-badge class="uni-badge-left-margin" text="6" :customStyle="{background: '#8707ff'}"/>. 组队要求
 		<view class="detail">
-			时间 :
+			截止时间 :
 			<view class="box">
 				<uni-datetime-picker
 					type="date"
@@ -80,7 +78,7 @@
 			</view>
 		</view>
 		<view class="detail">
-			地点 :
+			位置 :
 			<view class="box" @click="getMapLocation">
 				<uni-icons type="map-pin-ellipse" size="20"></uni-icons>
 				<p>{{address}}</p>
@@ -98,10 +96,13 @@
 			 </uni-data-picker>
 			 </view>
 		</view>
-		<view class="fcButton"></view>
-		<view class="publish" @click="publish">
-			<fcButton img-src='/static/images/发布.png' Title="发布组队" Color="#6B57FE"></fcButton>
+		
+		<view class="btn">
+			<view class="publish" @click="publish">
+				<fcButton img-src='/static/images/发布.png' Title="发布组队" Color="#6B57FE"></fcButton>
+			</view>
 		</view>
+		
 	</view>
 </view>
 </view>
@@ -278,14 +279,20 @@ const imageStyles = ref({
 <style lang="scss" scoped>
 .layout{
 	width: 100%;
-	height: 100%;	
+	
+	margin: 0 auto;
+
 	.choose{
 		padding-top: 30rpx;
 		width: 700rpx;
 		height: 100rpx;
-		padding-left: 20rpx;
+		padding-left: 40rpx;
+		.font{
+			padding-left: 0rpx;
+		}
 	}
 	.inputContainer{
+		margin-left: calc(50% - 250rpx);
 		margin-top: 10rpx;
 		width: 480rpx;
 		height: 73rpx;
@@ -312,18 +319,21 @@ const imageStyles = ref({
 	
 	}
 	.font{
-		font-size: 32rpx;
-		padding-left: 20rpx;
+		font-size: 32rpx ;
+		padding-left: 20rpx ;
+		padding-top: 10rpx;
 		color: #333;
 	}
 	.avatar{
 		padding-top: 50rpx;
 		width: 100%;
 		height: 300rpx;
-		
 		display: flex;
-		justify-content: space-between;
+		flex-direction: column;
+			border-bottom: 1px solid #eee;
 		.getImg{
+			margin-left: 80rpx;
+			padding-top: 20rpx;
 			width: 300rpx;
 			height: 100rpx;
 		}
@@ -331,31 +341,37 @@ const imageStyles = ref({
 	.name{
 		width: 100%;
 		height: 170rpx;
-		
+	    border-bottom: 1px solid #eee;
 		
 	}
 	.slogan{
 		width: 100%;
 		height: 170rpx;
-	
+			border-bottom: 1px solid #eee;
 	}
 	.rate{
 		width: 100%;
-		height: 150rpx;
+		height: 170rpx;
+		padding-left: 20rpx;
+		border-bottom: 1px solid #eee;
 		.list{
+			padding-top: 40rpx;
 			display: flex;
 			flex-wrap: wrap;
+			justify-content: center;
+			align-items: center;
+			margin-left: -30rpx;
 		}
 	}
 	.description{
 		width: 100%;
-		height: 270rpx;
-	
+		height: 300rpx;
+		border-bottom: 1px solid #eee;
 		textarea{
 			padding-left: 10rpx;
 			padding-top: 10rpx;
 			margin-top:20rpx;
-			margin-left:20rpx;
+			margin-left:calc(50% - 270rpx );
 			width: 500rpx;
 			height: 180rpx;
 			 border: 1px solid #818CF8;
@@ -366,7 +382,12 @@ const imageStyles = ref({
 		width: 100%;
 		height: 250rpx;
 		.detail{
-			padding-top: 20rpx;
+		padding: 20rpx;
+		border-bottom: 1px solid #eee;
+		padding-top: 10rpx;
+		&.detail:first-child{
+			
+		}
 		}
 	}
 	.box{
@@ -376,9 +397,24 @@ const imageStyles = ref({
 		display: flex;
 		justify-content: left;
 		align-items: center;
+		margin-top: 10rpx;
 		uni-data-picker{
 			width: 100%;
 		}
 	}
+	.btn{
+		width: 400rpx;
+		height: 140rpx;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		.publish{
+			width: 400rpx;
+			height: 80rpx;
+		
+			margin-bottom: 40rpx;
+		}
+	}
+	
 }
 </style>

@@ -1,5 +1,6 @@
 "use strict";
 const common_vendor = require("../../common/vendor.js");
+const common_assets = require("../../common/assets.js");
 if (!Array) {
   const _easycom_detailTitle2 = common_vendor.resolveComponent("detailTitle");
   const _easycom_dash2 = common_vendor.resolveComponent("dash");
@@ -145,80 +146,83 @@ const _sfc_main = {
           ["img-src"]: "/static/images/图片.png",
           ["p-title"]: "队伍图标"
         }),
-        b: common_vendor.p({
+        b: common_assets._imports_0$5,
+        c: common_vendor.p({
           ["img-src"]: "/static/images/别名.png",
           ["p-title"]: "队伍名称"
         }),
-        c: common_vendor.p({
+        d: common_vendor.p({
           ["img-src"]: "/static/images/文字.png",
           ["p-title"]: "队伍口号"
         }),
-        d: common_vendor.p({
+        e: common_vendor.p({
           ["img-src"]: "/static/images/简介.png",
           ["p-title"]: "队伍简介"
         }),
-        e: common_vendor.p({
+        f: common_vendor.p({
           Color: "#E5E5E5",
           Width: "780rpx",
           Height: "10rpx"
         }),
-        f: common_vendor.p({
+        g: common_vendor.p({
           ["img-src"]: "/static/images/人员.png",
           ["p-title"]: "队伍成员"
         }),
-        g: common_vendor.p({
+        h: common_assets._imports_1$4,
+        i: common_assets._imports_1$4,
+        j: common_assets._imports_1$4,
+        k: common_vendor.p({
           Color: "#E5E5E5",
           Width: "780rpx",
           Height: "10rpx"
         }),
-        h: common_vendor.p({
+        l: common_vendor.p({
           ["img-src"]: "/static/images/组队要求.png",
           ["p-title"]: "组队要求"
         }),
-        i: common_vendor.p({
+        m: common_vendor.p({
           ["img-src"]: "/static/images/组队人数.png",
           ["p-title"]: "组队人数"
         }),
-        j: common_vendor.o(logNum),
-        k: common_vendor.o(($event) => numbers.value = $event),
-        l: common_vendor.p({
+        n: common_vendor.o(logNum),
+        o: common_vendor.o(($event) => numbers.value = $event),
+        p: common_vendor.p({
           localdata: items.value,
           ["popup-title"]: "请选择组队人数",
           modelValue: numbers.value
         }),
-        m: common_vendor.p({
+        q: common_vendor.p({
           ["img-src"]: "/static/images/timeout.png",
           ["p-title"]: "截止时间"
         }),
-        n: common_vendor.o(logTime),
-        o: common_vendor.p({
+        r: common_vendor.o(logTime),
+        s: common_vendor.p({
           type: "date",
           value: single.value
         }),
-        p: common_vendor.p({
+        t: common_vendor.p({
           ["img-src"]: "/static/images/地点.png",
           ["p-title"]: "赛区地点"
         }),
-        q: common_vendor.p({
+        v: common_vendor.p({
           type: "map-pin-ellipse",
           size: "20"
         }),
-        r: common_vendor.t(address.value),
-        s: common_vendor.o(getMapLocation),
-        t: common_vendor.p({
+        w: common_vendor.t(address.value),
+        x: common_vendor.o(getMapLocation),
+        y: common_vendor.p({
           ["img-src"]: "/static/images/申请加入.png",
           Title: "申请加入",
           Color: "#FF5733"
         }),
-        v: common_vendor.p({
+        z: common_vendor.p({
           ["img-src"]: "/static/images/一起讨论.png",
           Title: "一起讨论",
           Color: "#F3705A"
         }),
-        w: common_vendor.o(toPage)
+        A: common_vendor.o(toPage)
       };
     };
   }
 };
-const MiniProgramPage = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["__file", "C:/Users/黎翠儿/Documents/GitHub/TeammateApp/pages/teamDetail/teamDetail.vue"]]);
-wx.createPage(MiniProgramPage);
+wx.createPage(_sfc_main);

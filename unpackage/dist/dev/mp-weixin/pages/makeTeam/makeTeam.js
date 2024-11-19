@@ -190,7 +190,7 @@ const _sfc_main = {
         }),
         f: common_vendor.p({
           limit: "1",
-          title: "从相册中选择",
+          title: "",
           fileMediatype: "image",
           ["image-styles"]: imageStyles.value
         }),
@@ -262,5 +262,5 @@ const _sfc_main = {
     };
   }
 };
-const MiniProgramPage = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["__scopeId", "data-v-f62f500a"], ["__file", "C:/Users/黎翠儿/Documents/GitHub/TeammateApp/pages/makeTeam/makeTeam.vue"]]);
+const MiniProgramPage = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["__scopeId", "data-v-f62f500a"]]);
 wx.createPage(MiniProgramPage);

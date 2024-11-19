@@ -1,5 +1,6 @@
 "use strict";
 const common_vendor = require("../../common/vendor.js");
+const common_assets = require("../../common/assets.js");
 if (!Array) {
   const _component_van_notice_bar = common_vendor.resolveComponent("van-notice-bar");
   const _easycom_dash2 = common_vendor.resolveComponent("dash");
@@ -40,40 +41,44 @@ const _sfc_main = {
       return {
         a: inputValue.value,
         b: common_vendor.o(($event) => inputValue.value = $event.detail.value),
-        c: common_vendor.o(() => {
+        c: common_assets._imports_0,
+        d: common_vendor.o(() => {
           navigateToDetail();
           searchInfo();
         }),
-        d: common_vendor.p({
+        e: common_vendor.p({
           scrollable: true,
           color: "#AC33C1",
           background: "#F1E6FF"
         }),
-        e: common_vendor.f(10, (item, index, i0) => {
+        f: common_vendor.f(10, (item, index, i0) => {
           return {
             a: index
           };
         }),
-        f: common_vendor.p({
+        g: common_assets._imports_1,
+        h: common_vendor.p({
           Color: "#E5E5E5",
           Width: "780rpx",
           Height: "10rpx"
         }),
-        g: common_vendor.p({
+        i: common_assets._imports_2,
+        j: common_assets._imports_3,
+        k: common_vendor.p({
           Color: "#F1E6FF",
           Width: "700rpx",
           Height: "8rpx"
         }),
-        h: common_vendor.f(10, (item, index, i0) => {
+        l: common_vendor.f(10, (item, index, i0) => {
           return {
             a: index,
             b: "305e4dd3-3-" + i0
           };
         }),
-        i: common_vendor.o(toMakeTeam)
+        m: common_vendor.o(toMakeTeam)
       };
     };
   }
 };
-const MiniProgramPage = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["__scopeId", "data-v-305e4dd3"], ["__file", "C:/Users/黎翠儿/Documents/GitHub/TeammateApp/pages/teammateHall/teammateHall.vue"]]);
+const MiniProgramPage = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["__scopeId", "data-v-305e4dd3"]]);
 wx.createPage(MiniProgramPage);

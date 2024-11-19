@@ -28,9 +28,6 @@
   height: 1262rpx;
   position: relative;
 }
-.tabControl .content .empty .createTeam.data-v-779b4231 {
-  position: relative;
-}
 .tabControl .content .empty .box.data-v-779b4231 {
   width: 330rpx;
   height: 330rpx;
@@ -53,6 +50,16 @@
 }
 .tabControl .content .teamList.data-v-779b4231 {
   margin-top: 48rpx;
+}
+.createTeam .team.data-v-779b4231 {
+  position: relative;
+}
+.createTeam .team .enterButton.data-v-779b4231 {
+  font-size: 32rpx;
+  position: absolute;
+  bottom: 30rpx;
+  right: 70rpx;
+  color: #fff;
 }
 .enterTeam .team.data-v-779b4231 {
   position: relative;
