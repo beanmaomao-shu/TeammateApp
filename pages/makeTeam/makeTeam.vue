@@ -96,16 +96,15 @@
 			 </uni-data-picker>
 			 </view>
 		</view>
-		
+
 		<view class="btn">
 			<view class="publish" @click="publish">
 				<fcButton img-src='/static/images/发布.png' Title="发布组队" Color="#6B57FE"></fcButton>
 			</view>
-
-		</view>
 		
 	</view>
 
+</view>
 </view>
 </template>
 

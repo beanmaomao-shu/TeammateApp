@@ -170,4 +170,17 @@
 		}
 		
 	}
+	.createTeam{
+		.team{
+			position: relative;
+			.enterButton{
+				font-size: 32rpx;
+			position: absolute;
+			bottom: 30rpx;
+			right: 70rpx;
+				color: #fff;
+			}
+		}
+		
+	}
 </style>

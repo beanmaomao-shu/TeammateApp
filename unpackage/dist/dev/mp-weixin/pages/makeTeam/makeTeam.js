@@ -252,12 +252,12 @@ const _sfc_main = {
           ["popup-title"]: "请选择组队人数",
           modelValue: numbers.value
         }),
-        w: common_vendor.p({
+        w: common_vendor.o(publish),
+        x: common_vendor.p({
           ["img-src"]: "/static/images/发布.png",
           Title: "发布组队",
           Color: "#6B57FE"
-        }),
-        x: common_vendor.o(publish)
+        })
       };
     };
   }

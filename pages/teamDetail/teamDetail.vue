@@ -80,6 +80,7 @@
 			<view class="chat" v-if="toValue==='a'" @click="toChatPage()">
 				<fcButton img-src='/static/images/一起讨论.png' Title="一起讨论" Color="#F3705A"></fcButton>
 			</view>
+
 			<view class="out" v-if="toValue==='b'"  @click="toggleDialog('error','out')">
 				<fcButton img-src='/static/images/退出队伍.png' Title="退出队伍" Color="#D43030"></fcButton>
 			</view>
@@ -88,6 +89,7 @@
 			</view>
 			<view class="dissolve" v-if="toValue==='c'" @click="toggleDialog('error','disband')">
 				<fcButton img-src='/static/images/解散队伍.png' Title="解散队伍" Color="#FF8D1A" ></fcButton>
+
 			</view>
 		</view>
 		<uni-popup ref="showMessage" type="message">
@@ -108,7 +110,7 @@
 <script setup>
 	import {ref} from 'vue';
 	import {onLoad} from "@dcloudio/uni-app";
-	
+
 
 	//队伍简介
 	const numbers=ref('2');
@@ -118,6 +120,7 @@
 	//跳转按钮
 	const toValue=ref('');
 	const tobValue=ref('');
+
 	
 	//弹窗相关
 	const alertDialog=ref(null)
@@ -143,7 +146,8 @@
 		popupMsg.value='操作成功'
 	}
 
-//
+
+
 	onLoad((option)=>{
 		toValue.value = option.toPageValue
 	})
