@@ -25,7 +25,7 @@
 						<view class="createTeam" v-if="!isemptycreateteam">
 							<view class="teamList">
 								<navigator url="/pages/chatRoom/chatRoom" class="team">
-									<infoCard>
+									<infoCard toValue='c' cValue='a'>
 										<template #name>马晓楠</template>
 									</infoCard>
 									<view class="enterButton">
@@ -35,7 +35,6 @@
 							</view>
 						</view>
 					</view>
-					
 					
 					<!-- 加入的团队 -->
 					<view v-if="current === 1">
@@ -52,7 +51,7 @@
 						<view class="enterTeam">
 							<view class="teamList" v-if="isemptyenterteam">
 								<navigator url="/pages/chatRoom/chatRoom" class="team">
-									<infoCard>
+									<infoCard toValue='b' cValue='b'>
 										<template #name>马晓楠</template>
 									</infoCard>
 									<view class="enterButton">
@@ -129,7 +128,11 @@
 		.team{
 			position: relative;
 			.enterButton{
-				font-size: 32rpx;
+			width: 230rpx;
+			height: 55rpx;
+			text-align: center;
+			border: 1px solid #fff;
+			font-size: 32rpx;
 			position: absolute;
 			bottom: 30rpx;
 			right: 70rpx;
@@ -138,6 +141,23 @@
 		}
 	 		}
 	.enterTeam{
+		.team{
+			position: relative;
+			.enterButton{
+			width: 230rpx;
+			height: 55rpx;
+			text-align: center;
+			border: 1px solid #fff;
+			font-size: 32rpx;
+			position: absolute;
+			bottom: 30rpx;
+			right: 70rpx;
+				color: #fff;
+			}
+		}
+		
+	}
+	.createTeam{
 		.team{
 			position: relative;
 			.enterButton{

@@ -150,6 +150,7 @@
   padding-left: 30rpx;
   padding-top: 30rpx;
   flex-wrap: wrap;
+  padding-bottom: 20rpx;
 }
 .chat-page .input-area .function .icon.data-v-9b186cfb {
   margin-right: 60rpx;

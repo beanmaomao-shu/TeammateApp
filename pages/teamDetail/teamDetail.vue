@@ -15,7 +15,7 @@
 					<!-- 队伍名称 -->
 					<view class="name">
 						<detailTitle img-src='/static/images/别名.png' p-title="队伍名称"></detailTitle>
-						<view class="box">吉伊粉丝后援团</view>
+						<view class="box">一战成名队</view>
 					</view>
 					<!-- 队伍口号 -->
 					<view class="slogan">
@@ -28,7 +28,7 @@
 			<!-- 队伍简介 -->
 			<view class="description">
 				<detailTitle img-src='/static/images/简介.png' p-title="队伍简介"></detailTitle>
-				<view class="desArea"></view>
+				<view class="desArea">我们致力于在 [组队相关领域，如竞赛领域、项目开发领域等] 中崭露头角。无论是面对复杂的挑战还是紧迫的时间限制，我们都秉持着团结协作的精神，充分发挥各自的专业知识和技能。成员们擅长 [列举团队成员主要擅长的方面，比如数据分析、创意构思、编程开发等]，在过往的经历中已经积累了一定的经验，为我们在本次组队活动中的表现奠定了坚实的基础</view>
 			</view>
 		</view>
 		<!-- 分割线 -->
@@ -53,24 +53,14 @@
 			<view class="numbers">
 				<detailTitle img-src='/static/images/组队人数.png' p-title="组队人数"></detailTitle>
 				<view class="box">
-					<uni-data-picker 
-						v-model="numbers"
-						:localdata="items"
-						popup-title="请选择组队人数"
-						@change="logNum"
-						  >
-					 </uni-data-picker>
+					{{numbers}}
 				</view>
 			</view>
 			<!-- 截止时间 -->
 			<view class="time">
 				<detailTitle img-src='/static/images/timeout.png' p-title="截止时间"></detailTitle>
 				<view class="box">
-					<uni-datetime-picker
-						type="date"
-						:value="single"
-						@change="logTime"
-					/>
+					{{time}}
 				</view>
 			</view>
 			<!-- 定位地址 -->
@@ -82,146 +72,89 @@
 				</view>
 			</view>
 		</view>
+		
 		<view class="btnArea">
-			<fcButton img-src='/static/images/申请加入.png' Title="申请加入" Color="#FF5733"></fcButton>
-			<view class="enter" @click="toPage">
+			 <view class="enter" v-if="toValue==='a'">
+				 <fcButton img-src='/static/images/申请加入.png' Title="申请加入" Color="#FF5733"></fcButton>
+			 </view>
+			<view class="chat" v-if="toValue==='a'" @click="toChatPage()">
 				<fcButton img-src='/static/images/一起讨论.png' Title="一起讨论" Color="#F3705A"></fcButton>
 			</view>
-<!-- 			<fcButton img-src='/static/images/退出队伍.png' Title="退出队伍" Color="#D43030"></fcButton>
-			<fcButton img-src='/static/images/发送邀请.png' Title="发送邀请" Color="#FF5733"></fcButton>
-			<fcButton img-src='/static/images/解散队伍.png' Title="解散队伍" Color="#FF8D1A"></fcButton> -->
+			<view class="out" v-if="toValue==='b'"  @click="toggleDialog('error','out')">
+				<fcButton img-src='/static/images/退出队伍.png' Title="退出队伍" Color="#D43030"></fcButton>
+			</view>
+			<view class="invite" v-if="toValue==='c'" @click="toInvitePage()" >
+				<fcButton img-src='/static/images/发送邀请.png' Title="发送邀请" Color="#FF5733"></fcButton>
+			</view>
+			<view class="dissolve" v-if="toValue==='c'" @click="toggleDialog('error','disband')">
+				<fcButton img-src='/static/images/解散队伍.png' Title="解散队伍" Color="#FF8D1A" ></fcButton>
+			</view>
 		</view>
+		<uni-popup ref="showMessage" type="message">
+			<uni-popup-message :type="popupType" :message="popupMsg" :duration="2000"></uni-popup-message>
+		</uni-popup>
+		<uni-popup ref="alertDialog" type="dialog" >
+			<uni-popup-dialog
+			:type="msgType"
+			cancelText="取消"
+			confirmText="确定"
+			:content="messageText"
+			@confirm="dialogConfirm"
+			></uni-popup-dialog>
+		</uni-popup>
 	</view>
 </template>
 
 <script setup>
 	import {ref} from 'vue';
 	import {onLoad} from "@dcloudio/uni-app";
-	// 搜索选择人数
-	const numbers=ref();
-	const items=ref([
-	            {
-	              text: "0",
-	              value: 0
-	            },
-	            {
-	              text: "1",
-	              value: 1
-	            },
-	            {
-	              text: "2",
-	              value: 2
-	            },
-	            {
-	              text: "3",
-	              value: 3
-	            },
-	            {
-	              text: "4",
-	              value: 4
-	            },
-	            {
-	              text: "5",
-	              value: 5
-	            },
-	            {
-	              text: "6",
-	              value: 6
-	            },
-	            {
-	              text: "7",
-	              value: 7
-	            },
-	            {
-	              text: "8",
-	              value: 8
-	            },
-	            {
-	              text: "9",
-	              value: 9
-	            },
-	            {
-	              text: "10",
-	              value: 10
-	            }
-	         ])
-	const logNum=()=>{
-		console.log(numbers.value)
-	};
-	//截止时间 
-	const single=ref();
-	const logTime=(e)=>{
-		single.value = e;
-		console.log(e);
+	
+
+	//队伍简介
+	const numbers=ref('2');
+	const time=ref('2022-12-12 12:12:12');
+	const address=ref('北京市朝阳区');
+
+	//跳转按钮
+	const toValue=ref('');
+	const tobValue=ref('');
+	
+	//弹窗相关
+	const alertDialog=ref(null)
+	const showMessage=ref(null)
+	const messageText=ref('')
+	const popupMsg=ref('')
+	const msgType=ref('success')
+	const popupType=ref('success')
+	const toggleDialog =(type,msg)=>{
+		msgType.value=type;
+		alertDialog.value.open();
+		if(msg=='out'){
+			messageText.value='您确定要退出该团队吗？'
+		}
+		if(msg=='disband')
+		{
+			messageText.value='您确定要解散该团队吗?'
+		}
 	}
-	//搜索选择地址
-	const address=ref('定位您的位置');
-	const getMapLocation=()=>{
-		uni.chooseLocation({
-			success:(res)=> {
-				// 将获取到的地址信息存储
-				address.value = res.name
-			},
-			fail:()=>{
-				// 如果用uni.chooseLocation没有获取到地理位置，则需要获取当前的授权信息，判断是否有地理授权信息
-				uni.getSetting({ //获取用户的当前设置
-					success: (res) => {
-						var status = res.authSetting;
-						if(!status['scope.userLocation']){
-						// 如果授权信息中没有地理位置的授权，则需要弹窗提示用户需要授权地理信息
-							uni.showModal({ //显示模态弹窗，可以只有一个确定按钮，也可以同时有确定和取消按钮。
-								title:"是否授权当前位置",
-								content:"需要获取您的地理位置，请确认授权，否则地图功能将无法使用",
-								success:(tip)=>{
-									if(tip.confirm){ 
-									// 如果用户同意授权地理信息，则打开授权设置页面，判断用户的操作
-										uni.openSetting({ //调起客户端小程序设置界面，返回用户设置的操作结果
-											success:(data)=>{
-											// 如果用户授权了地理信息在，则提示授权成功
-												if(data.authSetting['scope.userLocation']===true){
-													uni.showToast({
-														title:"授权成功",
-														icon:"success",
-														duration:1000
-													})
-													// 授权成功后，然后再次chooseLocation获取信息
-													uni.chooseLocation({
-														success: (res) => {
-															// 将获取到的地址信息存储
-															address.value = res.address
-														}
-													})
-												}else{
-													uni.showToast({
-														title:"授权失败",
-														icon:"none",
-														duration:1000
-													})
-												}
-											}
-										})
-									}
-								}
-							})
-						}
-					},
-					fail: (res) => {
-						uni.showToast({
-							title:"调用授权窗口失败",
-							icon:"none",
-							duration:1000
-						})
-					}
-				})
-			}
+	const dialogConfirm=()=>{
+		
+		showMessage.value.open();
+		popupMsg.value='操作成功'
+	}
+
+//
+	onLoad((option)=>{
+		toValue.value = option.toPageValue
+	})
+	const toChatPage=()=>{
+		uni.navigateTo({
+			url: "/pages/chatRoom/chatRoom"
 		})
 	}
-	
-	//跳转按钮
-	const dataFromSourcePage = ref('');
-	const toPage=()=>{
+	const toInvitePage=()=>{
 		uni.navigateTo({
-			url: '/pages/chatRoom/chatRoom'
+			url: "/pages/inviteMate/inviteMate"
 		})
 	}
 </script>
@@ -242,7 +175,7 @@
 		justify-content:space-evenly;
 		margin-bottom: 20rpx;
 		.avatar{
-			magrin-right:86rpx;
+			margin-right:86rpx;
 			.teamImg{
 				width: 180rpx;
 				height: 180rpx;
@@ -258,6 +191,8 @@
 			margin:0 auto;
 			margin-top: 20rpx;
 			box-shadow:0 4px 8px rgba(0, 0, 0, 0.2);
+			padding: 20rpx;
+			overflow: scroll;
 		}
 	}
 }
@@ -297,7 +232,7 @@
 	}
 	.region,.numbers{
 		.box{
-			justify-content: left;
+			justify-content: center;
 			font-size: 28rpx;
 			color:#808080;
 			uni-icons{

@@ -72,13 +72,22 @@
             <uni-icons type="location" size="40"></uni-icons>
             <view class="font">位置</view>
           </view>
-          <view class="icon">
-            <uni-icons type="image" size="40"></uni-icons>
-            <view class="font">相册</view>
+          <view class="icon" @click="exchangeWechat">
+            <uni-icons type="weixin" size="40"></uni-icons>
+            <view class="font">交换微信</view>
           </view>
         </view>
       </transition>
     </view>
+	<uni-popup ref="isOpen" type="dialog" >
+		<uni-popup-dialog
+		type="success"
+		cancelText="取消"
+		confirmText="确定"
+		content="您确定要交换联系方式吗?"
+		@confirm="dialogConfirm"
+		></uni-popup-dialog>
+	</uni-popup>
   </view>
 </template>
 
@@ -96,6 +105,9 @@ const message = ref('');
 
 // 控制功能区显示
 const isShowFunction = ref(false);
+
+//控制弹窗
+const isOpen=ref(null)
 
 // 发送消息的方法
 const sendMessage = () => {
@@ -115,6 +127,20 @@ const showFunction = () => {
 const handleInput = () => {
   // 可以在这里处理输入框的其他逻辑
 };
+
+//功能区的方法
+const exchangeWechat=()=>{
+	console.log('111')
+	isOpen.value.open();
+	msg.value='您确定要交换联系方式吗？'
+
+}
+const dialogConfirm=()=>{
+	const msg='我的微信是: yangbaba';
+	const currentTime=new Date().toLocaleTimeString('zh-CN',{hour12:false}).slice(0,5)
+	
+	messages.value.push({type:2,text:msg,time:currentTime})
+}
 </script>
 
 <style lang="scss" scoped>
@@ -252,7 +278,7 @@ const handleInput = () => {
       padding-left: 30rpx;
       padding-top: 30rpx;
       flex-wrap: wrap;
-
+	padding-bottom: 20rpx;
       .icon {
         margin-right: 60rpx;
         width: 110rpx;
@@ -261,11 +287,14 @@ const handleInput = () => {
         text-align: center;
         line-height: 110rpx;
         border-radius: 30%;
-
+		
         .font {
           line-height: 10rpx;
           color: #8a8a8a;
           font-size: 24rpx;
+		  :last-child{
+			  
+		  }
         }
       }
     }

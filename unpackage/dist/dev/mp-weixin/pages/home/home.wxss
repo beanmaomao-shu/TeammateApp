@@ -54,6 +54,7 @@
 .homeLayout .infoCard .functionCard .box .font.data-v-07e72d3c {
   font-size: 24rpx;
   margin-left: 10rpx;
+  font-weight: bold;
 }
 .homeLayout .adBanner.data-v-07e72d3c {
   height: 360rpx;

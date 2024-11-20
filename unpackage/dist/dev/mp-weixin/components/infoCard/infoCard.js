@@ -4,27 +4,51 @@ const common_assets = require("../../common/assets.js");
 const _sfc_main = {
   __name: "infoCard",
   props: {
-    isLeader: {
-      type: Boolean,
-      default: true
+    toValue: {
+      type: String
     },
-    isauthenticated: {
-      type: Boolean,
-      default: true
-    },
-    isaudited: {
-      type: Boolean,
-      default: true
+    cValue: {
+      type: String
     }
   },
   setup(__props) {
+    const isLeader = common_vendor.ref(true);
+    const isaudited = common_vendor.ref(false);
+    const isauthenticated = common_vendor.ref(true);
+    const props = __props;
+    const centerValue = common_vendor.ref("");
+    const contentValue = common_vendor.ref("");
+    common_vendor.onLoad(() => {
+      centerValue.value = props.toValue;
+      contentValue.value = props.cValue;
+    });
     return (_ctx, _cache) => {
       return common_vendor.e({
         a: common_assets._imports_0$3,
-        b: __props.isLeader
-      }, __props.isLeader ? {} : {}, {
-        c: !__props.isLeader
-      }, !__props.isLeader ? {} : {});
+        b: contentValue.value === "a"
+      }, contentValue.value === "a" ? common_vendor.e({
+        c: isLeader.value
+      }, isLeader.value ? {} : {}, {
+        d: !isLeader.value
+      }, !isLeader.value ? {} : {}) : {}, {
+        e: contentValue.value === "b"
+      }, contentValue.value === "b" ? common_vendor.e({
+        f: isaudited.value
+      }, isaudited.value ? {} : {}, {
+        g: !isaudited.value
+      }, !isaudited.value ? {} : {}) : {}, {
+        h: contentValue.value === "c"
+      }, contentValue.value === "c" ? common_vendor.e({
+        i: isauthenticated.value
+      }, isauthenticated.value ? {
+        j: common_assets._imports_1$7
+      } : {}, {
+        k: !isauthenticated.value
+      }, !isauthenticated.value ? {
+        l: common_assets._imports_2$3
+      } : {}) : {}, {
+        m: `/pages/teamDetail/teamDetail?toPageValue=${centerValue.value}`
+      });
     };
   }
 };

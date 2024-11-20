@@ -40,7 +40,7 @@
   margin-bottom: 20rpx;
 }
 .teamInfo .horizontal .avatar {
-  magrin-right: 86rpx;
+  margin-right: 86rpx;
 }
 .teamInfo .horizontal .avatar .teamImg {
   width: 180rpx;
@@ -56,6 +56,8 @@
   margin: 0 auto;
   margin-top: 20rpx;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  padding: 20rpx;
+  overflow: scroll;
 }
 .members {
   margin: 0 auto;
@@ -92,7 +94,7 @@
   width: 100%;
 }
 .require .region .box, .require .numbers .box {
-  justify-content: left;
+  justify-content: center;
   font-size: 28rpx;
   color: #808080;
 }

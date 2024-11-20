@@ -65,7 +65,7 @@
 </view>
 <!-- 6组队要求 -->
 <view class="require">
-	<view class="font">
+
 		<uni-badge class="uni-badge-left-margin" text="6" :customStyle="{background: '#8707ff'}"/>. 组队要求
 		<view class="detail">
 			截止时间 :
@@ -101,10 +101,11 @@
 			<view class="publish" @click="publish">
 				<fcButton img-src='/static/images/发布.png' Title="发布组队" Color="#6B57FE"></fcButton>
 			</view>
+
 		</view>
 		
 	</view>
-</view>
+
 </view>
 </template>
 

@@ -4,9 +4,10 @@
   "usingComponents": {
     "detail-title": "../../components/detailTitle/detailTitle",
     "dash": "../../components/dash/dash",
-    "uni-data-picker": "../../uni_modules/uni-data-picker/components/uni-data-picker/uni-data-picker",
-    "uni-datetime-picker": "../../uni_modules/uni-datetime-picker/components/uni-datetime-picker/uni-datetime-picker",
     "uni-icons": "../../uni_modules/uni-icons/components/uni-icons/uni-icons",
-    "fc-button": "../../components/fcButton/fcButton"
+    "fc-button": "../../components/fcButton/fcButton",
+    "uni-popup-message": "../../uni_modules/uni-popup/components/uni-popup-message/uni-popup-message",
+    "uni-popup": "../../uni_modules/uni-popup/components/uni-popup/uni-popup",
+    "uni-popup-dialog": "../../uni_modules/uni-popup/components/uni-popup-dialog/uni-popup-dialog"
   }
 }

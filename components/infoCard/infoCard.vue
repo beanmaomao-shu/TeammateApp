@@ -1,52 +1,65 @@
 <template>
-	<view class="infoCard">
-		<view class="info">
-			<view class="avatar">
-				<image class="avatarImg" src="../../static/images/avatar.png" mode="aspectFill"></image>
-			</view>
-			<view class="infoGroup">
-				<view class="name">
-					<slot name="name"></slot>
+	<navigator :url="`/pages/teamDetail/teamDetail?toPageValue=${centerValue}`">
+		<view class="infoCard">
+			<view class="info">
+				<view class="avatar">
+					<image class="avatarImg" src="../../static/images/avatar.png" mode="aspectFill"></image>
 				</view>
-				<!-- 研讨室 -->
-				<view class="identity" v-if="isLeader">
-					<view class="content">团队长</view>
+				<view class="infoGroup">
+					<view class="name">
+						<slot name="name"></slot>
+					</view>
+					<!-- 研讨室 -->
+					<view class="identity" v-if="contentValue==='a'">
+						<view class="content" v-if="isLeader">团队长</view>
+						<view class="content" v-if="!isLeader">团队员</view>
+					</view>
+					<view class="audit" v-if="contentValue==='b'">
+						<view class="content" v-if="isaudited">审核中</view>
+						<view class="content" v-if="!isaudited">已加入</view> 
+					</view>
+					<!-- 个人中心 -->
+					<view class="authentication" v-if="contentValue==='c'">
+						<view class="content"  v-if="isauthenticated">
+							<image class="authenImg" src="../../static/images/认证.png" mode="aspectFill"></image>
+							<view class="p">已认证</view>
+						</view>
+						<view class="content" v-if="!isauthenticated">
+							<image class="authenImg" src="../../static/images/未认证.png" mode="aspectFill"></image>
+							<view class="p">未认证</view>
+						</view>
+					</view>
 				</view>
-				<view class="identity" v-if="!isLeader">
-					<view class="content">团队员</view>
-				</view>
-				<!-- <view class="audit" v-if="isaudited">审核中</view>
-				<view class="audit" v-if="!isaudited">已加入</view> --> 
-				<!-- 个人中心 -->
-				<!-- <view class="authentication" v-if="isauthenticated">
-					<image class="authenImg" src="../../static/images/认证.png" mode="aspectFill"></image>
-					<view class="content">已认证</view>
-				</view>
-				<view class="authentication" v-if="!isauthenticated">
-					<image class="authenImg" src="../../static/images/认证.png" mode="aspectFill"></image>
-					<view class="content">未认证</view>
-				</view> -->
-				
 			</view>
 		</view>
-	</view>
+	</navigator>
 </template>
 
 <script setup>
-	defineProps({
-		isLeader:{
-			type:Boolean,
-			default:true
+	import { ref } from 'vue';
+	import {onLoad} from "@dcloudio/uni-app";
+	
+	//是否为团队长
+	const isLeader = ref(true);
+	//是否审核通过
+	const isaudited = ref(false);
+	//是否认证
+	const isauthenticated = ref(true);
+	
+	//标签显示+跳转组队详情按钮
+	const props = defineProps({
+		toValue:{
+			type:String,
 		},
-		isauthenticated:{
-			type:Boolean,
-			default:true
+		cValue:{
+			type:String,
 		},
-		isaudited:{
-			type:Boolean,
-			default:true
-		},
-		
+	})
+	const centerValue = ref('');
+	const contentValue=ref('');
+	onLoad(()=>{
+		centerValue.value=props.toValue;
+		contentValue.value=props.cValue
 	})
 </script>
 
@@ -89,6 +102,7 @@
 				align-items: center;
 				font-size: 24rpx;
 				margin: 0 auto;
+				margin-top: 10rpx;
 			}
 			.audit{
 				width: 104rpx;
@@ -100,17 +114,23 @@
 				justify-content: center;
 				align-items: center;
 				border-radius: 20rpx;
+				margin-top: 10rpx;
 			}
 			.authentication{
-				font-size: 24rpx;
-				display: flex;
-				justify-content: center;
-				align-items: center;
-				color: #fff;
-				.authenImg{
-					width: 32rpx;
-					height: 32rpx;
+				.content{
+					display: flex;
+					justify-content: center;
+					align-items: center;
+					font-size: 24rpx;
+					color: #fff;
+					margin-top: 10rpx;
+					.authenImg{
+						width: 32rpx;
+						height: 32rpx;
+						margin-right: 10rpx;
+					}
 				}
+				
 			}
 		}
 	}

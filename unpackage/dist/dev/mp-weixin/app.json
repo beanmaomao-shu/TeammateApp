@@ -10,7 +10,9 @@
     "pages/moreDetail/moreDetail",
     "pages/connect/connect",
     "pages/newsCenter/newsCenter",
-    "pages/teamDetail/teamDetail"
+    "pages/teamDetail/teamDetail",
+    "pages/inviteMate/inviteMate",
+    "pages/test/test"
   ],
   "usingComponents": {
     "van-popup": "/wxcomponents/dist/popup/index",

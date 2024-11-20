@@ -8066,6 +8066,20 @@ const pages = [
       navigationBarTitleText: "组队详情",
       enablePullDownRefresh: false
     }
+  },
+  {
+    path: "pages/inviteMate/inviteMate",
+    style: {
+      navigationBarTitleText: "邀请组队",
+      enablePullDownRefresh: false
+    }
+  },
+  {
+    path: "pages/test/test",
+    style: {
+      navigationBarTitleText: "",
+      enablePullDownRefresh: false
+    }
   }
 ];
 const globalStyle = {

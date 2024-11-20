@@ -1,7 +1,7 @@
 <template>
 	<!-- 点击卡片跳转组队信息详情页 -->
 	<view class="teamInfo">
-		<navigator url="/pages/teamDetail/teamDetail?value=${props.btn}">
+		<navigator :url="`/pages/teamDetail/teamDetail?toPageValue=${centerValue}`">
 			<!--比赛图片 -->
 			<view class="matchImg">
 				<image src="../../static/images/match16.png" mode="widthFix"></image>
@@ -39,10 +39,17 @@
 </template>
 
 <script setup>
+	import {ref} from 'vue';
+	import {onLoad} from "@dcloudio/uni-app";
+	
+	const centerValue=ref('');
 	const props=defineProps({
-		btn:{
+		toValue:{
 			type:String,
 		}
+	})
+	onLoad(()=>{
+		centerValue.value=props.toValue
 	})
 </script>
 
