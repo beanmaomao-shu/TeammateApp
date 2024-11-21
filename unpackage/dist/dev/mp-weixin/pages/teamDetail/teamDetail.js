@@ -90,9 +90,9 @@ const _sfc_main = {
           ["img-src"]: "/static/images/人员.png",
           ["p-title"]: "队伍成员"
         }),
-        h: common_assets._imports_1$4,
-        i: common_assets._imports_1$4,
-        j: common_assets._imports_1$4,
+        h: common_assets._imports_1$2,
+        i: common_assets._imports_1$2,
+        j: common_assets._imports_1$2,
         k: common_vendor.p({
           Color: "#E5E5E5",
           Width: "780rpx",

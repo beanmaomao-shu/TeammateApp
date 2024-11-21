@@ -1,7 +1,5 @@
 {
   "navigationBarTitleText": "搜索组队",
   "enablePullDownRefresh": false,
-  "usingComponents": {
-    "team-info": "../../components/teamInfo/teamInfo"
-  }
+  "usingComponents": {}
 }

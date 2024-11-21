@@ -39,8 +39,8 @@ const _sfc_main = {
       }, current.value === 0 ? common_vendor.e({
         d: isemptycreateteam.value
       }, isemptycreateteam.value ? {
-        e: common_assets._imports_0$1,
-        f: common_assets._imports_1$1
+        e: common_assets._imports_0$2,
+        f: common_assets._imports_1$3
       } : {}, {
         g: !isemptycreateteam.value
       }, !isemptycreateteam.value ? {
@@ -53,8 +53,8 @@ const _sfc_main = {
       }, current.value === 1 ? common_vendor.e({
         j: !isemptyenterteam.value
       }, !isemptyenterteam.value ? {
-        k: common_assets._imports_0$1,
-        l: common_assets._imports_1$1
+        k: common_assets._imports_0$2,
+        l: common_assets._imports_1$3
       } : {}, {
         m: isemptyenterteam.value
       }, isemptyenterteam.value ? {

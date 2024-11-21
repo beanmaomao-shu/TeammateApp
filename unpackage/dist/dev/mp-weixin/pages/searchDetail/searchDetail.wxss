@@ -52,3 +52,66 @@
   width: 48rpx;
   height: 48rpx;
 }
+.teamInfo.data-v-ce5e1149 {
+  width: 700rpx;
+  height: 180rpx;
+  margin: 0 auto;
+  border: 1rpx solid lightgray;
+  box-shadow: 0 2rpx 8rpx;
+  margin-bottom: 10rpx;
+  position: relative;
+}
+.teamInfo .matchImg.data-v-ce5e1149 {
+  position: absolute;
+  left: 15rpx;
+  top: 18rpx;
+}
+.teamInfo .matchImg image.data-v-ce5e1149 {
+  width: 210rpx;
+  height: 160rpx;
+}
+.teamInfo .mainInfo.data-v-ce5e1149 {
+  position: absolute;
+  left: 240rpx;
+  top: 9rpx;
+}
+.teamInfo .mainInfo .bottom.data-v-ce5e1149 {
+  display: flex;
+  align-items: center;
+}
+.teamInfo .mainInfo .bottom .avatars.data-v-ce5e1149 {
+  display: flex;
+  align-items: center;
+}
+.teamInfo .mainInfo .bottom .avatars image.data-v-ce5e1149 {
+  width: 48rpx;
+  height: 48rpx;
+  margin-right: 10rpx;
+}
+.teamInfo .mainInfo .bottom .avatars image.data-v-ce5e1149:first-child {
+  margin-left: 20rpx;
+}
+.teamInfo .mainInfo .bottom .goChat navigator.data-v-ce5e1149 {
+  display: flex;
+  font-size: 24rpx;
+  color: #808080;
+}
+.teamInfo .mainInfo .bottom .goChat navigator image.data-v-ce5e1149 {
+  width: 32rpx;
+  height: 32rpx;
+}
+.teamInfo .mainInfo .matchName.data-v-ce5e1149 {
+  font-size: 30rpx;
+  margin-left: 20rpx;
+}
+.teamInfo .mainInfo .teamName.data-v-ce5e1149 {
+  display: flex;
+  font-size: 24rpx;
+  margin: 5rpx 0;
+  margin-left: 20rpx;
+  color: #AC33C1;
+}
+.teamInfo .mainInfo .teamName image.data-v-ce5e1149 {
+  width: 32rpx;
+  height: 32rpx;
+}

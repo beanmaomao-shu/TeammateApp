@@ -24,7 +24,7 @@ const _sfc_main = {
     });
     return (_ctx, _cache) => {
       return common_vendor.e({
-        a: common_assets._imports_0$3,
+        a: common_assets._imports_0,
         b: contentValue.value === "a"
       }, contentValue.value === "a" ? common_vendor.e({
         c: isLeader.value

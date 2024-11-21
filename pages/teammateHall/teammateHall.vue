@@ -6,11 +6,24 @@
 			v-model="inputValue"
 			type="text" 
 			placeholder="搜索在线赛事组队信息"
+			@input="filterSuggestion"
+			@focus="showSuggestion=true"
+			@blur="showSuggestion=false"
 			/>
 			<view class="searchButton"  @click="(()=>{navigateToDetail();searchInfo()})">
 				<image src="../../static/images/搜索.png" mode=""></image>
 			</view>
 		</view> 
+		<!-- 提示词 -->
+		<ul class="suggesstions" v-if="showSuggestion&&filteredData.length">
+			<li class="list" v-for="(suggestion,index) in filteredData " @click.stop="selectSuggestion(suggestion,$event)">{{suggestion.matchName}}</li>
+			<view class="tip">
+				没有找到想要的比赛? 
+				<view class="tipNav">
+					点这里试试->
+				</view>
+			</view>
+		</ul>
 		<!-- 通知栏 -->
 		<van-notice-bar 
 			scrollable
@@ -50,7 +63,44 @@
 				</view>
 			</view>
 			<dash Color="#F1E6FF" Width="700rpx" Height="8rpx"></dash>
-			<teamInfo v-for="(item,index) in 10" :key="index" toValue='a'></teamInfo>
+			<!--  -->
+			
+			<view class="teamInfo" toValue='a' v-for="(item,index) in matchData" :key="item.id">
+				<navigator :url="`/pages/teamDetail/teamDetail?toPageValue=a`">
+					<!--比赛图片 -->
+					<view class="matchImg">
+						<image :src="item.imgUrl" mode="widthFix"></image>
+					</view>
+					<view class="mainInfo">
+						<!-- 比赛名 -->
+						<view class="matchName">
+							{{item.matchName}}
+						</view>
+						<!-- 队名 -->
+						<view class="teamName">
+							<image src="../../static/images/队伍.png" mode=""></image>
+							<p>{{item.name}}</p>
+						</view>
+						<!-- 头像列表//研讨室跳转 -->
+						<view class="bottom">
+							<view class="avatars">
+								<img src="../../static/images/avatar3.png" alt="" />
+								<img src="../../static/images/avatar1.png" alt="" />
+								<img src="../../static/images/avatar.png" alt="" />
+								<img src="../../static/images/avatar.png" alt="" />
+								<img src="../../static/images/avatar2.png" alt="" />
+							</view>
+							<view class="goChat">
+								<navigator url="/pages/chatRoom/chatRoom">
+									<image src="../../static/images/trending.png" mode=""></image>
+									<p>一起讨论></p>
+								</navigator>
+							</view>
+						</view>
+					</view>
+				</navigator>
+			</view>
+			<!--  -->
 		</view>
 		<view class="issue">
 			<button @click="toMakeTeam">
@@ -63,9 +113,24 @@
 <script setup>
 	import {ref} from 'vue';
 	import { useRouter } from 'vue-router';
+	import {onLoad} from "@dcloudio/uni-app";
 	
 	const inputValue=ref('');
 	const router = useRouter();
+	const showSuggestion=ref(false)
+	const matchData=ref([
+		{id:1,matchName:'2024年第十四届APMCM亚太地区大学生数学建模竞赛',name:'一战成名队', imgUrl:'../../static/images/match6.png'},
+		{id:2,matchName:'2024年全国大学生英语翻译大赛（NETCCS）',name:'六级能不能过队', imgUrl:'../../static/images/match3.png'},
+		{id:3,matchName:'2024年第五届"中译国青杯"国际组织文件翻译大赛',name:'超级翻译官队', imgUrl:'../../static/images/match4.png'},
+		{id:4,matchName:'2024创想中国全国大学生创新创业大赛',name:'小呆呆创新队', imgUrl:'../../static/images/match15.png'},
+		{id:5,matchName:'第三届"中外传播杯"全国大学生英语翻译大赛-英译汉赛道',name:'翻译的都队', imgUrl:'../../static/images/match8.png'},
+		{id:6,matchName:'第二届"数学周报"全国大学生数学能力大赛',name:'基本不懂式队', imgUrl:'../../static/images/match13.png'},
+		{id:7,matchName:'2024第二届全国大学生数学竞赛暨创新思维挑战赛',name:'哎我队', imgUrl:'../../static/images/match11.png'},
+		{id:8,matchName:'CCF2024年中国计算机应用技术大赛-全国算法精英大赛',name:'AC队', imgUrl:'../../static/images/match7.png'},
+		{id:9,matchName:'浙大研究院《智能无人机》研学实践项目',name:'让你飞起来队', imgUrl:'../../static/images/match14.png'},
+	])
+	//这个拿来存储筛选后回显的数据
+	const filteredData=ref([])
 	
 	
 	//搜索框跳转搜索详细页面
@@ -84,6 +149,27 @@
 		}
 		
 	}
+	//搜索输入框筛选逻辑
+	const filterSuggestion=()=>{
+		if(inputValue.value)
+		{
+			filteredData.value=matchData.value.filter(item=>{
+				return item.matchName.toLowerCase().includes(inputValue.value.toLowerCase())
+		
+			})
+		}else{
+			filteredData.value=[]
+		}
+	}
+	//点击li回显信息到输入框
+	const selectSuggestion=(suggestion,event)=>{
+		 event.stopPropagation()
+		inputValue.value=suggestion.matchName
+		console.log('Selecting suggestion:', suggestion)
+		filteredData.value=[]
+		
+	}
+	
 	//搜索组队信息
 	const searchInfo=async()=>{
 		// 这里处理输入框的逻辑
@@ -94,11 +180,23 @@
 			url:"../makeTeam/makeTeam"
 		})
 	}
+	//传参
+	const centerValue=ref('');
+	const props=defineProps({
+		toValue:{
+			type:String,
+		}
+	})
+	onLoad(()=>{
+		centerValue.value=props.toValue
+	})
 </script>
 
 <style lang="scss" scoped>
 	.teammateLayout{
+	
 		.search{
+			position: relative;
 			width: 700rpx;
 			height: 68rpx;
 			border: 4rpx solid #AC33C1;
@@ -124,6 +222,41 @@
 					width: 48rpx;
 					height: 48rpx;
 				}
+			}
+			
+		}
+		.suggesstions{
+			position: absolute;
+			width:668rpx ;
+			max-height: 500rpx;
+			border: 1px solid #6c5ce7;
+			border-top:0px ;
+			left: 40rpx;
+			border-radius: 10rpx;
+			background-color: #fff;
+			z-index: 1000;
+			overflow-y: auto;
+			box-shadow: 0 15rpx 20rpx rgba(0, 0, 0, 0.3);
+			.list{
+				padding: 10rpx;
+				border: 1px solid #f5f5f5;
+				&:hover{
+					background-color: #f0f0f0;
+				}
+			}
+			.tip{
+				padding: 10rpx;
+				height: 50rpx;
+				font-size: 24rpx;
+				color: #808080;
+				position: absolute;
+				display: flex;
+				right: 15rpx;
+				.tipNav{
+					padding-left: 10rpx;
+					color: #AC33C1;
+				}
+				
 			}
 		}
 		
@@ -194,5 +327,71 @@
 		}
 		
 	}
+	.teamInfo{
+		width: 700rpx;
+		height: 180rpx;
+		margin: 0 auto;
+		border: 1rpx solid lightgray;
+		box-shadow: 0 2rpx 8rpx;
+		margin-bottom: 10rpx;
+		position: relative;
+		
+		.matchImg{
+			position: absolute;
+			left: 15rpx;
+			top: 18rpx;
+			image{
+				width: 210rpx;
+				height: 160rpx;
+			}
+		}
+		.mainInfo{
+			position: absolute;
+			left: 240rpx;
+			top: 9rpx;
+			.bottom{
+				display: flex;
+				align-items: center;
+				.avatars{
+						display: flex;
+						align-items: center;
+						image{
+							width: 48rpx;
+							height: 48rpx;
+							margin-right: 10rpx;
+							&:first-child{
+								margin-left: 20rpx;
+							}
+						}
+				}
+				.goChat{
+					navigator{
+						display: flex;
+						image{
+							width: 32rpx;
+							height: 32rpx;
+						}
+						font-size: 24rpx;
+						color: #808080;
+					}
+				}
+			}
+			.matchName{
+				font-size: 30rpx;
+				margin-left: 20rpx;
+			}
+			.teamName{
+				display: flex;
+				image{
+					width: 32rpx;
+					height: 32rpx;
+				}
+					font-size: 24rpx;
+					margin:5rpx 0  ;
+					margin-left: 20rpx;
+					color: #AC33C1;
+			}
+			}
+		}
 	
 </style>

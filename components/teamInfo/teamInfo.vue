@@ -1,8 +1,7 @@
 <template>
 	<!-- 点击卡片跳转组队信息详情页 -->
 	<view class="teamInfo">
-		<navigator :url="`/pages/teamDetail/teamDetail?toPageValue=${centerValue}`">
-			<!--比赛图片 -->
+		<navigator :url="`/pages/teamDetail/teamDetail?toPageValue=a`">
 			<view class="matchImg">
 				<image src="../../static/images/match16.png" mode="widthFix"></image>
 			</view>

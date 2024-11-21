@@ -54,7 +54,7 @@ const _sfc_main = {
           return common_vendor.e({
             a: item.type == 1
           }, item.type == 1 ? {
-            b: common_assets._imports_0$3,
+            b: common_assets._imports_0,
             c: common_vendor.t(item.text),
             d: common_vendor.t(item.time)
           } : {}, {
@@ -62,7 +62,7 @@ const _sfc_main = {
           }, item.type == 2 ? {
             f: common_vendor.t(item.text),
             g: common_vendor.t(item.time),
-            h: common_assets._imports_0$3
+            h: common_assets._imports_0
           } : {}, {
             i: index
           });

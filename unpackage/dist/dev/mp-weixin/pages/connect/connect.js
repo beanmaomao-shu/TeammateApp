@@ -68,7 +68,7 @@ const _sfc_main = {
           isLink: true,
           value: phone.value
         }),
-        e: common_assets._imports_1$3,
+        e: common_assets._imports_1$5,
         f: common_vendor.o(openWechat),
         g: common_vendor.p({
           center: true,

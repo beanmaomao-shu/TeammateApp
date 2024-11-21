@@ -17,15 +17,15 @@ const _sfc_main = {
     return (_ctx, _cache) => {
       return {
         a: common_assets._imports_0$7,
-        b: common_assets._imports_1$6,
-        c: common_assets._imports_1$4,
-        d: common_assets._imports_3$2,
-        e: common_assets._imports_0$3,
-        f: common_assets._imports_1$4,
-        g: common_assets._imports_0$3,
-        h: common_assets._imports_5$1,
-        i: common_assets._imports_6$1,
-        j: `/pages/teamDetail/teamDetail?toPageValue=${centerValue.value}`
+        b: common_assets._imports_1$1,
+        c: common_assets._imports_1$2,
+        d: common_assets._imports_3$1,
+        e: common_assets._imports_0,
+        f: common_assets._imports_1$2,
+        g: common_assets._imports_0,
+        h: common_assets._imports_5,
+        i: common_assets._imports_6,
+        j: `/pages/teamDetail/teamDetail?toPageValue=a`
       };
     };
   }

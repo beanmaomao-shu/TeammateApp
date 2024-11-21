@@ -4,19 +4,35 @@ const common_assets = require("../../common/assets.js");
 if (!Array) {
   const _component_van_notice_bar = common_vendor.resolveComponent("van-notice-bar");
   const _easycom_dash2 = common_vendor.resolveComponent("dash");
-  const _easycom_teamInfo2 = common_vendor.resolveComponent("teamInfo");
-  (_component_van_notice_bar + _easycom_dash2 + _easycom_teamInfo2)();
+  (_component_van_notice_bar + _easycom_dash2)();
 }
 const _easycom_dash = () => "../../components/dash/dash.js";
-const _easycom_teamInfo = () => "../../components/teamInfo/teamInfo2.js";
 if (!Math) {
-  (_easycom_dash + _easycom_teamInfo)();
+  _easycom_dash();
 }
 const _sfc_main = {
   __name: "teammateHall",
+  props: {
+    toValue: {
+      type: String
+    }
+  },
   setup(__props) {
     const inputValue = common_vendor.ref("");
     common_vendor.useRouter();
+    const showSuggestion = common_vendor.ref(false);
+    const matchData = common_vendor.ref([
+      { id: 1, matchName: "2024年第十四届APMCM亚太地区大学生数学建模竞赛", name: "一战成名队", imgUrl: "../../static/images/match6.png" },
+      { id: 2, matchName: "2024年全国大学生英语翻译大赛（NETCCS）", name: "六级能不能过队", imgUrl: "../../static/images/match3.png" },
+      { id: 3, matchName: '2024年第五届"中译国青杯"国际组织文件翻译大赛', name: "超级翻译官队", imgUrl: "../../static/images/match4.png" },
+      { id: 4, matchName: "2024创想中国全国大学生创新创业大赛", name: "小呆呆创新队", imgUrl: "../../static/images/match15.png" },
+      { id: 5, matchName: '第三届"中外传播杯"全国大学生英语翻译大赛-英译汉赛道', name: "翻译的都队", imgUrl: "../../static/images/match8.png" },
+      { id: 6, matchName: '第二届"数学周报"全国大学生数学能力大赛', name: "基本不懂式队", imgUrl: "../../static/images/match13.png" },
+      { id: 7, matchName: "2024第二届全国大学生数学竞赛暨创新思维挑战赛", name: "哎我队", imgUrl: "../../static/images/match11.png" },
+      { id: 8, matchName: "CCF2024年中国计算机应用技术大赛-全国算法精英大赛", name: "AC队", imgUrl: "../../static/images/match7.png" },
+      { id: 9, matchName: "浙大研究院《智能无人机》研学实践项目", name: "让你飞起来队", imgUrl: "../../static/images/match14.png" }
+    ]);
+    const filteredData = common_vendor.ref([]);
     const navigateToDetail = () => {
       if (inputValue.value == "") {
         common_vendor.index.showToast({
@@ -30,6 +46,21 @@ const _sfc_main = {
         inputValue.value = "";
       }
     };
+    const filterSuggestion = () => {
+      if (inputValue.value) {
+        filteredData.value = matchData.value.filter((item) => {
+          return item.matchName.toLowerCase().includes(inputValue.value.toLowerCase());
+        });
+      } else {
+        filteredData.value = [];
+      }
+    };
+    const selectSuggestion = (suggestion, event) => {
+      event.stopPropagation();
+      inputValue.value = suggestion.matchName;
+      console.log("Selecting suggestion:", suggestion);
+      filteredData.value = [];
+    };
     const searchInfo = async () => {
     };
     const toMakeTeam = () => {
@@ -37,49 +68,72 @@ const _sfc_main = {
         url: "../makeTeam/makeTeam"
       });
     };
+    const centerValue = common_vendor.ref("");
+    const props = __props;
+    common_vendor.onLoad(() => {
+      centerValue.value = props.toValue;
+    });
     return (_ctx, _cache) => {
-      return {
-        a: inputValue.value,
-        b: common_vendor.o(($event) => inputValue.value = $event.detail.value),
-        c: common_assets._imports_0,
-        d: common_vendor.o(() => {
+      return common_vendor.e({
+        a: common_vendor.o([($event) => inputValue.value = $event.detail.value, filterSuggestion]),
+        b: common_vendor.o(($event) => showSuggestion.value = true),
+        c: common_vendor.o(($event) => showSuggestion.value = false),
+        d: inputValue.value,
+        e: common_assets._imports_0$1,
+        f: common_vendor.o(() => {
           navigateToDetail();
           searchInfo();
         }),
-        e: common_vendor.p({
+        g: showSuggestion.value && filteredData.value.length
+      }, showSuggestion.value && filteredData.value.length ? {
+        h: common_vendor.f(filteredData.value, (suggestion, index, i0) => {
+          return {
+            a: common_vendor.t(suggestion.matchName),
+            b: common_vendor.o(($event) => selectSuggestion(suggestion, $event))
+          };
+        })
+      } : {}, {
+        i: common_vendor.p({
           scrollable: true,
           color: "#AC33C1",
           background: "#F1E6FF"
         }),
-        f: common_vendor.f(10, (item, index, i0) => {
+        j: common_vendor.f(10, (item, index, i0) => {
           return {
             a: index
           };
         }),
-        g: common_assets._imports_1,
-        h: common_vendor.p({
+        k: common_assets._imports_1,
+        l: common_vendor.p({
           Color: "#E5E5E5",
           Width: "780rpx",
           Height: "10rpx"
         }),
-        i: common_assets._imports_2,
-        j: common_assets._imports_3,
-        k: common_vendor.p({
+        m: common_assets._imports_2,
+        n: common_assets._imports_3,
+        o: common_vendor.p({
           Color: "#F1E6FF",
           Width: "700rpx",
           Height: "8rpx"
         }),
-        l: common_vendor.f(10, (item, index, i0) => {
+        p: common_vendor.f(matchData.value, (item, index, i0) => {
           return {
-            a: index,
-            b: "305e4dd3-3-" + i0
+            a: item.imgUrl,
+            b: common_vendor.t(item.matchName),
+            c: common_vendor.t(item.name),
+            d: item.id
           };
         }),
-        m: common_vendor.p({
-          toValue: "a"
-        }),
-        n: common_vendor.o(toMakeTeam)
-      };
+        q: common_assets._imports_1$1,
+        r: common_assets._imports_1$2,
+        s: common_assets._imports_3$1,
+        t: common_assets._imports_0,
+        v: common_assets._imports_0,
+        w: common_assets._imports_5,
+        x: common_assets._imports_6,
+        y: `/pages/teamDetail/teamDetail?toPageValue=a`,
+        z: common_vendor.o(toMakeTeam)
+      });
     };
   }
 };
