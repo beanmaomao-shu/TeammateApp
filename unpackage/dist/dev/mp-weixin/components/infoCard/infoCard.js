@@ -1,56 +1,59 @@
 "use strict";
 const common_vendor = require("../../common/vendor.js");
-const common_assets = require("../../common/assets.js");
 const _sfc_main = {
   __name: "infoCard",
   props: {
-    toValue: {
+    toaValue: {
       type: String
     },
-    cValue: {
+    tobValue: {
+      type: String
+    },
+    tocValue: {
+      type: String
+    },
+    contentValue: {
       type: String
     }
   },
   setup(__props) {
+    const props = __props;
     const isLeader = common_vendor.ref(true);
     const isaudited = common_vendor.ref(false);
-    const isauthenticated = common_vendor.ref(true);
-    const props = __props;
-    const centerValue = common_vendor.ref("");
-    const contentValue = common_vendor.ref("");
-    common_vendor.onLoad(() => {
-      centerValue.value = props.toValue;
-      contentValue.value = props.cValue;
+    const centeraValue = common_vendor.ref("");
+    const centerbValue = common_vendor.ref("");
+    const centercValue = common_vendor.ref("");
+    const conValue = common_vendor.ref("");
+    common_vendor.onMounted(() => {
+      centeraValue.value = props.toaValue;
+      centerbValue.value = props.tobValue;
+      centercValue.value = props.tocValue;
+      conValue.value = props.contentValue;
     });
     return (_ctx, _cache) => {
       return common_vendor.e({
-        a: common_assets._imports_0$3,
-        b: contentValue.value === "a"
-      }, contentValue.value === "a" ? common_vendor.e({
-        c: isLeader.value
+        a: conValue.value === "a"
+      }, conValue.value === "a" ? common_vendor.e({
+        b: isLeader.value
       }, isLeader.value ? {} : {}, {
-        d: !isLeader.value
+        c: !isLeader.value
       }, !isLeader.value ? {} : {}) : {}, {
-        e: contentValue.value === "b"
-      }, contentValue.value === "b" ? common_vendor.e({
-        f: isaudited.value
+        d: conValue.value === "b"
+      }, conValue.value === "b" ? common_vendor.e({
+        e: isaudited.value
       }, isaudited.value ? {} : {}, {
-        g: !isaudited.value
+        f: !isaudited.value
       }, !isaudited.value ? {} : {}) : {}, {
-        h: contentValue.value === "c"
-      }, contentValue.value === "c" ? common_vendor.e({
-        i: isauthenticated.value
-      }, isauthenticated.value ? {
-        j: common_assets._imports_1$7
-      } : {}, {
-        k: !isauthenticated.value
-      }, !isauthenticated.value ? {
-        l: common_assets._imports_2$3
-      } : {}) : {}, {
-        m: `/pages/teamDetail/teamDetail?toPageValue=${centerValue.value}`
+        g: conValue.value === "c"
+      }, conValue.value === "c" ? common_vendor.e({
+        h: _ctx.isauthenticated
+      }, _ctx.isauthenticated ? {} : {}, {
+        i: !_ctx.isauthenticated
+      }, !_ctx.isauthenticated ? {} : {}) : {}, {
+        j: `/pages/teamDetail/teamDetail?tobPageValue=${centerbValue.value}&tocPageValue=${centercValue.value}`
       });
     };
   }
 };
-const Component = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["__scopeId", "data-v-d0ce716f"]]);
+const Component = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["__scopeId", "data-v-d0ce716f"], ["__file", "C:/Users/黎翠儿/Documents/GitHub/TeammateApp/components/infoCard/infoCard.vue"]]);
 wx.createComponent(Component);

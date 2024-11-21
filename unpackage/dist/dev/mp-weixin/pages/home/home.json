@@ -1,7 +1,5 @@
 {
   "navigationBarTitleText": "个人中心",
   "enablePullDownRefresh": false,
-  "usingComponents": {
-    "info-card": "../../components/infoCard/infoCard"
-  }
+  "usingComponents": {}
 }

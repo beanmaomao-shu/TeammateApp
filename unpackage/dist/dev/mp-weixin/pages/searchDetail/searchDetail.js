@@ -1,6 +1,5 @@
 "use strict";
 const common_vendor = require("../../common/vendor.js");
-const common_assets = require("../../common/assets.js");
 if (!Array) {
   const _easycom_teamInfo2 = common_vendor.resolveComponent("teamInfo");
   _easycom_teamInfo2();
@@ -20,8 +19,7 @@ const _sfc_main = {
       return {
         a: dataFromSourcePage.value,
         b: common_vendor.o(($event) => dataFromSourcePage.value = $event.detail.value),
-        c: common_assets._imports_0,
-        d: common_vendor.f(10, (item, index, i0) => {
+        c: common_vendor.f(10, (item, index, i0) => {
           return {
             a: index,
             b: "ce5e1149-0-" + i0
@@ -31,5 +29,5 @@ const _sfc_main = {
     };
   }
 };
-const MiniProgramPage = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["__scopeId", "data-v-ce5e1149"]]);
+const MiniProgramPage = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["__scopeId", "data-v-ce5e1149"], ["__file", "C:/Users/黎翠儿/Documents/GitHub/TeammateApp/pages/searchDetail/searchDetail.vue"]]);
 wx.createPage(MiniProgramPage);

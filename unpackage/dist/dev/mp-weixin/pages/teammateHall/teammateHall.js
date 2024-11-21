@@ -1,6 +1,5 @@
 "use strict";
 const common_vendor = require("../../common/vendor.js");
-const common_assets = require("../../common/assets.js");
 if (!Array) {
   const _component_van_notice_bar = common_vendor.resolveComponent("van-notice-bar");
   const _easycom_dash2 = common_vendor.resolveComponent("dash");
@@ -41,47 +40,43 @@ const _sfc_main = {
       return {
         a: inputValue.value,
         b: common_vendor.o(($event) => inputValue.value = $event.detail.value),
-        c: common_assets._imports_0,
-        d: common_vendor.o(() => {
+        c: common_vendor.o(() => {
           navigateToDetail();
           searchInfo();
         }),
-        e: common_vendor.p({
+        d: common_vendor.p({
           scrollable: true,
           color: "#AC33C1",
           background: "#F1E6FF"
         }),
-        f: common_vendor.f(10, (item, index, i0) => {
+        e: common_vendor.f(10, (item, index, i0) => {
           return {
             a: index
           };
         }),
-        g: common_assets._imports_1,
-        h: common_vendor.p({
+        f: common_vendor.p({
           Color: "#E5E5E5",
           Width: "780rpx",
           Height: "10rpx"
         }),
-        i: common_assets._imports_2,
-        j: common_assets._imports_3,
-        k: common_vendor.p({
+        g: common_vendor.p({
           Color: "#F1E6FF",
           Width: "700rpx",
           Height: "8rpx"
         }),
-        l: common_vendor.f(10, (item, index, i0) => {
+        h: common_vendor.f(10, (item, index, i0) => {
           return {
             a: index,
             b: "305e4dd3-3-" + i0
           };
         }),
-        m: common_vendor.p({
+        i: common_vendor.p({
           toValue: "a"
         }),
-        n: common_vendor.o(toMakeTeam)
+        j: common_vendor.o(toMakeTeam)
       };
     };
   }
 };
-const MiniProgramPage = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["__scopeId", "data-v-305e4dd3"]]);
+const MiniProgramPage = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["__scopeId", "data-v-305e4dd3"], ["__file", "C:/Users/黎翠儿/Documents/GitHub/TeammateApp/pages/teammateHall/teammateHall.vue"]]);
 wx.createPage(MiniProgramPage);

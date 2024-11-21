@@ -4,8 +4,13 @@
     <view class="header">
       <infoCard>
         <template #name>
-          鸭鸭
+          一战成名队
         </template>
+		<template #img>
+			<view class="avatar">
+				<image class="avatarImg" src="../../static/images/队伍图标1.jpg" mode="aspectFill"></image>
+			</view>
+		</template>
       </infoCard>
     </view>
 
@@ -152,6 +157,20 @@ const dialogConfirm=()=>{
   
   .header {
     padding: 20rpx;
+	.avatar{
+		display: flex;
+		justify-content: space-around;
+		align-items: center;
+		width: 104rpx;
+		height: 104rpx;
+		border:1px solid transparent;
+		border-radius: 40rpx;
+		margin:0 24rpx 0 50rpx;
+		.avatarImg{
+			width: 104rpx;
+			height: 104rpx;
+		}
+	}
   }
 
   .chat-content {

@@ -51,6 +51,20 @@
 .tabControl .content .teamList.data-v-779b4231 {
   margin-top: 48rpx;
 }
+.tabControl .content .teamList .avatar.data-v-779b4231 {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  width: 104rpx;
+  height: 104rpx;
+  border: 1px solid transparent;
+  border-radius: 40rpx;
+  margin: 0 24rpx 0 50rpx;
+}
+.tabControl .content .teamList .avatar .avatarImg.data-v-779b4231 {
+  width: 104rpx;
+  height: 104rpx;
+}
 .createTeam .team.data-v-779b4231 {
   position: relative;
 }

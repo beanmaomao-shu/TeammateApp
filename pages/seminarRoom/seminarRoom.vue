@@ -13,20 +13,24 @@
 				<view class="content">
 					<!-- 创建的团队 -->
 					<view v-if="current === 0">
-						<view class="createTeam empty" v-if="isemptycreateteam">
+						<view class="createTeam empty" v-if="isEmptyCreateTeam">
 							<image class="bg" src="../../static/images/background.png" mode=""></image>
 							<image class="box" src="../../static/images/default.png" mode="">
 							<view class="font">
 								你还没有创建任何团队呢~
 							</view>
 							</image>
-							
 						</view>
-						<view class="createTeam" v-if="!isemptycreateteam">
+						<view class="createTeam" v-if="!isEmptyCreateTeam">
 							<view class="teamList">
 								<navigator url="/pages/chatRoom/chatRoom" class="team">
-									<infoCard toValue='c' cValue='a'>
-										<template #name>马晓楠</template>
+									<infoCard tobValue='b' contentValue='a'>
+										<template #name>一战成名队</template>
+										<template #img>
+											<view class="avatar">
+												<image class="avatarImg" src="../../static/images/队伍图标1.jpg" mode="aspectFill"></image>
+											</view>
+										</template>
 									</infoCard>
 									<view class="enterButton">
 										>> 进入研讨室
@@ -35,24 +39,26 @@
 							</view>
 						</view>
 					</view>
-					
 					<!-- 加入的团队 -->
 					<view v-if="current === 1">
-						<view class="enterTeam empty" v-if="!isemptyenterteam">
+						<view class="enterTeam empty" v-if="!isEmptyEnterTeam">
 							<image class="bg" src="../../static/images/background.png" mode=""></image>
 							<image class="box" src="../../static/images/default.png" mode="">
 								<view class="font">
 									你还没有加入任何团队呢~
 								</view>
-								
 							</image>
-							
 						</view>
 						<view class="enterTeam">
-							<view class="teamList" v-if="isemptyenterteam">
+							<view class="teamList" v-if="isEmptyEnterTeam">
 								<navigator url="/pages/chatRoom/chatRoom" class="team">
-									<infoCard toValue='b' cValue='b'>
-										<template #name>马晓楠</template>
+									<infoCard tocValue='c'>
+										<template #name>对一题就队</template>
+										<template #img>
+											<view class="avatar">
+												<image class="avatarImg" src="../../static/images/队伍图标2.jpg" mode="aspectFill"></image>
+											</view>
+										</template>
 									</infoCard>
 									<view class="enterButton">
 										>> 进入研讨室
@@ -77,14 +83,15 @@
 	const styleType=ref('button')
 	const activeColor=ref('#AC33C1')
 	
+	//点击tab选项卡切换站内容
 	const onClickItem=(e)=>{
 		if (current.value !== e.currentIndex) {
 			current.value= e.currentIndex
 		}
 	}
 	//选项卡内容
-	const isemptyenterteam=ref(true)
-	const isemptycreateteam=ref(false)
+	const isEmptyEnterTeam=ref(true)
+	const isEmptyCreateTeam=ref(false)
 </script>
 
 <style lang="scss" scoped>
@@ -121,6 +128,20 @@
 			}
 			.teamList{
 				margin-top: 48rpx;
+				.avatar{
+					display: flex;
+					justify-content: space-around;
+					align-items: center;
+					width: 104rpx;
+					height: 104rpx;
+					border:1px solid transparent;
+					border-radius: 40rpx;
+					margin:0 24rpx 0 50rpx;
+					.avatarImg{
+						width: 104rpx;
+						height: 104rpx;
+					}
+				}
 			}
 		}
 	}

@@ -3,14 +3,29 @@
 		<!-- 头像板块 -->
 		<view class="infoCard">
 			<view class="peopleCard">
-				<infoCard cValue='c'>
-					<template #name>
-						鸭鸭
-					</template>
-				</infoCard>
+				<view class="info">
+					<view class="avatar">
+						<image class="avatarImg" src="../../static/images/avatar1.png" mode="aspectFill"></image>
+					</view>
+					<view class="infoGroup">
+						<view class="name">
+							鸭鸭
+						</view>
+						<!-- 个人中心 -->
+						<view class="authentication">
+							<view class="content"  v-if="isauthenticated">
+								<image class="authenImg" src="../../static/images/认证.png" mode="aspectFill"></image>
+								<view class="p">已认证</view>
+							</view>
+							<view class="content" v-if="!isauthenticated">
+								<image class="authenImg" src="../../static/images/未认证.png" mode="aspectFill"></image>
+								<view class="p">未认证</view>
+							</view>
+						</view>
+					</view>
+				</view>
 			</view>
 			<view class="functionCard">
-				
 				<view class="box">
 					<image  src="../../static/images/编辑.png" mode="aspectFill"></image>
 					<view class="font">编辑名片</view>
@@ -75,7 +90,9 @@
 </template>
 
 <script setup>
-	
+	import { ref,onMounted  } from 'vue';
+	//是否认证
+	const isauthenticated = ref(true);
 </script>
 
 <style lang="scss" scoped>
@@ -90,8 +107,53 @@
 	    background-color: #fff;
 		//头像
 		.peopleCard{
-			margin-top: 42rpx;
-			background-color: #fff;
+			.info{
+				width: 686rpx;
+				height: 200rpx;
+				background-image: url('../../static/images/personnel_card.png');
+				background-repeat: no-repeat;
+				background-size: cover;
+				display: flex;
+				align-items: center;
+				margin: 0 auto;
+				.avatar{
+					display: flex;
+					justify-content: space-around;
+					align-items: center;
+					width: 104rpx;
+					height: 104rpx;
+					border:1px solid transparent;
+					border-radius: 40rpx;
+					margin:0 24rpx 0 50rpx;
+					.avatarImg{
+						width: 104rpx;
+						height: 104rpx;
+					}
+				}
+				.infoGroup{
+					.name{
+						color: #F2C688;
+						font-size: 36rpx;
+					}
+					.authentication{
+						.content{
+							display: flex;
+							justify-content: center;
+							align-items: center;
+							font-size: 24rpx;
+							color: #fff;
+							margin-top: 10rpx;
+							.authenImg{
+								width: 32rpx;
+								height: 32rpx;
+								margin-right: 10rpx;
+							}
+						}
+						
+					}
+				}
+			}
+			
 		}	
 		//头像下方功能卡
 		.functionCard{
@@ -159,4 +221,5 @@
 	}
 	
 }
+
 </style>
