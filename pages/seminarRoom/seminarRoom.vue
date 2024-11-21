@@ -24,7 +24,7 @@
 						<view class="createTeam" v-if="!isEmptyCreateTeam">
 							<view class="teamList">
 								<navigator url="/pages/chatRoom/chatRoom" class="team">
-									<infoCard tobValue='b' contentValue='a'>
+									<infoCard tocValue='c' contentValue='a'>
 										<template #name>一战成名队</template>
 										<template #img>
 											<view class="avatar">
@@ -52,7 +52,7 @@
 						<view class="enterTeam">
 							<view class="teamList" v-if="isEmptyEnterTeam">
 								<navigator url="/pages/chatRoom/chatRoom" class="team">
-									<infoCard tocValue='c'>
+									<infoCard tobValue='b'>
 										<template #name>对一题就队</template>
 										<template #img>
 											<view class="avatar">

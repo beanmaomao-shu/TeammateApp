@@ -41,7 +41,7 @@ const _sfc_main = {
         e: !isEmptyCreateTeam.value
       }, !isEmptyCreateTeam.value ? {
         f: common_vendor.p({
-          tobValue: "b",
+          tocValue: "c",
           contentValue: "a"
         })
       } : {}) : {}, {
@@ -52,7 +52,7 @@ const _sfc_main = {
         i: isEmptyEnterTeam.value
       }, isEmptyEnterTeam.value ? {
         j: common_vendor.p({
-          tocValue: "c"
+          tobValue: "b"
         })
       } : {}) : {}, {
         k: common_vendor.p({
