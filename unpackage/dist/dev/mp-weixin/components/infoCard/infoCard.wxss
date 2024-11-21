@@ -33,20 +33,6 @@
   align-items: center;
   margin: 0 auto;
 }
-.info .avatar.data-v-d0ce716f {
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  width: 104rpx;
-  height: 104rpx;
-  border: 1px solid transparent;
-  border-radius: 40rpx;
-  margin: 0 24rpx 0 50rpx;
-}
-.info .avatar .avatarImg.data-v-d0ce716f {
-  width: 104rpx;
-  height: 104rpx;
-}
 .info .infoGroup .name.data-v-d0ce716f {
   color: #F2C688;
   font-size: 36rpx;

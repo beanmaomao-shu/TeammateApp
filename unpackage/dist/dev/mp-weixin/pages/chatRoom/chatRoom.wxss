@@ -32,6 +32,20 @@
 .chat-page .header.data-v-9b186cfb {
   padding: 20rpx;
 }
+.chat-page .header .avatar.data-v-9b186cfb {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  width: 104rpx;
+  height: 104rpx;
+  border: 1px solid transparent;
+  border-radius: 40rpx;
+  margin: 0 24rpx 0 50rpx;
+}
+.chat-page .header .avatar .avatarImg.data-v-9b186cfb {
+  width: 104rpx;
+  height: 104rpx;
+}
 .chat-page .chat-content.data-v-9b186cfb {
   flex: 1;
   overflow-y: auto;

@@ -9,7 +9,7 @@
 				<!-- 队伍图标 -->
 				<view class="avatar">
 					<detailTitle img-src='/static/images/图片.png' p-title="队伍图标"></detailTitle>
-					<image class="teamImg" src="../../static/images/match8.png" mode=""></image>
+					<image class="teamImg" src="../../static/images/队伍图标1.jpg" mode=""></image>
 				</view>
 				<view>
 					<!-- 队伍名称 -->
@@ -74,20 +74,20 @@
 		</view>
 		
 		<view class="btnArea">
-			 <view class="enter" v-if="toValue==='a'">
+			 <view class="enter" v-if="toaValue==='a'">
 				 <fcButton img-src='/static/images/申请加入.png' Title="申请加入" Color="#FF5733"></fcButton>
 			 </view>
-			<view class="chat" v-if="toValue==='a'" @click="toChatPage()">
+			<view class="chat" v-if="toaValue==='a'" @click="toChatPage()">
 				<fcButton img-src='/static/images/一起讨论.png' Title="一起讨论" Color="#F3705A"></fcButton>
 			</view>
 
-			<view class="out" v-if="toValue==='b'"  @click="toggleDialog('error','out')">
+			<view class="out" v-if="tobValue==='b'"  @click="toggleDialog('error','out')">
 				<fcButton img-src='/static/images/退出队伍.png' Title="退出队伍" Color="#D43030"></fcButton>
 			</view>
-			<view class="invite" v-if="toValue==='c'" @click="toInvitePage()" >
+			<view class="invite" v-if="tocValue==='c'" @click="toInvitePage()" >
 				<fcButton img-src='/static/images/发送邀请.png' Title="发送邀请" Color="#FF5733"></fcButton>
 			</view>
-			<view class="dissolve" v-if="toValue==='c'" @click="toggleDialog('error','disband')">
+			<view class="dissolve" v-if="tocValue==='c'" @click="toggleDialog('error','disband')">
 				<fcButton img-src='/static/images/解散队伍.png' Title="解散队伍" Color="#FF8D1A" ></fcButton>
 
 			</view>
@@ -118,9 +118,9 @@
 	const address=ref('北京市朝阳区');
 
 	//跳转按钮
-	const toValue=ref('');
+	const toaValue=ref('');
 	const tobValue=ref('');
-
+	const tocValue=ref('');
 	
 	//弹窗相关
 	const alertDialog=ref(null)
@@ -129,6 +129,7 @@
 	const popupMsg=ref('')
 	const msgType=ref('success')
 	const popupType=ref('success')
+	
 	const toggleDialog =(type,msg)=>{
 		msgType.value=type;
 		alertDialog.value.open();
@@ -149,7 +150,8 @@
 
 
 	onLoad((option)=>{
-		toValue.value = option.toPageValue
+		tobValue.value = option.tobPageValue
+		tocValue.value = option.tocPageValue
 	})
 	const toChatPage=()=>{
 		uni.navigateTo({

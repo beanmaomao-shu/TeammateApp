@@ -24,8 +24,8 @@ const _sfc_main = {
         current.value = e.currentIndex;
       }
     };
-    const isemptyenterteam = common_vendor.ref(true);
-    const isemptycreateteam = common_vendor.ref(false);
+    const isEmptyEnterTeam = common_vendor.ref(true);
+    const isEmptyCreateTeam = common_vendor.ref(false);
     return (_ctx, _cache) => {
       return common_vendor.e({
         a: common_vendor.o(onClickItem),
@@ -37,33 +37,34 @@ const _sfc_main = {
         }),
         c: current.value === 0
       }, current.value === 0 ? common_vendor.e({
-        d: isemptycreateteam.value
-      }, isemptycreateteam.value ? {
-        e: common_assets._imports_0$2,
+        d: isEmptyCreateTeam.value
+      }, isEmptyCreateTeam.value ? {
+        e: common_assets._imports_0$1,
         f: common_assets._imports_1$3
       } : {}, {
-        g: !isemptycreateteam.value
-      }, !isemptycreateteam.value ? {
-        h: common_vendor.p({
-          toValue: "c",
-          cValue: "a"
+        g: !isEmptyCreateTeam.value
+      }, !isEmptyCreateTeam.value ? {
+        h: common_assets._imports_0$2,
+        i: common_vendor.p({
+          tocValue: "c",
+          contentValue: "a"
         })
       } : {}) : {}, {
-        i: current.value === 1
+        j: current.value === 1
       }, current.value === 1 ? common_vendor.e({
-        j: !isemptyenterteam.value
-      }, !isemptyenterteam.value ? {
-        k: common_assets._imports_0$2,
-        l: common_assets._imports_1$3
+        k: !isEmptyEnterTeam.value
+      }, !isEmptyEnterTeam.value ? {
+        l: common_assets._imports_0$1,
+        m: common_assets._imports_1$3
       } : {}, {
-        m: isemptyenterteam.value
-      }, isemptyenterteam.value ? {
-        n: common_vendor.p({
-          toValue: "b",
-          cValue: "b"
+        n: isEmptyEnterTeam.value
+      }, isEmptyEnterTeam.value ? {
+        o: common_assets._imports_3$2,
+        p: common_vendor.p({
+          tobValue: "b"
         })
       } : {}) : {}, {
-        o: common_vendor.p({
+        q: common_vendor.p({
           title: "实心标签",
           type: "line"
         })

@@ -141,7 +141,7 @@ function uploadCloudFiles(files, max = 5, onUploadProgress) {
       const index = self.files.findIndex((v) => v.uuid === fileItem.uuid);
       fileItem.url = "";
       delete fileItem.errMsg;
-      common_vendor.Vs.uploadFile({
+      common_vendor.Ws.uploadFile({
         filePath: fileItem.path,
         cloudPath: fileItem.cloudPath,
         fileType: fileItem.fileType,

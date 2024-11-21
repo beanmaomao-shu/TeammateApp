@@ -1,25 +1,25 @@
 <template>
-	<navigator :url="`/pages/teamDetail/teamDetail?toPageValue=${centerValue}`">
+	<navigator :url="`/pages/teamDetail/teamDetail?tobPageValue=${centerbValue}&tocPageValue=${centercValue}`">
 		<view class="infoCard">
 			<view class="info">
 				<view class="avatar">
-					<image class="avatarImg" src="../../static/images/avatar.png" mode="aspectFill"></image>
+					<slot name="img"></slot>
 				</view>
 				<view class="infoGroup">
 					<view class="name">
 						<slot name="name"></slot>
 					</view>
 					<!-- 研讨室 -->
-					<view class="identity" v-if="contentValue==='a'">
+					<view class="identity" v-if="conValue==='a'">
 						<view class="content" v-if="isLeader">团队长</view>
 						<view class="content" v-if="!isLeader">团队员</view>
 					</view>
-					<view class="audit" v-if="contentValue==='b'">
+					<view class="audit" v-if="conValue==='b'">
 						<view class="content" v-if="isaudited">审核中</view>
 						<view class="content" v-if="!isaudited">已加入</view> 
 					</view>
 					<!-- 个人中心 -->
-					<view class="authentication" v-if="contentValue==='c'">
+					<view class="authentication" v-if="conValue==='c'">
 						<view class="content"  v-if="isauthenticated">
 							<image class="authenImg" src="../../static/images/认证.png" mode="aspectFill"></image>
 							<view class="p">已认证</view>
@@ -36,30 +36,42 @@
 </template>
 
 <script setup>
-	import { ref } from 'vue';
+	import { ref,onMounted  } from 'vue';
 	import {onLoad} from "@dcloudio/uni-app";
 	
 	//是否为团队长
 	const isLeader = ref(true);
 	//是否审核通过
 	const isaudited = ref(false);
-	//是否认证
-	const isauthenticated = ref(true);
+
 	
 	//标签显示+跳转组队详情按钮
 	const props = defineProps({
-		toValue:{
+		toaValue:{
 			type:String,
 		},
-		cValue:{
+		tobValue:{
 			type:String,
 		},
+		tocValue:{
+			type:String,
+		},
+		contentValue:{
+			type:String,
+		}
 	})
-	const centerValue = ref('');
-	const contentValue=ref('');
-	onLoad(()=>{
-		centerValue.value=props.toValue;
-		contentValue.value=props.cValue
+	//组队详情按钮显示--中转值
+	const centeraValue = ref('');
+	const centerbValue = ref('');
+	const centercValue = ref('');
+	
+	const conValue=ref('');
+	
+	onMounted(()=>{
+		centeraValue.value=props.toaValue;
+		centerbValue.value=props.tobValue;
+		centercValue.value=props.tocValue;
+		conValue.value=props.contentValue;
 	})
 </script>
 
@@ -73,20 +85,6 @@
 		display: flex;
 		align-items: center;
 		margin: 0 auto;
-		.avatar{
-			display: flex;
-			justify-content: space-around;
-			align-items: center;
-			width: 104rpx;
-			height: 104rpx;
-			border:1px solid transparent;
-			border-radius: 40rpx;
-			margin:0 24rpx 0 50rpx;
-			.avatarImg{
-				width: 104rpx;
-				height: 104rpx;
-			}
-		}
 		.infoGroup{
 			.name{
 				color: #F2C688;
@@ -134,6 +132,5 @@
 			}
 		}
 	}
-	
-	
+
 </style>

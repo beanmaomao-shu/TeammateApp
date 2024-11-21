@@ -15,7 +15,7 @@ const _sfc_main = {
       return {
         a: dataFromSourcePage.value,
         b: common_vendor.o(($event) => dataFromSourcePage.value = $event.detail.value),
-        c: common_assets._imports_0$1,
+        c: common_assets._imports_0,
         d: common_vendor.f(matchData.value, (item, index, i0) => {
           return {
             a: item.imgUrl,
@@ -27,8 +27,8 @@ const _sfc_main = {
         e: common_assets._imports_1$1,
         f: common_assets._imports_1$2,
         g: common_assets._imports_3$1,
-        h: common_assets._imports_0,
-        i: common_assets._imports_0,
+        h: common_assets._imports_4,
+        i: common_assets._imports_4,
         j: common_assets._imports_5,
         k: common_assets._imports_6,
         l: `/pages/teamDetail/teamDetail?toPageValue=a`

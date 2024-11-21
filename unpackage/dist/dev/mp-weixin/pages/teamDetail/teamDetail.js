@@ -27,8 +27,9 @@ const _sfc_main = {
     const numbers = common_vendor.ref("2");
     const time = common_vendor.ref("2022-12-12 12:12:12");
     const address = common_vendor.ref("北京市朝阳区");
-    const toValue = common_vendor.ref("");
-    common_vendor.ref("");
+    const toaValue = common_vendor.ref("");
+    const tobValue = common_vendor.ref("");
+    const tocValue = common_vendor.ref("");
     const alertDialog = common_vendor.ref(null);
     const showMessage = common_vendor.ref(null);
     const messageText = common_vendor.ref("");
@@ -50,7 +51,8 @@ const _sfc_main = {
       popupMsg.value = "操作成功";
     };
     common_vendor.onLoad((option) => {
-      toValue.value = option.toPageValue;
+      tobValue.value = option.tobPageValue;
+      tocValue.value = option.tocPageValue;
     });
     const toChatPage = () => {
       common_vendor.index.navigateTo({
@@ -68,7 +70,7 @@ const _sfc_main = {
           ["img-src"]: "/static/images/图片.png",
           ["p-title"]: "队伍图标"
         }),
-        b: common_assets._imports_0$5,
+        b: common_assets._imports_0$2,
         c: common_vendor.p({
           ["img-src"]: "/static/images/别名.png",
           ["p-title"]: "队伍名称"
@@ -122,16 +124,16 @@ const _sfc_main = {
         }),
         s: common_vendor.t(address.value),
         t: common_vendor.o((...args) => _ctx.getMapLocation && _ctx.getMapLocation(...args)),
-        v: toValue.value === "a"
-      }, toValue.value === "a" ? {
+        v: toaValue.value === "a"
+      }, toaValue.value === "a" ? {
         w: common_vendor.p({
           ["img-src"]: "/static/images/申请加入.png",
           Title: "申请加入",
           Color: "#FF5733"
         })
       } : {}, {
-        x: toValue.value === "a"
-      }, toValue.value === "a" ? {
+        x: toaValue.value === "a"
+      }, toaValue.value === "a" ? {
         y: common_vendor.p({
           ["img-src"]: "/static/images/一起讨论.png",
           Title: "一起讨论",
@@ -139,8 +141,8 @@ const _sfc_main = {
         }),
         z: common_vendor.o(($event) => toChatPage())
       } : {}, {
-        A: toValue.value === "b"
-      }, toValue.value === "b" ? {
+        A: tobValue.value === "b"
+      }, tobValue.value === "b" ? {
         B: common_vendor.p({
           ["img-src"]: "/static/images/退出队伍.png",
           Title: "退出队伍",
@@ -148,8 +150,8 @@ const _sfc_main = {
         }),
         C: common_vendor.o(($event) => toggleDialog("error", "out"))
       } : {}, {
-        D: toValue.value === "c"
-      }, toValue.value === "c" ? {
+        D: tocValue.value === "c"
+      }, tocValue.value === "c" ? {
         E: common_vendor.p({
           ["img-src"]: "/static/images/发送邀请.png",
           Title: "发送邀请",
@@ -157,8 +159,8 @@ const _sfc_main = {
         }),
         F: common_vendor.o(($event) => toInvitePage())
       } : {}, {
-        G: toValue.value === "c"
-      }, toValue.value === "c" ? {
+        G: tocValue.value === "c"
+      }, tocValue.value === "c" ? {
         H: common_vendor.p({
           ["img-src"]: "/static/images/解散队伍.png",
           Title: "解散队伍",

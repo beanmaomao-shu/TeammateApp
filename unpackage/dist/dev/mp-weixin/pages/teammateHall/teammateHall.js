@@ -79,7 +79,7 @@ const _sfc_main = {
         b: common_vendor.o(($event) => showSuggestion.value = true),
         c: common_vendor.o(($event) => showSuggestion.value = false),
         d: inputValue.value,
-        e: common_assets._imports_0$1,
+        e: common_assets._imports_0,
         f: common_vendor.o(() => {
           navigateToDetail();
           searchInfo();
@@ -127,8 +127,8 @@ const _sfc_main = {
         q: common_assets._imports_1$1,
         r: common_assets._imports_1$2,
         s: common_assets._imports_3$1,
-        t: common_assets._imports_0,
-        v: common_assets._imports_0,
+        t: common_assets._imports_4,
+        v: common_assets._imports_4,
         w: common_assets._imports_5,
         x: common_assets._imports_6,
         y: `/pages/teamDetail/teamDetail?toPageValue=a`,

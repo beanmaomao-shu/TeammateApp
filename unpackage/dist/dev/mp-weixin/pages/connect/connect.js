@@ -76,7 +76,7 @@ const _sfc_main = {
           isLink: true,
           value: wechat.value
         }),
-        h: common_assets._imports_2$2,
+        h: common_assets._imports_2$1,
         i: common_vendor.o(openInfocard),
         j: common_vendor.p({
           center: true,
