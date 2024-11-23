@@ -59,7 +59,7 @@ const _sfc_main = {
       } : {}, {
         n: isEmptyEnterTeam.value
       }, isEmptyEnterTeam.value ? {
-        o: common_assets._imports_3$2,
+        o: common_assets._imports_3$1,
         p: common_vendor.p({
           tobValue: "b"
         })

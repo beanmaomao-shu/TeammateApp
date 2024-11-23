@@ -166,9 +166,9 @@ const _sfc_main = {
     }
   },
   created() {
-    if (!(common_vendor.Ws.config && common_vendor.Ws.config.provider)) {
+    if (!(common_vendor.Vs.config && common_vendor.Vs.config.provider)) {
       this.noSpace = true;
-      common_vendor.Ws.chooseAndUploadFile = uni_modules_uniFilePicker_components_uniFilePicker_chooseAndUploadFile.chooseAndUploadFile;
+      common_vendor.Vs.chooseAndUploadFile = uni_modules_uniFilePicker_components_uniFilePicker_chooseAndUploadFile.chooseAndUploadFile;
     }
     this.form = this.getForm("uniForms");
     this.formItem = this.getForm("uniFormsItem");
@@ -268,7 +268,7 @@ const _sfc_main = {
      */
     chooseFiles() {
       const _extname = uni_modules_uniFilePicker_components_uniFilePicker_utils.get_extname(this.fileExtname);
-      common_vendor.Ws.chooseAndUploadFile({
+      common_vendor.Vs.chooseAndUploadFile({
         type: this.fileMediatype,
         compressed: false,
         sizeType: this.sizeType,
@@ -492,7 +492,7 @@ const _sfc_main = {
       fileList = {
         fileList: [].concat(fileList)
       };
-      const urls = await common_vendor.Ws.getTempFileURL(fileList);
+      const urls = await common_vendor.Vs.getTempFileURL(fileList);
       return urls.fileList[0].tempFileURL || "";
     },
     /**
@@ -552,5 +552,5 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
     })
   } : {});
 }
-const Component = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["render", _sfc_render], ["__file", "C:/Users/黎翠儿/Documents/GitHub/TeammateApp/uni_modules/uni-file-picker/components/uni-file-picker/uni-file-picker.vue"]]);
+const Component = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["render", _sfc_render]]);
 wx.createComponent(Component);

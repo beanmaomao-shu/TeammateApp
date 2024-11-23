@@ -3,7 +3,6 @@
   "enablePullDownRefresh": false,
   "usingComponents": {
     "dash": "../../components/dash/dash",
-    "wei-dropdown-menu": "../../uni_modules/wei-dropdown-menu/components/wei-dropdown-menu/wei-dropdown-menu",
-    "team-info": "../../components/teamInfo/teamInfo"
+    "wei-dropdown-menu": "../../uni_modules/wei-dropdown-menu/components/wei-dropdown-menu/wei-dropdown-menu"
   }
 }

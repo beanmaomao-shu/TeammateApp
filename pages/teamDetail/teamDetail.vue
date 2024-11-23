@@ -150,6 +150,7 @@
 
 
 	onLoad((option)=>{
+		 toaValue.value = option.toPageValue 
 		tobValue.value = option.tobPageValue
 		tocValue.value = option.tocPageValue
 	})

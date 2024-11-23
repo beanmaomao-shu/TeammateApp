@@ -7,7 +7,7 @@ const _sfc_main = {
     const isauthenticated = common_vendor.ref(true);
     return (_ctx, _cache) => {
       return common_vendor.e({
-        a: common_assets._imports_3$1,
+        a: common_assets._imports_3,
         b: isauthenticated.value
       }, isauthenticated.value ? {
         c: common_assets._imports_0$3
@@ -16,7 +16,7 @@ const _sfc_main = {
       }, !isauthenticated.value ? {
         e: common_assets._imports_1$4
       } : {}, {
-        f: common_assets._imports_3$3,
+        f: common_assets._imports_3$2,
         g: common_assets._imports_4$1,
         h: common_assets._imports_5$1,
         i: common_assets._imports_6$1,

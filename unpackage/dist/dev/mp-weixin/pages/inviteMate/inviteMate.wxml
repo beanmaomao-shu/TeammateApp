@@ -1,1 +1,1 @@
-<view class="inviteMate"><image src="/static/images/邀请海报.png" mode=""></image><view class="code"><image src="/static/images/code.png" mode=""></image><view class="p">长按保存图片并转发</view></view></view>
+<view class="inviteMate"><image src="{{a}}" mode=""></image><view class="code"><image src="{{b}}" mode="" show-menu-by-longpress="{{true}}"></image><view class="p">长按保存图片并转发</view></view></view>

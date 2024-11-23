@@ -60,7 +60,7 @@ const _sfc_main = {
           Width: "780rpx",
           Height: "10rpx"
         }),
-        b: common_assets._imports_0$4,
+        b: common_assets._imports_0$5,
         c: common_vendor.o(openPhone),
         d: common_vendor.p({
           center: true,

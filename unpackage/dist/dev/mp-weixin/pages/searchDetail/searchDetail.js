@@ -26,7 +26,7 @@ const _sfc_main = {
         }),
         e: common_assets._imports_1$1,
         f: common_assets._imports_1$2,
-        g: common_assets._imports_3$1,
+        g: common_assets._imports_3,
         h: common_assets._imports_4,
         i: common_assets._imports_4,
         j: common_assets._imports_5,

@@ -34,11 +34,15 @@ const _sfc_main = {
       }
     });
     const range = common_vendor.ref([
-      { value: 0, text: "2024全国大学生数学模型竞赛" },
-      { value: 1, text: "2024全国大学生数学模型竞赛" },
-      { value: 2, text: "2024全国大学生数学模型竞赛" },
-      { value: 3, text: "2024全国大学生数学模型竞赛" },
-      { value: 4, text: "2024全国大学生数学模型竞赛" }
+      { value: 0, text: "2024年第十四届APMCM大学生数学建模竞赛" },
+      { value: 1, text: "2024年全国大学生英语翻译大赛（NETCCS）" },
+      { value: 2, text: "2024年第五届中译国青杯国际组织文件翻译大赛" },
+      { value: 3, text: "2024创想中国全国大学生创新创业大赛" },
+      { value: 5, text: "第三届中外传播杯全国大学生英语翻译大赛" },
+      { value: 6, text: "第二届“数学周报”全国大学生数学能力大赛" },
+      { value: 7, text: "2024第二届全国大学生数学竞赛暨创新思维挑战赛" },
+      { value: 8, text: "CCF2024年中国计算机应用技术大赛算法精英大赛" },
+      { value: 9, text: "浙大研究院《智能无人机》研学实践项目" }
     ]);
     const rates = common_vendor.ref([
       { value: "1", name: "专科" },
@@ -262,5 +266,5 @@ const _sfc_main = {
     };
   }
 };
-const MiniProgramPage = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["__scopeId", "data-v-f62f500a"], ["__file", "C:/Users/黎翠儿/Documents/GitHub/TeammateApp/pages/makeTeam/makeTeam.vue"]]);
+const MiniProgramPage = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["__scopeId", "data-v-f62f500a"]]);
 wx.createPage(MiniProgramPage);

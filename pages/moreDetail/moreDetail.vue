@@ -24,7 +24,6 @@
 				 >
 			 </wei-dropdown-menu>
 		</view>
-		<teamInfo  v-for="(item,index) in 10" :key="index"></teamInfo>
 	</view>
 </template>
 

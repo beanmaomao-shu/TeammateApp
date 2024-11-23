@@ -42,8 +42,8 @@
 			:autoplay="true" 
 			:interval="3000"
 			:duration="500">
-				<swiper-item v-for="(item,index) in 10" :key="index">
-					<image src="../../static/images/match1.png" mode="widthFix"></image>
+				<swiper-item v-for="(item,index) in matchData" :key="index">
+					<image :src="item.imgUrl" mode="widthFix"></image>
 				</swiper-item>
 			</swiper>
 		</view>

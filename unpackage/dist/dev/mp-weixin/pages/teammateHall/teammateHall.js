@@ -98,25 +98,25 @@ const _sfc_main = {
           color: "#AC33C1",
           background: "#F1E6FF"
         }),
-        j: common_vendor.f(10, (item, index, i0) => {
+        j: common_vendor.f(matchData.value, (item, index, i0) => {
           return {
-            a: index
+            a: item.imgUrl,
+            b: index
           };
         }),
-        k: common_assets._imports_1,
-        l: common_vendor.p({
+        k: common_vendor.p({
           Color: "#E5E5E5",
           Width: "780rpx",
           Height: "10rpx"
         }),
+        l: common_assets._imports_1,
         m: common_assets._imports_2,
-        n: common_assets._imports_3,
-        o: common_vendor.p({
+        n: common_vendor.p({
           Color: "#F1E6FF",
           Width: "700rpx",
           Height: "8rpx"
         }),
-        p: common_vendor.f(matchData.value, (item, index, i0) => {
+        o: common_vendor.f(matchData.value, (item, index, i0) => {
           return {
             a: item.imgUrl,
             b: common_vendor.t(item.matchName),
@@ -124,15 +124,15 @@ const _sfc_main = {
             d: item.id
           };
         }),
-        q: common_assets._imports_1$1,
-        r: common_assets._imports_1$2,
-        s: common_assets._imports_3$1,
+        p: common_assets._imports_1$1,
+        q: common_assets._imports_1$2,
+        r: common_assets._imports_3,
+        s: common_assets._imports_4,
         t: common_assets._imports_4,
-        v: common_assets._imports_4,
-        w: common_assets._imports_5,
-        x: common_assets._imports_6,
-        y: `/pages/teamDetail/teamDetail?toPageValue=a`,
-        z: common_vendor.o(toMakeTeam)
+        v: common_assets._imports_5,
+        w: common_assets._imports_6,
+        x: `/pages/teamDetail/teamDetail?toPageValue=a`,
+        y: common_vendor.o(toMakeTeam)
       });
     };
   }

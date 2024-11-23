@@ -2,14 +2,18 @@
 	<view class="inviteMate">
 		<image src="../../static/images/邀请海报.png" mode=""></image>
 		<view class="code">
-			<image src="../../static/images/code.png" mode=""></image>
+			<image src="../../static/images/code.png" mode="" :show-menu-by-longpress="true"></image>
 			<p class="p">长按保存图片并转发</p>
 		</view>
 	</view>
 </template>
 
 <script setup>
+	import{ref} from 'vue'
 	
+	const shareImage=()=>{
+		
+	}
 </script>
 
 <style lang="scss">
@@ -37,4 +41,5 @@
 			font-weight: bolder;
 		}
 	}
+	
 </style>

@@ -16,5 +16,5 @@ const _sfc_main = {
     };
   }
 };
-const Component = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["__scopeId", "data-v-e9261bcc"], ["__file", "C:/Users/黎翠儿/Documents/GitHub/TeammateApp/components/detailTitle/detailTitle.vue"]]);
+const Component = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["__scopeId", "data-v-e9261bcc"]]);
 wx.createComponent(Component);

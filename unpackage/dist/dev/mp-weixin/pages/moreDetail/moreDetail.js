@@ -3,14 +3,12 @@ const common_vendor = require("../../common/vendor.js");
 if (!Array) {
   const _easycom_dash2 = common_vendor.resolveComponent("dash");
   const _easycom_wei_dropdown_menu2 = common_vendor.resolveComponent("wei-dropdown-menu");
-  const _easycom_teamInfo2 = common_vendor.resolveComponent("teamInfo");
-  (_easycom_dash2 + _easycom_wei_dropdown_menu2 + _easycom_teamInfo2)();
+  (_easycom_dash2 + _easycom_wei_dropdown_menu2)();
 }
 const _easycom_dash = () => "../../components/dash/dash.js";
 const _easycom_wei_dropdown_menu = () => "../../uni_modules/wei-dropdown-menu/components/wei-dropdown-menu/wei-dropdown-menu.js";
-const _easycom_teamInfo = () => "../../components/teamInfo/teamInfo2.js";
 if (!Math) {
-  (_easycom_dash + _easycom_wei_dropdown_menu + _easycom_teamInfo)();
+  (_easycom_dash + _easycom_wei_dropdown_menu)();
 }
 const _sfc_main = {
   __name: "moreDetail",
@@ -127,16 +125,10 @@ const _sfc_main = {
         g: common_vendor.p({
           data: teamRegionData.value,
           value: _ctx.teamRegionValue
-        }),
-        h: common_vendor.f(10, (item, index, i0) => {
-          return {
-            a: index,
-            b: "c2e090e7-4-" + i0
-          };
         })
       };
     };
   }
 };
-const MiniProgramPage = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["__scopeId", "data-v-c2e090e7"], ["__file", "C:/Users/黎翠儿/Documents/GitHub/TeammateApp/pages/moreDetail/moreDetail.vue"]]);
+const MiniProgramPage = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["__scopeId", "data-v-c2e090e7"]]);
 wx.createPage(MiniProgramPage);

@@ -51,6 +51,7 @@ const _sfc_main = {
       popupMsg.value = "操作成功";
     };
     common_vendor.onLoad((option) => {
+      toaValue.value = option.toPageValue;
       tobValue.value = option.tobPageValue;
       tocValue.value = option.tocPageValue;
     });
