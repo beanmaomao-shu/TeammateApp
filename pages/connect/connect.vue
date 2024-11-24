@@ -29,8 +29,8 @@
 
 <script setup>
 	import { ref, nextTick } from 'vue';
-	const phone=ref('(空)');
-	const wechat=ref('(空)');
+	const phone=ref('17752261391');
+	const wechat=ref('yangbaba');
 	const infocard=ref('(空)');
 	
 	

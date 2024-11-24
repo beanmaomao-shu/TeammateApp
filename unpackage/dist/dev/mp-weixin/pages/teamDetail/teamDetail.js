@@ -1,6 +1,5 @@
 "use strict";
 const common_vendor = require("../../common/vendor.js");
-const common_assets = require("../../common/assets.js");
 if (!Array) {
   const _easycom_detailTitle2 = common_vendor.resolveComponent("detailTitle");
   const _easycom_dash2 = common_vendor.resolveComponent("dash");
@@ -24,8 +23,8 @@ if (!Math) {
 const _sfc_main = {
   __name: "teamDetail",
   setup(__props) {
-    const numbers = common_vendor.ref("2");
-    const time = common_vendor.ref("2022-12-12 12:12:12");
+    const numbers = common_vendor.ref("6");
+    const time = common_vendor.ref("2024-12-12 8:30:00");
     const address = common_vendor.ref("北京市朝阳区");
     const toaValue = common_vendor.ref("");
     const tobValue = common_vendor.ref("");
@@ -49,9 +48,14 @@ const _sfc_main = {
     const dialogConfirm = () => {
       showMessage.value.open();
       popupMsg.value = "操作成功";
+      common_vendor.index.navigateBack();
     };
     common_vendor.onLoad((option) => {
+<<<<<<< Updated upstream
       toaValue.value = option.toPageValue;
+=======
+      toaValue.value = option.toaPageValue;
+>>>>>>> Stashed changes
       tobValue.value = option.tobPageValue;
       tocValue.value = option.tocPageValue;
     });
@@ -71,130 +75,127 @@ const _sfc_main = {
           ["img-src"]: "/static/images/图片.png",
           ["p-title"]: "队伍图标"
         }),
-        b: common_assets._imports_0$2,
-        c: common_vendor.p({
+        b: common_vendor.p({
           ["img-src"]: "/static/images/别名.png",
           ["p-title"]: "队伍名称"
         }),
-        d: common_vendor.p({
+        c: common_vendor.p({
           ["img-src"]: "/static/images/文字.png",
           ["p-title"]: "队伍口号"
         }),
-        e: common_vendor.p({
+        d: common_vendor.p({
           ["img-src"]: "/static/images/简介.png",
           ["p-title"]: "队伍简介"
         }),
-        f: common_vendor.p({
+        e: common_vendor.p({
           Color: "#E5E5E5",
           Width: "780rpx",
           Height: "10rpx"
         }),
-        g: common_vendor.p({
+        f: common_vendor.p({
           ["img-src"]: "/static/images/人员.png",
           ["p-title"]: "队伍成员"
         }),
-        h: common_assets._imports_1$2,
-        i: common_assets._imports_1$2,
-        j: common_assets._imports_1$2,
-        k: common_vendor.p({
+        g: common_vendor.p({
           Color: "#E5E5E5",
           Width: "780rpx",
           Height: "10rpx"
         }),
-        l: common_vendor.p({
+        h: common_vendor.p({
           ["img-src"]: "/static/images/组队要求.png",
           ["p-title"]: "组队要求"
         }),
-        m: common_vendor.p({
+        i: common_vendor.p({
           ["img-src"]: "/static/images/组队人数.png",
           ["p-title"]: "组队人数"
         }),
-        n: common_vendor.t(numbers.value),
-        o: common_vendor.p({
+        j: common_vendor.t(numbers.value),
+        k: common_vendor.p({
           ["img-src"]: "/static/images/timeout.png",
           ["p-title"]: "截止时间"
         }),
-        p: common_vendor.t(time.value),
-        q: common_vendor.p({
+        l: common_vendor.t(time.value),
+        m: common_vendor.p({
           ["img-src"]: "/static/images/地点.png",
           ["p-title"]: "赛区地点"
         }),
-        r: common_vendor.p({
+        n: common_vendor.p({
           type: "map-pin-ellipse",
           size: "20"
         }),
-        s: common_vendor.t(address.value),
-        t: common_vendor.o((...args) => _ctx.getMapLocation && _ctx.getMapLocation(...args)),
-        v: toaValue.value === "a"
+        o: common_vendor.t(address.value),
+        p: common_vendor.o((...args) => _ctx.getMapLocation && _ctx.getMapLocation(...args)),
+        q: toaValue.value === "a"
       }, toaValue.value === "a" ? {
-        w: common_vendor.p({
+        r: common_vendor.p({
           ["img-src"]: "/static/images/申请加入.png",
           Title: "申请加入",
           Color: "#FF5733"
         })
       } : {}, {
-        x: toaValue.value === "a"
+        s: toaValue.value === "a"
       }, toaValue.value === "a" ? {
-        y: common_vendor.p({
+        t: common_vendor.p({
           ["img-src"]: "/static/images/一起讨论.png",
           Title: "一起讨论",
           Color: "#F3705A"
         }),
-        z: common_vendor.o(($event) => toChatPage())
+        v: common_vendor.o(($event) => toChatPage())
       } : {}, {
-        A: tobValue.value === "b"
+        w: tobValue.value === "b"
       }, tobValue.value === "b" ? {
-        B: common_vendor.p({
+        x: common_vendor.p({
           ["img-src"]: "/static/images/退出队伍.png",
           Title: "退出队伍",
           Color: "#D43030"
         }),
-        C: common_vendor.o(($event) => toggleDialog("error", "out"))
+        y: common_vendor.o(($event) => toggleDialog("error", "out"))
       } : {}, {
-        D: tocValue.value === "c"
+        z: tocValue.value === "c"
       }, tocValue.value === "c" ? {
-        E: common_vendor.p({
+        A: common_vendor.p({
           ["img-src"]: "/static/images/发送邀请.png",
           Title: "发送邀请",
           Color: "#FF5733"
         }),
-        F: common_vendor.o(($event) => toInvitePage())
+        B: common_vendor.o(($event) => toInvitePage())
       } : {}, {
-        G: tocValue.value === "c"
+        C: tocValue.value === "c"
       }, tocValue.value === "c" ? {
-        H: common_vendor.p({
+        D: common_vendor.p({
           ["img-src"]: "/static/images/解散队伍.png",
           Title: "解散队伍",
           Color: "#FF8D1A"
         }),
-        I: common_vendor.o(($event) => toggleDialog("error", "disband"))
+        E: common_vendor.o(($event) => toggleDialog("error", "disband"))
       } : {}, {
-        J: common_vendor.p({
+        F: common_vendor.p({
           type: popupType.value,
           message: popupMsg.value,
           duration: 2e3
         }),
-        K: common_vendor.sr(showMessage, "a119523a-17", {
+        G: common_vendor.sr(showMessage, "6da55282-17", {
           "k": "showMessage"
         }),
-        L: common_vendor.p({
+        H: common_vendor.p({
           type: "message"
         }),
-        M: common_vendor.o(dialogConfirm),
-        N: common_vendor.p({
+        I: common_vendor.o(dialogConfirm),
+        J: common_vendor.p({
           type: msgType.value,
           cancelText: "取消",
           confirmText: "确定",
           content: messageText.value
         }),
-        O: common_vendor.sr(alertDialog, "a119523a-19", {
+        K: common_vendor.sr(alertDialog, "6da55282-19", {
           "k": "alertDialog"
         }),
-        P: common_vendor.p({
+        L: common_vendor.p({
           type: "dialog"
         })
       });
     };
   }
 };
-wx.createPage(_sfc_main);
+const MiniProgramPage = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["__file", "C:/Users/黎翠儿/Documents/GitHub/TeammateApp/pages/teamDetail/teamDetail.vue"]]);
+wx.createPage(MiniProgramPage);

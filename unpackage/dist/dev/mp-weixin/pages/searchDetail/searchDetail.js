@@ -1,6 +1,5 @@
 "use strict";
 const common_vendor = require("../../common/vendor.js");
-const common_assets = require("../../common/assets.js");
 const _sfc_main = {
   __name: "searchDetail",
   setup(__props) {
@@ -15,8 +14,7 @@ const _sfc_main = {
       return {
         a: dataFromSourcePage.value,
         b: common_vendor.o(($event) => dataFromSourcePage.value = $event.detail.value),
-        c: common_assets._imports_0,
-        d: common_vendor.f(matchData.value, (item, index, i0) => {
+        c: common_vendor.f(matchData.value, (item, index, i0) => {
           return {
             a: item.imgUrl,
             b: common_vendor.t(item.matchName),
@@ -24,6 +22,7 @@ const _sfc_main = {
             d: item.id
           };
         }),
+<<<<<<< Updated upstream
         e: common_assets._imports_1$1,
         f: common_assets._imports_1$2,
         g: common_assets._imports_3,
@@ -32,9 +31,12 @@ const _sfc_main = {
         j: common_assets._imports_5,
         k: common_assets._imports_6,
         l: `/pages/teamDetail/teamDetail?toPageValue=a`
+=======
+        d: `/pages/teamDetail/teamDetail?toPageValue=a`
+>>>>>>> Stashed changes
       };
     };
   }
 };
-const MiniProgramPage = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["__scopeId", "data-v-ce5e1149"]]);
+const MiniProgramPage = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["__scopeId", "data-v-ce5e1149"], ["__file", "C:/Users/黎翠儿/Documents/GitHub/TeammateApp/pages/searchDetail/searchDetail.vue"]]);
 wx.createPage(MiniProgramPage);

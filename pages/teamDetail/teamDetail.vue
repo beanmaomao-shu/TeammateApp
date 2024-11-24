@@ -20,7 +20,7 @@
 					<!-- 队伍口号 -->
 					<view class="slogan">
 						<detailTitle img-src='/static/images/文字.png' p-title="队伍口号"></detailTitle>
-						<view class="box">乌拉呀哈呀哈乌拉</view>
+						<view class="box">Bug 克星，代码任我行！</view>
 					</view>
 				</view>
 			
@@ -37,9 +37,10 @@
 		<view class="members">
 			<detailTitle img-src='/static/images/人员.png' p-title="队伍成员"></detailTitle>
 			<view class="avatarsList">
+				<image class="avatar" src="../../static/images/avatar1.png" mode=""></image>
+				<image class="avatar" src="../../static/images/avatar2.png" mode=""></image>
 				<image class="avatar" src="../../static/images/avatar3.png" mode=""></image>
-				<image class="avatar" src="../../static/images/avatar3.png" mode=""></image>
-				<image class="avatar" src="../../static/images/avatar3.png" mode=""></image>
+				<image class="avatar" src="../../static/images/avatar.png" mode=""></image>
 			</view>
 		</view>
 		<!-- 分割线 -->
@@ -102,7 +103,8 @@
 			confirmText="确定"
 			:content="messageText"
 			@confirm="dialogConfirm"
-			></uni-popup-dialog>
+			>
+			</uni-popup-dialog>
 		</uni-popup>
 	</view>
 </template>
@@ -113,8 +115,8 @@
 
 
 	//队伍简介
-	const numbers=ref('2');
-	const time=ref('2022-12-12 12:12:12');
+	const numbers=ref('6');
+	const time=ref('2024-12-12 8:30:00');
 	const address=ref('北京市朝阳区');
 
 	//跳转按钮
@@ -141,16 +143,19 @@
 			messageText.value='您确定要解散该团队吗?'
 		}
 	}
+	
 	const dialogConfirm=()=>{
-		
 		showMessage.value.open();
-		popupMsg.value='操作成功'
+		popupMsg.value='操作成功';
+		uni.navigateBack()
 	}
 
-
-
 	onLoad((option)=>{
+<<<<<<< Updated upstream
 		 toaValue.value = option.toPageValue 
+=======
+		toaValue.value = option.toaPageValue
+>>>>>>> Stashed changes
 		tobValue.value = option.tobPageValue
 		tocValue.value = option.tocPageValue
 	})
@@ -159,6 +164,7 @@
 			url: "/pages/chatRoom/chatRoom"
 		})
 	}
+	
 	const toInvitePage=()=>{
 		uni.navigateTo({
 			url: "/pages/inviteMate/inviteMate"

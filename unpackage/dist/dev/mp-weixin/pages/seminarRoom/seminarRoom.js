@@ -1,6 +1,5 @@
 "use strict";
 const common_vendor = require("../../common/vendor.js");
-const common_assets = require("../../common/assets.js");
 if (!Array) {
   const _easycom_uni_segmented_control2 = common_vendor.resolveComponent("uni-segmented-control");
   const _easycom_infoCard2 = common_vendor.resolveComponent("infoCard");
@@ -24,8 +23,13 @@ const _sfc_main = {
         current.value = e.currentIndex;
       }
     };
-    const isEmptyEnterTeam = common_vendor.ref(true);
-    const isEmptyCreateTeam = common_vendor.ref(false);
+    const isCreateTeam = common_vendor.ref(true);
+    const isEnterTeam = common_vendor.ref(true);
+    common_vendor.onMounted(() => {
+      setInterval(() => {
+        isCreateTeam.value = false;
+      }, 3e3);
+    });
     return (_ctx, _cache) => {
       return common_vendor.e({
         a: common_vendor.o(onClickItem),
@@ -37,21 +41,18 @@ const _sfc_main = {
         }),
         c: current.value === 0
       }, current.value === 0 ? common_vendor.e({
-        d: isEmptyCreateTeam.value
-      }, isEmptyCreateTeam.value ? {
-        e: common_assets._imports_0$1,
-        f: common_assets._imports_1$3
-      } : {}, {
-        g: !isEmptyCreateTeam.value
-      }, !isEmptyCreateTeam.value ? {
-        h: common_assets._imports_0$2,
-        i: common_vendor.p({
+        d: !isCreateTeam.value
+      }, !isCreateTeam.value ? {} : {}, {
+        e: isCreateTeam.value
+      }, isCreateTeam.value ? {
+        f: common_vendor.p({
           tocValue: "c",
           contentValue: "a"
         })
       } : {}) : {}, {
-        j: current.value === 1
+        g: current.value === 1
       }, current.value === 1 ? common_vendor.e({
+<<<<<<< Updated upstream
         k: !isEmptyEnterTeam.value
       }, !isEmptyEnterTeam.value ? {
         l: common_assets._imports_0$1,
@@ -61,10 +62,17 @@ const _sfc_main = {
       }, isEmptyEnterTeam.value ? {
         o: common_assets._imports_3$1,
         p: common_vendor.p({
+=======
+        h: !isEnterTeam.value
+      }, !isEnterTeam.value ? {} : {}, {
+        i: isEnterTeam.value
+      }, isEnterTeam.value ? {
+        j: common_vendor.p({
+>>>>>>> Stashed changes
           tobValue: "b"
         })
       } : {}) : {}, {
-        q: common_vendor.p({
+        k: common_vendor.p({
           title: "实心标签",
           type: "line"
         })
@@ -72,5 +80,5 @@ const _sfc_main = {
     };
   }
 };
-const MiniProgramPage = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["__scopeId", "data-v-779b4231"]]);
+const MiniProgramPage = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["__scopeId", "data-v-779b4231"], ["__file", "C:/Users/黎翠儿/Documents/GitHub/TeammateApp/pages/seminarRoom/seminarRoom.vue"]]);
 wx.createPage(MiniProgramPage);

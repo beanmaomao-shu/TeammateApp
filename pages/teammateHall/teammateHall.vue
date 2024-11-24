@@ -64,9 +64,45 @@
 			</view>
 			<dash Color="#F1E6FF" Width="700rpx" Height="8rpx"></dash>
 			<!--  -->
-			
-			<view class="teamInfo" toValue='a' v-for="(item,index) in matchData" :key="item.id">
-				<navigator :url="`/pages/teamDetail/teamDetail?toPageValue=a`">
+			<!-- 新组建的 -->
+			<view class="teamInfo" v-if="create">
+				<navigator :url="`/pages/teamDetail/teamDetail?tocPageValue=c`">
+					<!--比赛图片 -->
+					<view class="matchImg">
+						<image src='../../static/images/match8.png' mode="widthFix"></image>
+					</view>
+					<view class="mainInfo">
+						<!-- 比赛名 -->
+						<view class="matchName">
+							'第三届"中外传播杯"全国大学生英语翻译大赛-英译汉赛道'
+						</view>
+						<!-- 队名 -->
+						<view class="teamName">
+							<image src="../../static/images/队伍.png" mode=""></image>
+							<p>一战成名队</p>
+						</view>
+						<!-- 头像列表//研讨室跳转 -->
+						<view class="bottom">
+							<view class="avatars">
+								<img src="../../static/images/avatar3.png" alt="" />
+								<img src="../../static/images/avatar1.png" alt="" />
+								<img src="../../static/images/avatar.png" alt="" />
+								<img src="../../static/images/avatar.png" alt="" />
+								<img src="../../static/images/avatar2.png" alt="" />
+							</view>
+							<view class="goChat">
+								<navigator url="/pages/chatRoom/chatRoom">
+									<image src="../../static/images/trending.png" mode=""></image>
+									<p>一起讨论></p>
+								</navigator>
+							</view>
+						</view>
+					</view>
+				</navigator>
+			</view>
+			<!-- 默认生成 -->
+			<view class="teamInfo" v-for="(item,index) in matchData" :key="item.id">
+				<navigator :url="`/pages/teamDetail/teamDetail?toaPageValue=a`">
 					<!--比赛图片 -->
 					<view class="matchImg">
 						<image :src="item.imgUrl" mode="widthFix"></image>
@@ -103,9 +139,12 @@
 			<!--  -->
 		</view>
 		<view class="issue">
-			<button @click="toMakeTeam">
+			<!-- <button @click="toMakeTeam">
 				组队
-			</button>
+			</button> -->
+		</view>
+		<view class="issue" @click="toMakeTeam">
+			<navigator url="../makeTeam/makeTeam">组队</navigator>
 		</view>
 	</view>
 </template>
@@ -115,11 +154,20 @@
 	import { useRouter } from 'vue-router';
 	import {onLoad} from "@dcloudio/uni-app";
 	
+	// 临时生成新组成的队伍
+	const create=ref(false)
+	const toMakeTeam=()=>{
+		setInterval(()=>{
+			create.value=true
+		},1000)
+	}
+	
+	// 
 	const inputValue=ref('');
 	const router = useRouter();
 	const showSuggestion=ref(false)
 	const matchData=ref([
-		{id:1,matchName:'2024年第十四届APMCM亚太地区大学生数学建模竞赛',name:'一战成名队', imgUrl:'../../static/images/match6.png'},
+		{id:1,matchName:'2024年第十四届APMCM亚太地区大学生数学建模竞赛',name:'听党的就队', imgUrl:'../../static/images/match6.png'},
 		{id:2,matchName:'2024年全国大学生英语翻译大赛（NETCCS）',name:'六级能不能过队', imgUrl:'../../static/images/match3.png'},
 		{id:3,matchName:'2024年第五届"中译国青杯"国际组织文件翻译大赛',name:'超级翻译官队', imgUrl:'../../static/images/match4.png'},
 		{id:4,matchName:'2024创想中国全国大学生创新创业大赛',name:'小呆呆创新队', imgUrl:'../../static/images/match15.png'},
@@ -149,25 +197,25 @@
 		}
 		
 	}
+	
 	//搜索输入框筛选逻辑
 	const filterSuggestion=()=>{
 		if(inputValue.value)
 		{
 			filteredData.value=matchData.value.filter(item=>{
 				return item.matchName.toLowerCase().includes(inputValue.value.toLowerCase())
-		
 			})
 		}else{
 			filteredData.value=[]
 		}
 	}
+	
 	//点击li回显信息到输入框
 	const selectSuggestion=(suggestion,event)=>{
-		 event.stopPropagation()
+		event.stopPropagation()
 		inputValue.value=suggestion.matchName
 		console.log('Selecting suggestion:', suggestion)
 		filteredData.value=[]
-		
 	}
 	
 	//搜索组队信息
@@ -175,11 +223,12 @@
 		// 这里处理输入框的逻辑
 	}
 	//跳转到组队页面
-	const toMakeTeam=()=>{
-		uni.redirectTo({
-			url:"../makeTeam/makeTeam"
-		})
-	}
+	// const toMakeTeam=()=>{
+	// 	uni.redirectTo({
+	// 		url:"../makeTeam/makeTeam"
+	// 	})
+	// }
+	
 	//传参
 	const centerValue=ref('');
 	const props=defineProps({
@@ -194,7 +243,6 @@
 
 <style lang="scss" scoped>
 	.teammateLayout{
-	
 		.search{
 			position: relative;
 			width: 700rpx;
@@ -315,15 +363,15 @@
 		right: 30rpx;
 		bottom: 100rpx;
 		border-radius: 20%;
-		width: 130rpx;
-		height: 50rpx;
 		text-align: center;
-		line-height: 50rpx;
-		button{
+		line-height: 80rpx;
+		width: 130rpx;
+		height: 80rpx;
+		background: linear-gradient(90deg, #6c5ce7, rgba(224, 217, 255, 0.8));
+		border-radius: 30rpx;
+		border: 2rpx solid #fff;
+		navigator{
 			color: #fff;
-		 background: linear-gradient(90deg, #6c5ce7, rgba(224, 217, 255, 0.8));
-			border-radius: 30rpx;
-			border: 2rpx solid #fff;
 		}
 		
 	}

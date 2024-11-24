@@ -13,7 +13,8 @@
 				<view class="content">
 					<!-- 创建的团队 -->
 					<view v-if="current === 0">
-						<view class="createTeam empty" v-if="isEmptyCreateTeam">
+						<!-- 无创建团队 -->
+						<view class="createTeam empty" v-if="!isCreateTeam">
 							<image class="bg" src="../../static/images/background.png" mode=""></image>
 							<image class="box" src="../../static/images/default.png" mode="">
 							<view class="font">
@@ -21,7 +22,8 @@
 							</view>
 							</image>
 						</view>
-						<view class="createTeam" v-if="!isEmptyCreateTeam">
+						<!-- 有创建团队 -->
+						<view class="createTeam" v-if="isCreateTeam">
 							<view class="teamList">
 								<navigator url="/pages/chatRoom/chatRoom" class="team">
 									<infoCard tocValue='c' contentValue='a'>
@@ -41,7 +43,8 @@
 					</view>
 					<!-- 加入的团队 -->
 					<view v-if="current === 1">
-						<view class="enterTeam empty" v-if="!isEmptyEnterTeam">
+						<!-- 无加入团队 -->
+						<view class="enterTeam empty" v-if="!isEnterTeam">
 							<image class="bg" src="../../static/images/background.png" mode=""></image>
 							<image class="box" src="../../static/images/default.png" mode="">
 								<view class="font">
@@ -50,7 +53,8 @@
 							</image>
 						</view>
 						<view class="enterTeam">
-							<view class="teamList" v-if="isEmptyEnterTeam">
+							<!-- 有加入团队 -->
+							<view class="teamList" v-if="isEnterTeam">
 								<navigator url="/pages/chatRoom/chatRoom" class="team">
 									<infoCard tobValue='b'>
 										<template #name>对一题就队</template>
@@ -75,8 +79,8 @@
 </template>
 
 <script setup>
-	import {ref} from 'vue'
-	
+	import {ref,onMounted } from 'vue'
+	import {onLoad,onShow} from "@dcloudio/uni-app";
 	// 选项卡
 	const current=ref(0)
 	const items=ref(['我创建的团队', '我加入的团队'])
@@ -90,8 +94,16 @@
 		}
 	}
 	//选项卡内容
-	const isEmptyEnterTeam=ref(true)
-	const isEmptyCreateTeam=ref(false)
+	const isCreateTeam=ref(true) //创建团队
+	const isEnterTeam=ref(true) //加入团队
+	
+	//等pinia重新处理解散业务
+	onMounted(()=>{
+		setInterval(()=>{
+			isCreateTeam.value=false
+		},3000)
+	})
+
 </script>
 
 <style lang="scss" scoped>
@@ -101,8 +113,6 @@
 				width: 780rpx;
 				height: 1262rpx;
 				position: relative;
-			
-			
 				.box{
 					width: 330rpx;
 					height: 330rpx;

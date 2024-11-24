@@ -1,6 +1,5 @@
 "use strict";
 const common_vendor = require("../../common/vendor.js");
-const common_assets = require("../../common/assets.js");
 if (!Array) {
   const _easycom_dash2 = common_vendor.resolveComponent("dash");
   const _component_van_cell = common_vendor.resolveComponent("van-cell");
@@ -17,8 +16,8 @@ if (!Math) {
 const _sfc_main = {
   __name: "connect",
   setup(__props) {
-    const phone = common_vendor.ref("(空)");
-    const wechat = common_vendor.ref("(空)");
+    const phone = common_vendor.ref("17752261391");
+    const wechat = common_vendor.ref("yangbaba");
     const infocard = common_vendor.ref("(空)");
     const phoneRef = common_vendor.ref(null);
     const wechatRef = common_vendor.ref(null);
@@ -60,75 +59,78 @@ const _sfc_main = {
           Width: "780rpx",
           Height: "10rpx"
         }),
+<<<<<<< Updated upstream
         b: common_assets._imports_0$5,
         c: common_vendor.o(openPhone),
         d: common_vendor.p({
+=======
+        b: common_vendor.o(openPhone),
+        c: common_vendor.p({
+>>>>>>> Stashed changes
           center: true,
           title: "拨打电话",
           isLink: true,
           value: phone.value
         }),
-        e: common_assets._imports_1$5,
-        f: common_vendor.o(openWechat),
-        g: common_vendor.p({
+        d: common_vendor.o(openWechat),
+        e: common_vendor.p({
           center: true,
           title: "添加微信",
           isLink: true,
           value: wechat.value
         }),
-        h: common_assets._imports_2$1,
-        i: common_vendor.o(openInfocard),
-        j: common_vendor.p({
+        f: common_vendor.o(openInfocard),
+        g: common_vendor.p({
           center: true,
           title: "浏览名片",
           isLink: true,
           value: infocard.value
         }),
-        k: common_vendor.o(closePhone),
-        l: common_vendor.o(confirmPhone),
-        m: common_vendor.p({
+        h: common_vendor.o(closePhone),
+        i: common_vendor.o(confirmPhone),
+        j: common_vendor.p({
           mode: "input",
           message: "电话",
           duration: "2000",
           ["before-close"]: "true"
         }),
-        n: common_vendor.sr(phoneRef, "ea8c7664-4", {
+        k: common_vendor.sr(phoneRef, "ea8c7664-4", {
           "k": "phoneRef"
         }),
-        o: common_vendor.p({
+        l: common_vendor.p({
           type: "dialog"
         }),
-        p: common_vendor.o(closeWechat),
-        q: common_vendor.o(confirmWechat),
-        r: common_vendor.p({
+        m: common_vendor.o(closeWechat),
+        n: common_vendor.o(confirmWechat),
+        o: common_vendor.p({
           mode: "input",
           message: "微信",
           duration: "2000",
           ["before-close"]: "true"
         }),
-        s: common_vendor.sr(wechatRef, "ea8c7664-6", {
+        p: common_vendor.sr(wechatRef, "ea8c7664-6", {
           "k": "wechatRef"
         }),
-        t: common_vendor.p({
+        q: common_vendor.p({
           type: "dialog"
         }),
-        v: common_vendor.o(closeInfocard),
-        w: common_vendor.o(confirmInfocard),
-        x: common_vendor.p({
+        r: common_vendor.o(closeInfocard),
+        s: common_vendor.o(confirmInfocard),
+        t: common_vendor.p({
           mode: "input",
           message: "名片",
           duration: "2000",
           ["before-close"]: "true"
         }),
-        y: common_vendor.sr(infocardRef, "ea8c7664-8", {
+        v: common_vendor.sr(infocardRef, "ea8c7664-8", {
           "k": "infocardRef"
         }),
-        z: common_vendor.p({
+        w: common_vendor.p({
           type: "dialog"
         })
       };
     };
   }
 };
-const MiniProgramPage = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["__scopeId", "data-v-ea8c7664"]]);
+const MiniProgramPage = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["__scopeId", "data-v-ea8c7664"], ["__file", "C:/Users/黎翠儿/Documents/GitHub/TeammateApp/pages/connect/connect.vue"]]);
 wx.createPage(MiniProgramPage);

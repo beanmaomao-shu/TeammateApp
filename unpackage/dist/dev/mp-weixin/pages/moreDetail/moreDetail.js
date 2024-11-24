@@ -16,6 +16,17 @@ const _sfc_main = {
     const recentMatchValue = common_vendor.ref({});
     const matchCategoryValue = common_vendor.ref({});
     common_vendor.ref({});
+    const matchData = common_vendor.ref([
+      { id: 1, matchName: "2024年第十四届APMCM亚太地区大学生数学建模竞赛", name: "一战成名队", imgUrl: "../../static/images/match6.png" },
+      { id: 2, matchName: "2024年全国大学生英语翻译大赛（NETCCS）", name: "六级能不能过队", imgUrl: "../../static/images/match3.png" },
+      { id: 3, matchName: '2024年第五届"中译国青杯"国际组织文件翻译大赛', name: "超级翻译官队", imgUrl: "../../static/images/match4.png" },
+      { id: 4, matchName: "2024创想中国全国大学生创新创业大赛", name: "小呆呆创新队", imgUrl: "../../static/images/match15.png" },
+      { id: 5, matchName: '第三届"中外传播杯"全国大学生英语翻译大赛-英译汉赛道', name: "翻译的都队", imgUrl: "../../static/images/match8.png" },
+      { id: 6, matchName: '第二届"数学周报"全国大学生数学能力大赛', name: "基本不懂式队", imgUrl: "../../static/images/match13.png" },
+      { id: 7, matchName: "2024第二届全国大学生数学竞赛暨创新思维挑战赛", name: "哎我队", imgUrl: "../../static/images/match11.png" },
+      { id: 8, matchName: "CCF2024年中国计算机应用技术大赛-全国算法精英大赛", name: "AC队", imgUrl: "../../static/images/match7.png" },
+      { id: 9, matchName: "浙大研究院《智能无人机》研学实践项目", name: "让你飞起来队", imgUrl: "../../static/images/match14.png" }
+    ]);
     const changeMatch = (e) => {
       console.log(e.value.recentMatch);
     };
@@ -125,7 +136,20 @@ const _sfc_main = {
         g: common_vendor.p({
           data: teamRegionData.value,
           value: _ctx.teamRegionValue
+<<<<<<< Updated upstream
         })
+=======
+        }),
+        h: common_vendor.f(matchData.value, (item, index, i0) => {
+          return {
+            a: item.imgUrl,
+            b: common_vendor.t(item.matchName),
+            c: common_vendor.t(item.name),
+            d: item.id
+          };
+        }),
+        i: `/pages/teamDetail/teamDetail?toaPageValue=a`
+>>>>>>> Stashed changes
       };
     };
   }

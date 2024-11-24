@@ -1,6 +1,5 @@
 "use strict";
 const common_vendor = require("../../common/vendor.js");
-const common_assets = require("../../common/assets.js");
 const _sfc_main = {
   __name: "infoCard",
   props: {
@@ -18,9 +17,9 @@ const _sfc_main = {
     }
   },
   setup(__props) {
+    const props = __props;
     const isLeader = common_vendor.ref(true);
     const isaudited = common_vendor.ref(false);
-    const props = __props;
     const centeraValue = common_vendor.ref("");
     const centerbValue = common_vendor.ref("");
     const centercValue = common_vendor.ref("");
@@ -48,17 +47,13 @@ const _sfc_main = {
         g: conValue.value === "c"
       }, conValue.value === "c" ? common_vendor.e({
         h: _ctx.isauthenticated
-      }, _ctx.isauthenticated ? {
-        i: common_assets._imports_0$3
-      } : {}, {
-        j: !_ctx.isauthenticated
-      }, !_ctx.isauthenticated ? {
-        k: common_assets._imports_1$4
-      } : {}) : {}, {
-        l: `/pages/teamDetail/teamDetail?tobPageValue=${centerbValue.value}&tocPageValue=${centercValue.value}`
+      }, _ctx.isauthenticated ? {} : {}, {
+        i: !_ctx.isauthenticated
+      }, !_ctx.isauthenticated ? {} : {}) : {}, {
+        j: `/pages/teamDetail/teamDetail?tobPageValue=${centerbValue.value}&tocPageValue=${centercValue.value}`
       });
     };
   }
 };
-const Component = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["__scopeId", "data-v-d0ce716f"]]);
+const Component = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["__scopeId", "data-v-d0ce716f"], ["__file", "C:/Users/黎翠儿/Documents/GitHub/TeammateApp/components/infoCard/infoCard.vue"]]);
 wx.createComponent(Component);

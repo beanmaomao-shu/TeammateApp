@@ -1,6 +1,5 @@
 "use strict";
 const common_vendor = require("../../common/vendor.js");
-const common_assets = require("../../common/assets.js");
 if (!Array) {
   const _easycom_infoCard2 = common_vendor.resolveComponent("infoCard");
   const _easycom_uni_icons2 = common_vendor.resolveComponent("uni-icons");
@@ -50,80 +49,77 @@ const _sfc_main = {
     };
     return (_ctx, _cache) => {
       return {
-        a: common_assets._imports_0$2,
-        b: common_vendor.f(messages.value, (item, index, i0) => {
+        a: common_vendor.f(messages.value, (item, index, i0) => {
           return common_vendor.e({
             a: item.type == 1
           }, item.type == 1 ? {
-            b: common_assets._imports_4,
-            c: common_vendor.t(item.text),
-            d: common_vendor.t(item.time)
+            b: common_vendor.t(item.text),
+            c: common_vendor.t(item.time)
           } : {}, {
-            e: item.type == 2
+            d: item.type == 2
           }, item.type == 2 ? {
-            f: common_vendor.t(item.text),
-            g: common_vendor.t(item.time),
-            h: common_assets._imports_4
+            e: common_vendor.t(item.text),
+            f: common_vendor.t(item.time)
           } : {}, {
-            i: index
+            g: index
           });
         }),
-        c: common_vendor.o([($event) => message.value = $event.detail.value, handleInput]),
-        d: message.value,
-        e: common_vendor.o(showFunction),
-        f: !message.value,
-        g: common_vendor.p({
+        b: common_vendor.o([($event) => message.value = $event.detail.value, handleInput]),
+        c: message.value,
+        d: common_vendor.o(showFunction),
+        e: !message.value,
+        f: common_vendor.p({
           type: "plus",
           size: "40"
         }),
-        h: message.value,
-        i: common_vendor.o(sendMessage),
-        j: common_vendor.p({
+        g: message.value,
+        h: common_vendor.o(sendMessage),
+        i: common_vendor.p({
           type: "image",
           size: "40"
         }),
-        k: common_vendor.p({
+        j: common_vendor.p({
           type: "camera",
           size: "40"
         }),
-        l: common_vendor.p({
+        k: common_vendor.p({
           type: "email",
           size: "40"
         }),
-        m: common_vendor.p({
+        l: common_vendor.p({
           type: "phone",
           size: "40"
         }),
-        n: common_vendor.p({
+        m: common_vendor.p({
           type: "location",
           size: "40"
         }),
-        o: common_vendor.p({
+        n: common_vendor.p({
           type: "weixin",
           size: "40"
         }),
-        p: common_vendor.o(exchangeWechat),
-        q: isShowFunction.value,
-        r: common_vendor.p({
+        o: common_vendor.o(exchangeWechat),
+        p: isShowFunction.value,
+        q: common_vendor.p({
           name: "slide-up"
         }),
-        s: isShowFunction.value ? 1 : "",
-        t: common_vendor.o(dialogConfirm),
-        v: common_vendor.p({
+        r: isShowFunction.value ? 1 : "",
+        s: common_vendor.o(dialogConfirm),
+        t: common_vendor.p({
           type: "success",
           cancelText: "取消",
           confirmText: "确定",
           content: "您确定要交换联系方式吗?"
         }),
-        w: common_vendor.sr(isOpen, "9b186cfb-9", {
+        v: common_vendor.sr(isOpen, "9b186cfb-9", {
           "k": "isOpen"
         }),
-        x: common_vendor.p({
+        w: common_vendor.p({
           type: "dialog"
         })
       };
     };
   }
 };
-const MiniProgramPage = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["__scopeId", "data-v-9b186cfb"]]);
+const MiniProgramPage = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["__scopeId", "data-v-9b186cfb"], ["__file", "C:/Users/黎翠儿/Documents/GitHub/TeammateApp/pages/chatRoom/chatRoom.vue"]]);
 wx.createPage(MiniProgramPage);

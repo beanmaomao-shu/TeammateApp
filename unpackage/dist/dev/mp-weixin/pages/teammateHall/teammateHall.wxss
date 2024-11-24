@@ -136,16 +136,16 @@
   right: 30rpx;
   bottom: 100rpx;
   border-radius: 20%;
-  width: 130rpx;
-  height: 50rpx;
   text-align: center;
-  line-height: 50rpx;
-}
-.issue button.data-v-305e4dd3 {
-  color: #fff;
+  line-height: 80rpx;
+  width: 130rpx;
+  height: 80rpx;
   background: linear-gradient(90deg, #6c5ce7, rgba(224, 217, 255, 0.8));
   border-radius: 30rpx;
   border: 2rpx solid #fff;
+}
+.issue navigator.data-v-305e4dd3 {
+  color: #fff;
 }
 .teamInfo.data-v-305e4dd3 {
   width: 700rpx;
