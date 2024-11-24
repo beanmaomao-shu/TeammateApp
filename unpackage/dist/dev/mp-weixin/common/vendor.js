@@ -7275,6 +7275,13 @@ const pages = [
       navigationBarTitleText: "",
       enablePullDownRefresh: false
     }
+  },
+  {
+    path: "pages/fakedetail/fakedetail",
+    style: {
+      navigationBarTitleText: "组队详情",
+      enablePullDownRefresh: false
+    }
   }
 ];
 const globalStyle = {

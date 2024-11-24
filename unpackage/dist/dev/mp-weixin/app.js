@@ -15,6 +15,7 @@ if (!Math) {
   "./pages/teamDetail/teamDetail.js";
   "./pages/inviteMate/inviteMate.js";
   "./pages/test/test.js";
+  "./pages/fakedetail/fakedetail.js";
 }
 const _sfc_main = {
   onLaunch: function() {

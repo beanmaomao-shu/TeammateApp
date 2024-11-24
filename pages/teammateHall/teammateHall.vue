@@ -96,6 +96,40 @@
 					</view>
 				</navigator>
 			</view>
+			<!-- 演示 -->
+			<view class="teamInfo">
+				<navigator url="/pages/fakedetail/fakedetail">
+					<!--比赛图片 -->
+					<view class="matchImg">
+						<image src='../../static/images/match5.png' mode="widthFix"></image>
+					</view>
+					<view class="mainInfo">
+						<!-- 比赛名 -->
+						<view class="matchName">
+							2024第十届全国中西部外语翻译大赛
+						</view>
+						<!-- 队名 -->
+						<view class="teamName">
+							<image src="../../static/images/队伍.png" mode=""></image>
+							<p>让我们说中文队</p>
+						</view>
+						<!-- 头像列表//研讨室跳转 -->
+						<view class="bottom">
+							<view class="avatars">
+								<image class="avatar" src="../../static/images/avatar1 (1).jpg" mode=""></image>
+								<image class="avatar" src="../../static/images/avatar1 (2).jpg" mode=""></image>
+								<image class="avatar" src="../../static/images/avatar1 (6).jpg" mode=""></image>
+							</view>
+							<view class="goChat">
+								<navigator url="/pages/chatRoom/chatRoom">
+									<image src="../../static/images/trending.png" mode=""></image>
+									<p>一起讨论></p>
+								</navigator>
+							</view>
+						</view>
+					</view>
+				</navigator>
+			</view>
 			<!-- 默认生成 -->
 			<view class="teamInfo" v-for="(item,index) in matchData" :key="item.id">
 				<navigator :url="`/pages/teamDetail/teamDetail?toaPageValue=a`">

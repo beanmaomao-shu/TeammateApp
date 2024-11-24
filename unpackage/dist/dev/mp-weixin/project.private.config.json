@@ -4,6 +4,20 @@
     "miniprogram": {
       "list": [
         {
+          "name": "pages/fakedetail/fakedetail",
+          "pathName": "pages/fakedetail/fakedetail",
+          "query": "",
+          "launchMode": "default",
+          "scene": null
+        },
+        {
+          "name": "pages/faketeamdetail/faketeamdetail",
+          "pathName": "pages/faketeamdetail/faketeamdetail",
+          "query": "",
+          "launchMode": "default",
+          "scene": null
+        },
+        {
           "name": "pages/seminarRoom/seminarRoom",
           "pathName": "pages/seminarRoom/seminarRoom",
           "query": "",
