@@ -84,11 +84,7 @@
 						<!-- 头像列表//研讨室跳转 -->
 						<view class="bottom">
 							<view class="avatars">
-								<img src="../../static/images/avatar3.png" alt="" />
-								<img src="../../static/images/avatar1.png" alt="" />
 								<img src="../../static/images/avatar.png" alt="" />
-								<img src="../../static/images/avatar.png" alt="" />
-								<img src="../../static/images/avatar2.png" alt="" />
 							</view>
 							<view class="goChat">
 								<navigator url="/pages/chatRoom/chatRoom">

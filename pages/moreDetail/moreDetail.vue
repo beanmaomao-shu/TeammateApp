@@ -25,9 +25,7 @@
 			 </wei-dropdown-menu>
 
 		</view>
-<<<<<<< Updated upstream
-=======
-		<view class="teamInfo" v-for="(item,index) in matchData" :key="item.id">
+		<view class="teamInfo" v-for="(item,index) in matchData" :key="item.id" v-if="!show">
 			<navigator :url="`/pages/teamDetail/teamDetail?toaPageValue=a`">
 				<!--比赛图片 -->
 				<view class="matchImg">
@@ -62,8 +60,41 @@
 				</view>
 			</navigator>
 		</view>
-				
->>>>>>> Stashed changes
+		<view class="teamInfo" v-for="(item,index) in data" :key="item.id" v-if="show">
+			<navigator :url="`/pages/teamDetail/teamDetail?toaPageValue=a`">
+				<!--比赛图片 -->
+				<view class="matchImg">
+					<image :src="item.imgUrl" mode="widthFix"></image>
+				</view>
+				<view class="mainInfo">
+					<!-- 比赛名 -->
+					<view class="matchName">
+						{{item.matchName}}
+					</view>
+					<!-- 队名 -->
+					<view class="teamName">
+						<image src="../../static/images/队伍.png" mode=""></image>
+						<p>{{item.name}}</p>
+					</view>
+					<!-- 头像列表//研讨室跳转 -->
+					<view class="bottom">
+						<view class="avatars">
+							<img src="../../static/images/avatar3.png" alt="" />
+							<img src="../../static/images/avatar1.png" alt="" />
+							<img src="../../static/images/avatar.png" alt="" />
+							<img src="../../static/images/avatar.png" alt="" />
+							<img src="../../static/images/avatar2.png" alt="" />
+						</view>
+						<view class="goChat">
+							<navigator url="/pages/chatRoom/chatRoom">
+								<image src="../../static/images/trending.png" mode=""></image>
+								<p>一起讨论></p>
+							</navigator>
+						</view>
+					</view>
+				</view>
+			</navigator>
+		</view>
 	</view>
 </template>
 
@@ -85,12 +116,21 @@
 		{id:8,matchName:'CCF2024年中国计算机应用技术大赛-全国算法精英大赛',name:'AC队', imgUrl:'../../static/images/match7.png'},
 		{id:9,matchName:'浙大研究院《智能无人机》研学实践项目',name:'让你飞起来队', imgUrl:'../../static/images/match14.png'},
 	])
+	const data=ref([
+		{id:1,matchName:'2024年全国大学生英语翻译大赛（NETCCS）',name:'六级能不能过队', imgUrl:'../../static/images/match3.png'},
+		{id:2,matchName:'2024年第五届"中译国青杯"国际组织文件翻译大赛',name:'超级翻译官队', imgUrl:'../../static/images/match4.png'},
+		{id:3,matchName:'第三届"中外传播杯"全国大学生英语翻译大赛-英译汉赛道',name:'翻译的都队', imgUrl:'../../static/images/match8.png'},
+	])
 	
+	const show=ref(false)
 	const changeMatch=(e)=>{
 		console.log(e.value.recentMatch)
 	};
 	const changeCategory=(e)=>{
-		console.log(e.value.matchCategory)
+		if(e.value.matchCategory==3)
+		{
+			show.value=true;
+		}
 	};
 	const changeRegion=(e)=>{
 		console.log(e.value.teamRegion)

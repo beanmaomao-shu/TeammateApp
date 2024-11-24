@@ -266,5 +266,5 @@ const _sfc_main = {
     };
   }
 };
-const MiniProgramPage = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["__scopeId", "data-v-f62f500a"]]);
+const MiniProgramPage = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["__scopeId", "data-v-f62f500a"], ["__file", "C:/Users/黎翠儿/Documents/GitHub/TeammateApp/pages/makeTeam/makeTeam.vue"]]);
 wx.createPage(MiniProgramPage);

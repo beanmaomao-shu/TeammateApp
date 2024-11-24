@@ -97,45 +97,27 @@ const _sfc_main = {
           color: "#AC33C1",
           background: "#F1E6FF"
         }),
-<<<<<<< Updated upstream
-        j: common_vendor.f(matchData.value, (item, index, i0) => {
-=======
-        i: common_vendor.f(10, (item, index, i0) => {
->>>>>>> Stashed changes
+        i: common_vendor.f(matchData.value, (item, index, i0) => {
           return {
             a: item.imgUrl,
             b: index
           };
         }),
-<<<<<<< Updated upstream
-        k: common_vendor.p({
-=======
         j: common_vendor.p({
->>>>>>> Stashed changes
           Color: "#E5E5E5",
           Width: "780rpx",
           Height: "10rpx"
         }),
-<<<<<<< Updated upstream
-        l: common_assets._imports_1,
-        m: common_assets._imports_2,
-        n: common_vendor.p({
-=======
         k: common_vendor.p({
->>>>>>> Stashed changes
           Color: "#F1E6FF",
           Width: "700rpx",
           Height: "8rpx"
         }),
-<<<<<<< Updated upstream
-        o: common_vendor.f(matchData.value, (item, index, i0) => {
-=======
         l: create.value
       }, create.value ? {
         m: `/pages/teamDetail/teamDetail?tocPageValue=c`
       } : {}, {
         n: common_vendor.f(matchData.value, (item, index, i0) => {
->>>>>>> Stashed changes
           return {
             a: item.imgUrl,
             b: common_vendor.t(item.matchName),
@@ -143,20 +125,8 @@ const _sfc_main = {
             d: item.id
           };
         }),
-<<<<<<< Updated upstream
-        p: common_assets._imports_1$1,
-        q: common_assets._imports_1$2,
-        r: common_assets._imports_3,
-        s: common_assets._imports_4,
-        t: common_assets._imports_4,
-        v: common_assets._imports_5,
-        w: common_assets._imports_6,
-        x: `/pages/teamDetail/teamDetail?toPageValue=a`,
-        y: common_vendor.o(toMakeTeam)
-=======
         o: `/pages/teamDetail/teamDetail?toaPageValue=a`,
         p: common_vendor.o(toMakeTeam)
->>>>>>> Stashed changes
       });
     };
   }

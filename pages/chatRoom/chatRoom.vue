@@ -4,11 +4,11 @@
     <view class="header">
       <infoCard>
         <template #name>
-          一战成名队
+          对一题就队
         </template>
 		<template #img>
 			<view class="avatar">
-				<image class="avatarImg" src="../../static/images/队伍图标1.jpg" mode="aspectFill"></image>
+				<image class="avatarImg" src="../../static/images/队伍图标2.jpg" mode="aspectFill"></image>
 			</view>
 		</template>
       </infoCard>
@@ -23,7 +23,7 @@
       <view class="chat-body" v-for="(item, index) in messages" :key="index">
         <!-- 别人发的信息 -->
         <view class="chat-left" v-if="item.type == 1">
-          <image src="../../static/images/avatar.png" mode="aspectFill"></image>
+          <image src="../../static/images/avatar3.png" mode="aspectFill"></image>
           <view class="textarea">
             {{ item.text }}
             <view class="time">

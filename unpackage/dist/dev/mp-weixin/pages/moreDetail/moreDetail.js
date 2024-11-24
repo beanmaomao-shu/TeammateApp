@@ -27,11 +27,19 @@ const _sfc_main = {
       { id: 8, matchName: "CCF2024年中国计算机应用技术大赛-全国算法精英大赛", name: "AC队", imgUrl: "../../static/images/match7.png" },
       { id: 9, matchName: "浙大研究院《智能无人机》研学实践项目", name: "让你飞起来队", imgUrl: "../../static/images/match14.png" }
     ]);
+    const data = common_vendor.ref([
+      { id: 1, matchName: "2024年全国大学生英语翻译大赛（NETCCS）", name: "六级能不能过队", imgUrl: "../../static/images/match3.png" },
+      { id: 2, matchName: '2024年第五届"中译国青杯"国际组织文件翻译大赛', name: "超级翻译官队", imgUrl: "../../static/images/match4.png" },
+      { id: 3, matchName: '第三届"中外传播杯"全国大学生英语翻译大赛-英译汉赛道', name: "翻译的都队", imgUrl: "../../static/images/match8.png" }
+    ]);
+    const show = common_vendor.ref(false);
     const changeMatch = (e) => {
       console.log(e.value.recentMatch);
     };
     const changeCategory = (e) => {
-      console.log(e.value.matchCategory);
+      if (e.value.matchCategory == 3) {
+        show.value = true;
+      }
     };
     const changeRegion = (e) => {
       console.log(e.value.teamRegion);
@@ -116,7 +124,7 @@ const _sfc_main = {
       }
     ]);
     return (_ctx, _cache) => {
-      return {
+      return common_vendor.e({
         a: common_vendor.p({
           Color: "#E5E5E5",
           Width: "780rpx",
@@ -136,11 +144,10 @@ const _sfc_main = {
         g: common_vendor.p({
           data: teamRegionData.value,
           value: _ctx.teamRegionValue
-<<<<<<< Updated upstream
-        })
-=======
         }),
-        h: common_vendor.f(matchData.value, (item, index, i0) => {
+        h: !show.value
+      }, !show.value ? {
+        i: common_vendor.f(matchData.value, (item, index, i0) => {
           return {
             a: item.imgUrl,
             b: common_vendor.t(item.matchName),
@@ -148,11 +155,22 @@ const _sfc_main = {
             d: item.id
           };
         }),
-        i: `/pages/teamDetail/teamDetail?toaPageValue=a`
->>>>>>> Stashed changes
-      };
+        j: `/pages/teamDetail/teamDetail?toaPageValue=a`
+      } : {}, {
+        k: show.value
+      }, show.value ? {
+        l: common_vendor.f(data.value, (item, index, i0) => {
+          return {
+            a: item.imgUrl,
+            b: common_vendor.t(item.matchName),
+            c: common_vendor.t(item.name),
+            d: item.id
+          };
+        }),
+        m: `/pages/teamDetail/teamDetail?toaPageValue=a`
+      } : {});
     };
   }
 };
-const MiniProgramPage = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["__scopeId", "data-v-c2e090e7"]]);
+const MiniProgramPage = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["__scopeId", "data-v-c2e090e7"], ["__file", "C:/Users/黎翠儿/Documents/GitHub/TeammateApp/pages/moreDetail/moreDetail.vue"]]);
 wx.createPage(MiniProgramPage);

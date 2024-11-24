@@ -5,7 +5,7 @@
 			<view class="peopleCard">
 				<view class="info">
 					<view class="avatar">
-						<image class="avatarImg" src="../../static/images/avatar1.png" mode="aspectFill"></image>
+						<image class="avatarImg" src="../../static/images/avatar.png" mode="aspectFill"></image>
 					</view>
 					<view class="infoGroup">
 						<view class="name">

@@ -37,9 +37,6 @@
 		<view class="members">
 			<detailTitle img-src='/static/images/人员.png' p-title="队伍成员"></detailTitle>
 			<view class="avatarsList">
-				<image class="avatar" src="../../static/images/avatar1.png" mode=""></image>
-				<image class="avatar" src="../../static/images/avatar2.png" mode=""></image>
-				<image class="avatar" src="../../static/images/avatar3.png" mode=""></image>
 				<image class="avatar" src="../../static/images/avatar.png" mode=""></image>
 			</view>
 		</view>
@@ -151,11 +148,7 @@
 	}
 
 	onLoad((option)=>{
-<<<<<<< Updated upstream
-		 toaValue.value = option.toPageValue 
-=======
 		toaValue.value = option.toaPageValue
->>>>>>> Stashed changes
 		tobValue.value = option.tobPageValue
 		tocValue.value = option.tocPageValue
 	})

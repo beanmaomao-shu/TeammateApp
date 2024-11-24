@@ -51,11 +51,7 @@ const _sfc_main = {
       common_vendor.index.navigateBack();
     };
     common_vendor.onLoad((option) => {
-<<<<<<< Updated upstream
-      toaValue.value = option.toPageValue;
-=======
       toaValue.value = option.toaPageValue;
->>>>>>> Stashed changes
       tobValue.value = option.tobPageValue;
       tocValue.value = option.tocPageValue;
     });

@@ -22,18 +22,7 @@ const _sfc_main = {
             d: item.id
           };
         }),
-<<<<<<< Updated upstream
-        e: common_assets._imports_1$1,
-        f: common_assets._imports_1$2,
-        g: common_assets._imports_3,
-        h: common_assets._imports_4,
-        i: common_assets._imports_4,
-        j: common_assets._imports_5,
-        k: common_assets._imports_6,
-        l: `/pages/teamDetail/teamDetail?toPageValue=a`
-=======
         d: `/pages/teamDetail/teamDetail?toPageValue=a`
->>>>>>> Stashed changes
       };
     };
   }

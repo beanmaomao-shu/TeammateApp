@@ -59,14 +59,8 @@ const _sfc_main = {
           Width: "780rpx",
           Height: "10rpx"
         }),
-<<<<<<< Updated upstream
-        b: common_assets._imports_0$5,
-        c: common_vendor.o(openPhone),
-        d: common_vendor.p({
-=======
         b: common_vendor.o(openPhone),
         c: common_vendor.p({
->>>>>>> Stashed changes
           center: true,
           title: "拨打电话",
           isLink: true,

@@ -52,23 +52,11 @@ const _sfc_main = {
       } : {}) : {}, {
         g: current.value === 1
       }, current.value === 1 ? common_vendor.e({
-<<<<<<< Updated upstream
-        k: !isEmptyEnterTeam.value
-      }, !isEmptyEnterTeam.value ? {
-        l: common_assets._imports_0$1,
-        m: common_assets._imports_1$3
-      } : {}, {
-        n: isEmptyEnterTeam.value
-      }, isEmptyEnterTeam.value ? {
-        o: common_assets._imports_3$1,
-        p: common_vendor.p({
-=======
         h: !isEnterTeam.value
       }, !isEnterTeam.value ? {} : {}, {
         i: isEnterTeam.value
       }, isEnterTeam.value ? {
         j: common_vendor.p({
->>>>>>> Stashed changes
           tobValue: "b"
         })
       } : {}) : {}, {

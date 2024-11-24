@@ -27,5 +27,5 @@ const _sfc_main = {
     };
   }
 };
-const Component = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["__scopeId", "data-v-a91f18cb"]]);
+const Component = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["__scopeId", "data-v-a91f18cb"], ["__file", "C:/Users/黎翠儿/Documents/GitHub/TeammateApp/components/fcButton/fcButton.vue"]]);
 wx.createComponent(Component);
