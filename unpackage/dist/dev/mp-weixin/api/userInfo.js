@@ -1,0 +1,1 @@
+"use strict";const e=require("../utils/request.js"),t=r=>e.request({url:"/users/card",method:"PUT",data:r}),s=()=>e.request({url:"/users/card",method:"GET"});exports.editUserInfoAPI=t;exports.getUserInfoAPI=s;

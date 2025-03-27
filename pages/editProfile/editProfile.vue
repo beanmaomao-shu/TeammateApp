@@ -20,18 +20,23 @@
       <view class="form-group">
         <view class="form-item">
           <text class="label">昵称</text>
-          <input type="text" v-model="profile.nickname" placeholder="鸭鸭"/>
+          <input type="text" v-model="profile.username" placeholder="鸭鸭"/>
         </view>
         <view class="form-item">
           <text class="label">性别</text>
-          <picker @change="bindGenderChange" :value="profile.gender" :range="genderArray">
-            <view class="picker">{{genderArray[profile.gender]}}</view>
+          <picker @change="bindGenderChange" :value="profile.sex" :range="genderArray">
+            <view class="picker">{{genderArray[profile.sex]}}</view>
           </picker>
         </view>
         <view class="form-item">
           <text class="label">学校</text>
           <input type="text" v-model="profile.school" placeholder="请输入学校"/>
         </view>
+        <view class="form-item">
+          <text class="label">所在城市</text>
+          <input type="text" v-model="profile.location" placeholder="请输入所在城市"/>
+        </view>
+        
       </view>
 
       <!-- 联系方式 -->
@@ -43,7 +48,7 @@
         </view>
         <view class="form-item">
           <text class="label">微信号</text>
-          <input type="text" v-model="profile.wechat" placeholder="13432439031"/>
+          <input type="text" v-model="profile.wechatId" placeholder="13432439031"/>
         </view>
         <view class="form-item">
           <text class="label">邮箱</text>
@@ -69,8 +74,8 @@
       <!-- 个人简介 -->
       <view class="section-title">个人简介</view>
       <view class="form-group">
-        <textarea v-model="profile.bio" placeholder="请输入个人简介" maxlength="200"/>
-        <view class="word-count">{{profile.bio.length}}/200</view>
+        <textarea v-model="profile.introduction" placeholder="请输入个人简介" maxlength="200"/>
+        <view class="word-count">{{profile.introduction.length}}/200</view>
       </view>
     </view>
 
@@ -80,51 +85,131 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import { editUserInfo } from '@/api/userInfo';
+import { ref, onMounted } from 'vue';
+import { editUserInfoAPI, getUserInfoAPI } from '@/api/userInfo';
 
 const genderArray = ['请选择性别', '男', '女'];
 
 const profile = ref({
-  nickname: '',
-  gender: 0,
+  username: '',
+  sex: '',
   school: '',
   phone: '',
-  wechat: '',
+  wechatId: '',
   email: '',
-  awards: [],
-  bio: ''
+  introduction: '',
+  location: '',
+  awards: []
 });
 
-const bindGenderChange = (e) => {
-  profile.value.gender = e.detail.value;
+// 获取用户现有信息
+const getUserInfo = async () => {
+  try {
+    const res = await getUserInfoAPI();
+    if (res.data) {
+      // 处理 awards 数据，将字符串转换为数组
+      let awardsArray = [];
+      try {
+        // 尝试解析 awards 字符串为数组
+        awardsArray = res.data.awards ? JSON.parse(res.data.awards) : [];
+      } catch (e) {
+        console.error('解析 awards 失败：', e);
+        awardsArray = [];
+      }
+
+      profile.value = {
+        username: res.data.username || '',
+        sex: res.data.sex === '男' ? 1 : (res.data.sex === '女' ? 2 : 0),
+        school: res.data.school || '',
+        phone: res.data.phone || '',
+        wechatId: res.data.wechatId || '',
+        email: res.data.email || '',
+        introduction: res.data.introduction || '',
+        location: res.data.location || '',
+        awards: awardsArray.map(award => ({ name: award })) // 转换为对象数组用于显示
+      };
+    }
+    console.log('获取到的用户信息：', profile.value);
+  } catch (error) {
+    console.error('获取用户信息失败：', error);
+  }
 };
 
+// 保存个人资料
+const saveProfile = async () => {
+  try {
+    // 表单验证
+    if (!profile.value.username.trim()) {
+      uni.showToast({
+        title: '请输入昵称',
+        icon: 'none'
+      });
+      return;
+    }
+
+    // 处理 awards 数据
+    const awardsArray = profile.value.awards
+      .map(award => award.name)
+      .filter(name => name.trim()); // 过滤空值
+
+    // 格式化数据
+    const formData = {
+      username: String(profile.value.username || ''),
+      sex: String(genderArray[profile.value.sex] || ''),
+      school: String(profile.value.school || ''),
+      phone: String(profile.value.phone || ''),
+      wechatId: String(profile.value.wechatId || ''),
+      email: String(profile.value.email || ''),
+      awards: JSON.stringify(awardsArray), // 将数组转换为字符串
+      location: String(profile.value.location || ''),
+      introduction: String(profile.value.introduction || '')
+    };
+
+    // 调试输出
+    console.log('准备提交的数据：', formData);
+
+    const res = await editUserInfoAPI(formData);
+    
+    if (res.code === 200) {
+      uni.showToast({
+        title: '保存成功',
+        icon: 'success'
+      });
+      
+      setTimeout(() => {
+        uni.navigateBack();
+      }, 1500);
+    } else {
+      throw new Error(res.message || '保存失败');
+    }
+  } catch (error) {
+    console.error('保存失败：', error);
+    uni.showToast({
+      title: error.message || '保存失败，请重试',
+      icon: 'none'
+    });
+  }
+};
+
+// 性别选择处理
+const bindGenderChange = (e) => {
+  profile.value.sex = parseInt(e.detail.value);
+};
+
+// 添加获奖经历
 const addAward = () => {
   profile.value.awards.push({ name: '' });
 };
 
+// 删除获奖经历
 const removeAward = (index) => {
   profile.value.awards.splice(index, 1);
 };
 
-const saveProfile = async () => {
- 
-  try{
- uni.showToast({
-    title: '保存成功',
-    icon: 'success'
-  });
-  await editUserInfo(profile.value);
-  setTimeout(() => {
-    uni.navigateBack();
-  }, 1500);
-  }catch(error){
-    console.error('保存失败：', error);
-  }
-  
-  
-};
+// 页面加载时获取用户信息
+onMounted(() => {
+  getUserInfo();
+});
 </script>
 
 <style lang="scss" scoped>
