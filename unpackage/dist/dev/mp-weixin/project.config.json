@@ -11,6 +11,7 @@
     "minified": true,
     "newFeature": true,
     "bigPackageSizeSupport": true,
+    "ignoreUploadUnusedFiles": true,
     "babelSetting": {
       "ignore": [],
       "disablePlugins": [],
@@ -18,8 +19,8 @@
     }
   },
   "compileType": "miniprogram",
-  "libVersion": "3.6.2",
-  "appid": "wxc99881a55ee63f8d",
+  "libVersion": "3.7.7",
+  "appid": "wxcd8f0b97f5343d75",
   "projectname": "T",
   "condition": {
     "search": {

@@ -109,7 +109,16 @@
 				"navigationBarTitleText" : "组队详情",
 				"enablePullDownRefresh" : false
 			}
+		},
+		{
+			"path" : "pages/editProfile/editProfile",
+			"style" : 
+			{
+				"navigationBarTitleText" : "编辑名片",
+				"enablePullDownRefresh" : false
+			}
 		}
+		
 	],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
@@ -151,6 +160,7 @@
 				"iconPath": "./static/images/Home.png",
 				"selectedIconPath": "./static/images/opt-Home.png"
 			}
+			
 		]
 	}
 }

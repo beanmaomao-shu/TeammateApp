@@ -3,65 +3,111 @@
 		<!-- 搜索框 -->
 		<view class="search">
 			<input 
-			v-model="dataFromSourcePage"
+			v-model="searchKeyword"
 			placeholder="搜索在线赛事组队信息"
-			type="text"/>
+			type="text"
+			@input="handleSearch"
+			/>
 			<view>
-				<button class="searchButton" >
+				<button class="searchButton" @click="doSearch">
 					<image src="../../static/images/搜索.png" mode=""></image>
 				</button>
 			</view>
 		</view>
-		<view class="teamInfo" toValue='a' v-for="(item,index) in matchData" :key="item.id">
-			<navigator :url="`/pages/teamDetail/teamDetail?toPageValue=a`">
-				<!--比赛图片 -->
-				<view class="matchImg">
-					<image :src="item.imgUrl" mode="widthFix"></image>
-				</view>
-				<view class="mainInfo">
-					<!-- 比赛名 -->
-					<view class="matchName">
-						{{item.matchName}}
+
+		<!-- 搜索结果列表 -->
+		<view v-if="matchData.length > 0">
+			<view class="teamInfo" v-for="(item, index) in matchData" :key="item.id">
+				<navigator :url="`/pages/teamDetail/teamDetail?toPageValue=a`">
+					<!--比赛图片 -->
+					<view class="matchImg">
+						<image :src="item.poster" mode="widthFix"></image>
 					</view>
-					<!-- 队名 -->
-					<view class="teamName">
-						<image src="../../static/images/队伍.png" mode=""></image>
-						<p>{{item.name}}</p>
-					</view>
-					<!-- 头像列表//研讨室跳转 -->
-					<view class="bottom">
-						<view class="avatars">
-							<img src="../../static/images/avatar3.png" alt="" />
-							<img src="../../static/images/avatar1.png" alt="" />
-							<img src="../../static/images/avatar.png" alt="" />
-							<img src="../../static/images/avatar.png" alt="" />
-							<img src="../../static/images/avatar2.png" alt="" />
+					<view class="mainInfo">
+						<!-- 比赛名 -->
+						<view class="matchName">
+							{{item.name}}
 						</view>
-						<view class="goChat">
-							<navigator url="/pages/chatRoom/chatRoom">
-								<image src="../../static/images/trending.png" mode=""></image>
-								<p>一起讨论></p>
-							</navigator>
+						<!-- 队名 -->
+						<view class="teamName">
+							<image src="../../static/images/队伍.png" mode=""></image>
+							<p>鸭鸭小队</p>
+						</view>
+						<!-- 头像列表//研讨室跳转 -->
+						<view class="bottom">
+							<view class="avatars">
+								<img src="../../static/images/avatar3.png" alt="" />
+								<img src="../../static/images/avatar1.png" alt="" />
+								<img src="../../static/images/avatar.png" alt="" />
+								<img src="../../static/images/avatar.png" alt="" />
+								<img src="../../static/images/avatar2.png" alt="" />
+							</view>
+							<view class="goChat">
+								<navigator url="/pages/chatRoom/chatRoom">
+									<image src="../../static/images/trending.png" mode=""></image>
+									<p>一起讨论></p>
+								</navigator>
+							</view>
 						</view>
 					</view>
-				</view>
-			</navigator>
+				</navigator>
+			</view>
+		</view>
+
+		<!-- 无搜索结果提示 -->
+		<view v-else class="no-result">
+			<text>暂无相关比赛信息</text>
 		</view>
 	</view>
 </template>
 
 <script setup>
-import {onLoad} from "@dcloudio/uni-app";
-import {ref} from 'vue';
+import { ref, onMounted } from 'vue';
+import { onLoad } from "@dcloudio/uni-app";
+import { searchContest } from "@/api/search.js";
 
-const dataFromSourcePage = ref('');
-const matchData=ref([
-		{id:2,matchName:'2024年全国大学生英语翻译大赛（NETCCS）',name:'六级能不能过队', imgUrl:'../../static/images/match3.png'},
-	])
+const searchKeyword = ref('');
+const matchData = ref([]);
+let searchTimeout = null;
+
+// 接收上一页传来的搜索关键词并立即搜索
 onLoad((options) => {
-  dataFromSourcePage.value = options.value;
-  // 可以在这里对传递过来的数据进行处理
+	if (options.value) {
+		searchKeyword.value = decodeURIComponent(options.value);
+		doSearch();
+	}
 });
+
+// 处理输入框搜索
+const handleSearch = () => {
+	clearTimeout(searchTimeout);
+	searchTimeout = setTimeout(() => {
+		doSearch();
+	}, 300);
+};
+
+// 执行搜索
+const doSearch = async () => {
+	if (!searchKeyword.value) {
+		matchData.value = [];
+		return;
+	}
+
+	try {
+		const res = await searchContest(searchKeyword.value);
+		if (res.data) {
+			matchData.value = res.data;
+		} else {
+			matchData.value = [];
+		}
+	} catch (error) {
+		console.error('搜索失败：', error);
+		uni.showToast({
+			title: '搜索失败',
+			icon: 'none'
+		});
+	}
+};
 </script>
 
 <style lang="scss" scoped>
@@ -107,9 +153,11 @@ onLoad((options) => {
 			position: absolute;
 			left: 15rpx;
 			top: 18rpx;
+			width: 210rpx;
+			height: 180rpx;
 			image{
-				width: 210rpx;
-				height: 160rpx;
+				width: 100%;
+				height: 100%;
 			}
 		}
 		.mainInfo{
@@ -161,4 +209,11 @@ onLoad((options) => {
 			}
 		}
 	
+	// 添加无结果提示样式
+	.no-result {
+		text-align: center;
+		padding: 40rpx;
+		color: #999;
+		font-size: 28rpx;
+	}
 </style>

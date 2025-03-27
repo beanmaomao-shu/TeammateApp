@@ -3,78 +3,43 @@
 		<dash Color="#E5E5E5" Width="780rpx" Height="10rpx"></dash>
 		<view class="headMenu">
 			<!-- 近期比赛 -->
-			 <wei-dropdown-menu 
-				 :data="recentMatchData" 
-				 :value="recentMatchValue"
-				 @change="changeMatch"
-				 >
-			 </wei-dropdown-menu>
-			 <!-- 比赛类型 -->
-			  <wei-dropdown-menu 
-				 :data="matchCategoryData" 
-				 :value="matchCategoryValue"
-				 @change="changeCategory"
-				 >
-			 </wei-dropdown-menu>
-			 <!-- 组队赛区 -->
-			 <wei-dropdown-menu
-				 :data="teamRegionData" 
-				 :value="teamRegionValue"
-				 @change="changeRegion"
-				 >
-			 </wei-dropdown-menu>
-
+			<wei-dropdown-menu 
+				:data="recentMatchData" 
+				:value="recentMatchValue"
+				@change="changeMatch"
+				
+			>
+			</wei-dropdown-menu>
+			<!-- 比赛类型 -->
+			<wei-dropdown-menu 
+				:data="matchCategoryData" 
+				:value="matchCategoryValue"
+				@change="changeCategory"
+			>
+			</wei-dropdown-menu>
+			<!-- 组队赛区 -->
+			<wei-dropdown-menu
+				:data="teamRegionData" 
+				:value="teamRegionValue"
+				@change="changeRegion"
+			>
+			</wei-dropdown-menu>
 		</view>
-		<view class="teamInfo" v-for="(item,index) in matchData" :key="item.id" v-if="!show">
-			<navigator :url="`/pages/teamDetail/teamDetail?toaPageValue=a`">
+		<view class="teamInfo" v-for="item in filteredContestData" :key="item.id">
+			<navigator :url="`/pages/teamDetail/teamDetail?id=${item.id}`">
 				<!--比赛图片 -->
 				<view class="matchImg">
-					<image :src="item.imgUrl" mode="widthFix"></image>
+					<image :src="item.poster" mode="widthFix"></image>
 				</view>
 				<view class="mainInfo">
 					<!-- 比赛名 -->
 					<view class="matchName">
-						{{item.matchName}}
+						{{item.name}}
 					</view>
 					<!-- 队名 -->
-					<view class="teamName">
+					<view class="teamName" v-if="item.teamList && item.teamList.length">
 						<image src="../../static/images/队伍.png" mode=""></image>
-						<p>{{item.name}}</p>
-					</view>
-					<!-- 头像列表//研讨室跳转 -->
-					<view class="bottom">
-						<view class="avatars">
-							<img src="../../static/images/avatar3.png" alt="" />
-							<img src="../../static/images/avatar1.png" alt="" />
-							<img src="../../static/images/avatar.png" alt="" />
-							<img src="../../static/images/avatar.png" alt="" />
-							<img src="../../static/images/avatar2.png" alt="" />
-						</view>
-						<view class="goChat">
-							<navigator url="/pages/chatRoom/chatRoom">
-								<image src="../../static/images/trending.png" mode=""></image>
-								<p>一起讨论></p>
-							</navigator>
-						</view>
-					</view>
-				</view>
-			</navigator>
-		</view>
-		<view class="teamInfo" v-for="(item,index) in data" :key="item.id" v-if="show">
-			<navigator :url="`/pages/teamDetail/teamDetail?toaPageValue=a`">
-				<!--比赛图片 -->
-				<view class="matchImg">
-					<image :src="item.imgUrl" mode="widthFix"></image>
-				</view>
-				<view class="mainInfo">
-					<!-- 比赛名 -->
-					<view class="matchName">
-						{{item.matchName}}
-					</view>
-					<!-- 队名 -->
-					<view class="teamName">
-						<image src="../../static/images/队伍.png" mode=""></image>
-						<p>{{item.name}}</p>
+						<p>{{item.teamList[0].name}}</p>
 					</view>
 					<!-- 头像列表//研讨室跳转 -->
 					<view class="bottom">
@@ -99,63 +64,70 @@
 </template>
 
 <script setup>
-	import{ ref }from 'vue';
+	import{ ref ,onMounted, computed}from 'vue';
+	import { getContest } from '../../api/contest';
 	
 	const recentMatchValue = ref({});
 	const matchCategoryValue = ref({});
 	const matchRegionValue = ref({});
+	const selectedType=ref()
 	
-	const matchData=ref([
-		{id:1,matchName:'2024年第十四届APMCM亚太地区大学生数学建模竞赛',name:'一战成名队', imgUrl:'../../static/images/match6.png'},
-		{id:2,matchName:'2024年全国大学生英语翻译大赛（NETCCS）',name:'六级能不能过队', imgUrl:'../../static/images/match3.png'},
-		{id:3,matchName:'2024年第五届"中译国青杯"国际组织文件翻译大赛',name:'超级翻译官队', imgUrl:'../../static/images/match4.png'},
-		{id:4,matchName:'2024创想中国全国大学生创新创业大赛',name:'小呆呆创新队', imgUrl:'../../static/images/match15.png'},
-		{id:5,matchName:'第三届"中外传播杯"全国大学生英语翻译大赛-英译汉赛道',name:'翻译的都队', imgUrl:'../../static/images/match8.png'},
-		{id:6,matchName:'第二届"数学周报"全国大学生数学能力大赛',name:'基本不懂式队', imgUrl:'../../static/images/match13.png'},
-		{id:7,matchName:'2024第二届全国大学生数学竞赛暨创新思维挑战赛',name:'哎我队', imgUrl:'../../static/images/match11.png'},
-		{id:8,matchName:'CCF2024年中国计算机应用技术大赛-全国算法精英大赛',name:'AC队', imgUrl:'../../static/images/match7.png'},
-		{id:9,matchName:'浙大研究院《智能无人机》研学实践项目',name:'让你飞起来队', imgUrl:'../../static/images/match14.png'},
-	])
-	const data=ref([
-		{id:1,matchName:'2024年全国大学生英语翻译大赛（NETCCS）',name:'六级能不能过队', imgUrl:'../../static/images/match3.png'},
-		{id:2,matchName:'2024年第五届"中译国青杯"国际组织文件翻译大赛',name:'超级翻译官队', imgUrl:'../../static/images/match4.png'},
-		{id:3,matchName:'第三届"中外传播杯"全国大学生英语翻译大赛-英译汉赛道',name:'翻译的都队', imgUrl:'../../static/images/match8.png'},
-	])
+	const contestData=ref([])
+	const selectedLocation=ref()
+	
 	
 	const show=ref(false)
-	const changeMatch=(e)=>{
-		console.log(e.value.recentMatch)
+	const changeMatch=()=>{
+		// 清空所有筛选条件
+		selectedType.value = '';
+		selectedLocation.value = '';
+		// 重置其他下拉菜单的值
+		matchCategoryValue.value = {};
+		teamRegionValue.value = {};
 	};
-	const changeCategory=(e)=>{
-		if(e.value.matchCategory==3)
-		{
-			show.value=true;
+	const getData=async()=>{
+		try{
+			const res=await getContest()
+			contestData.value=res.data
+			console.log(contestData.value)
+		}catch(error){
+			console.log('111',error)
 		}
+	}
+	
+	const changeCategory=(e)=>{
+		console.log('选择的类型：', e);
+		const typeMap = {
+			'0': 'IT',
+			'1': '理科',
+			'2': '文学',
+			'3': '外语'
+		};
+		selectedType.value = typeMap[e.value.matchCategory];
+		console.log('筛选类型：', selectedType.value);
 	};
 	const changeRegion=(e)=>{
-		console.log(e.value.teamRegion)
+		console.log('选择的地区：', e);
+		const locationMap = {
+			'0': '广东',
+			'1': '上海',
+			'2': '湖南'
+		};
+		selectedLocation.value = locationMap[e.value.teamRegion];
+		console.log('筛选地区：', selectedLocation.value);
 	}
+	
 	const recentMatchData = ref([
 		{
 			name: 'recentMatch',
 			title: "近期比赛",
 			options: [
 				{
-					label: 'APMCM亚太大学生数学建模竞赛',
-					value: '0',
-					 tip: "显示在最右边的提示" 
-				},
-				{
-					label: 'CCF CAT中国计算机应用技术大赛',
-					value: '1',
-					 tip: "显示在最右边的提示" 
-				},
-				{
-					label: '“天柱山杯”国际传播翻译大赛',
-					value: '2',
-					 tip: "显示在最右边的提示" 
-				},
-			],
+					label: '全部比赛',
+					value: 'all',
+					tip: "显示全部比赛"
+				}
+			]
 		}])
 	const matchCategoryData = ref([
 		{
@@ -163,29 +135,24 @@
 			title: "比赛类别",
 			options: [
 				{
-					label: '工科',
+					label: 'IT',
 					value: '0',
-					 tip: "显示在最右边的提示" 
+					 tip: "IT类比赛" 
 				},
 				{
 					label: '理科',
 					value: '1',
-					 tip: "显示在最右边的提示" 
+					 tip: "理科类比赛" 
 				},
 				{
 					label: '文学',
 					value: '2',
-					 tip: "显示在最右边的提示" 
+					 tip: "文学类比赛" 
 				},
 				{
 					label: '外语',
 					value: '3',
-					 tip: "显示在最右边的提示" 
-				},
-				{
-					label: '媒体',
-					value: '4',
-					 tip: "显示在最右边的提示" 
+					 tip: "外语类比赛" 
 				},
 			],
 		}])
@@ -197,21 +164,47 @@
 				{
 					label: '广东',
 					value: '0',
-					 tip: "显示在最右边的提示" 
+					 tip: "广东赛区" 
 				},
 				{
 					label: '上海',
 					value: '1',
-					 tip: "显示在最右边的提示" 
+					 tip: "上海赛区" 
 				},
 				{
 					label: '湖南',
 					value: '2',
-					 tip: "显示在最右边的提示" 
+					 tip: "湖南赛区" 
 				},
 			]
 		}]);
+	
+	const currentType = ref('');
+	
+	const filteredContestData = computed(() => {
+		// 如果没有选择任何筛选条件，返回全部数据
+		if (!selectedType.value && !selectedLocation.value) {
+			return contestData.value;
+		}
 		
+		let result = contestData.value;
+		
+		// 类型筛选
+		if (selectedType.value) {
+			result = result.filter(item => item.type === selectedType.value);
+		}
+		
+		// 地区筛选
+		if (selectedLocation.value) {
+			result = result.filter(item => item.location === selectedLocation.value);
+		}
+		
+		return result;
+	});
+	
+	onMounted(()=>{
+		getData()
+	})
 </script>
 
 <style lang="scss" scoped>
@@ -272,8 +265,18 @@
 				}
 			}
 			.matchName{
-				font-size: 30rpx;
-				margin-left: 20rpx;
+				min-height: 80rpx;
+				max-height: 90rpx;
+				padding: 12rpx;
+				font-size: 28rpx;
+				line-height: 1.4;
+				white-space: normal;
+				word-wrap: break-word;
+				display: -webkit-box;
+				-webkit-box-orient: vertical;
+				-webkit-line-clamp: 2;
+				overflow: hidden;
+				text-overflow: ellipsis;
 			}
 			.teamName{
 				display: flex;

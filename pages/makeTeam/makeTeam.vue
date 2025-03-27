@@ -14,65 +14,70 @@
 		></uni-data-select>
 	</view>
 	<!-- 1队伍图标 -->
-<view class="avatar">
-	<view class="font">
-		<uni-badge class="uni-badge-left-margin" text="1" :customStyle="{background: '#8707ff'}"/>. 上传队伍图标
-	</view>
-	<view class="getImg">
-		<uni-file-picker limit="1" title=""	fileMediatype="image" :image-styles="imageStyles"></uni-file-picker>
-</view>
-</view>
-<!-- 2队伍名称 -->
-<view class="name">
-	<view class="font">
-		<uni-badge class="uni-badge-left-margin" text="2" :customStyle="{background: '#8707ff'}"/>. 请输入队伍名称:
-		<view class="inputContainer">
-			<input type="text" placeholder="吉伊粉丝后援团"/>
+	<view class="avatar">
+		<view class="font">
+			<uni-badge class="uni-badge-left-margin" text="1" :customStyle="{background: '#8707ff'}"/>. 上传队伍图标
 		</view>
-		
-	</view>
-</view>
-<!-- 3队伍口号 -->
-<view class="slogan">
-	<view class="font">
-		<uni-badge class="uni-badge-left-margin" text="3" :customStyle="{background: '#8707ff'}"/>. 请输入队伍口号 
-		<view class="inputContainer">
-			<input type="text" placeholder="开什么玩笑..." />
+		<view class="getImg">
+			<uni-file-picker 
+				limit="1" 
+				title="" 
+				fileMediatype="image" 
+				:image-styles="imageStyles" 
+				action="http://117.72.54.182:8898/users/upload"
+				@select="onFileSelect"
+				@success="onFileUploadSuccess"
+				@progress="onFileUploadProgress"
+				@fail="onFileUploadFail"
+			></uni-file-picker>
 		</view>
-		
 	</view>
-</view>
-<!-- 4报名类别-->
-<view class="rate">
-	<uni-badge class="uni-badge-left-margin" text="4" type="primary"
-						:customStyle="{background: '#8707ff'}" />. 请选择比赛组别
+	<!-- 2队伍名称 -->
+	<view class="name">
+		<view class="font">
+			<uni-badge class="uni-badge-left-margin" text="2" :customStyle="{background: '#8707ff'}"/>. 请输入队伍名称:
+			<view class="inputContainer">
+				<input v-model="teamData.name" type="text" placeholder="吉伊粉丝后援团"/>
+			</view>
+		</view>
+	</view>
+	<!-- 3队伍口号 -->
+	<view class="slogan">
+		<view class="font">
+			<uni-badge class="uni-badge-left-margin" text="3" :customStyle="{background: '#8707ff'}"/>. 请输入队伍口号 
+			<view class="inputContainer">
+				<input v-model="teamData.slogan" type="text" placeholder="开什么玩笑..." />
+			</view>
+		</view>
+	</view>
+	<!-- 4报名类别-->
+	<view class="rate">
+		<uni-badge class="uni-badge-left-margin" text="4" type="primary" :customStyle="{background: '#8707ff'}" />. 请选择比赛组别
 		<view class="list">
 			<radio-group @change="radioChange">
 				<label style="padding-left: 20rpx;" v-for="(item, index) in rates" :key="item.value" >
-						<radio :value="item.value" :checked="index === current" color="#8707ff"/>
+					<radio :value="item.value" :checked="index === current" color="#8707ff"/>
 					{{item.name}}
 				</label>
 			</radio-group>
 		</view>
-	
-</view>
-<!-- 5队伍简介 -->
-<view class="description">
-	<view class="font">
-		<uni-badge class="uni-badge-left-margin" text="5" :customStyle="{background: '#8707ff'}"/>. 请输入队伍简介 
-		<textarea name="" id="" cols="30" rows="10" placeholder="叭叭叭叭叭叭(140字以内)"></textarea>
 	</view>
-</view>
-<!-- 6组队要求 -->
-<view class="require">
-
+	<!-- 5队伍简介 -->
+	<view class="description">
+		<view class="font">
+			<uni-badge class="uni-badge-left-margin" text="5" :customStyle="{background: '#8707ff'}"/>. 请输入队伍简介 
+			<textarea v-model="teamData.introduction" name="" id="" cols="30" rows="10" placeholder="叭叭叭叭叭叭(140字以内)"></textarea>
+		</view>
+	</view>
+	<!-- 6组队要求 -->
+	<view class="require">
 		<uni-badge class="uni-badge-left-margin" text="6" :customStyle="{background: '#8707ff'}"/>. 组队要求
 		<view class="detail">
 			截止时间 :
 			<view class="box">
 				<uni-datetime-picker
 					type="date"
-					:value="single"
+					:value="teamData.endTime"
 					@change="logTime"
 				/>
 			</view>
@@ -87,197 +92,312 @@
 		<view class="detail">
 			限制人数 :
 			<view class="box">
-			<uni-data-picker
-				v-model="numbers"
-				:localdata="items"
-				popup-title="请选择组队人数"
-				@change="logNum"
-				  >
-			 </uni-data-picker>
-			 </view>
+				<uni-data-picker
+					v-model="teamData.numbers"
+					:localdata="items"
+					popup-title="请选择组队人数"
+					@change="logNum"
+				>
+				</uni-data-picker>
+			</view>
 		</view>
-
 		<view class="btn">
-			<view class="publish" @click="publish">
+			<view class="publish" @click="addTeam">
 				<fcButton img-src='/static/images/发布.png' Title="发布组队" Color="#6B57FE"></fcButton>
 			</view>
-		
+		</view>
 	</view>
-
-</view>
 </view>
 </template>
 
 <script setup>
-import {ref} from 'vue';
-import {onLoad} from "@dcloudio/uni-app";
+import { ref, onMounted } from 'vue';
+import { createTeamAPI } from '../../api/team';
+import { getContest } from "@/api/contest.js"; // 引入获取比赛列表的API
+
 const imageStyles = ref({
-      width: 90,
-      height: 90,
-      border: {
-        color: "#68c984",
-        width: 1,
-        style: 'dashed',
-        radius: '10rpx'
-      },
-    });
-	
-	const range = ref([
-		{value:0,text:"2024年第十四届APMCM大学生数学建模竞赛"},
-		{value:1,text:"2024年全国大学生英语翻译大赛（NETCCS）"},
-		{value:2,text:"2024年第五届中译国青杯国际组织文件翻译大赛"},
-		{value:3,text:"2024创想中国全国大学生创新创业大赛"},
-		{value:5,text:"第三届中外传播杯全国大学生英语翻译大赛"},
-		{value:6,text:"第二届“数学周报”全国大学生数学能力大赛"},
-		{value:7,text:"2024第二届全国大学生数学竞赛暨创新思维挑战赛"},
-		{value:8,text:"CCF2024年中国计算机应用技术大赛算法精英大赛"},
-		{value:9,text:"浙大研究院《智能无人机》研学实践项目"},
-	])	
-	
-	const rates=ref([
-		{value:"1",name:"专科"},
-		{value:"2",name:"普通本科"},
-		{value:"3",name:"92高校"},
-		{value:"4",name:"研究生"},
-	])
-	
-	// 搜索选择人数
-	const numbers=ref();
-	const items=ref([
-	            {
-	              text: "0",
-	              value: 0
-	            },
-	            {
-	              text: "1",
-	              value: 1
-	            },
-	            {
-	              text: "2",
-	              value: 2
-	            },
-	            {
-	              text: "3",
-	              value: 3
-	            },
-	            {
-	              text: "4",
-	              value: 4
-	            },
-	            {
-	              text: "5",
-	              value: 5
-	            },
-	            {
-	              text: "6",
-	              value: 6
-	            },
-	            {
-	              text: "7",
-	              value: 7
-	            },
-	            {
-	              text: "8",
-	              value: 8
-	            },
-	            {
-	              text: "9",
-	              value: 9
-	            },
-	            {
-	              text: "10",
-	              value: 10
-	            }
-	         ])
-	const logNum=()=>{
-		console.log(numbers.value)
-	};
-	//截止时间 
-	const single=ref();
-	const logTime=(e)=>{
-		single.value = e;
-		console.log(e);
-	}
-	
-	//搜索选择地址
-	const address=ref('定位您的位置');
-	const getMapLocation=()=>{
-		uni.chooseLocation({
-			success:(res)=> {
-				// 将获取到的地址信息存储
-				address.value = res.name
+	width: 90,
+	height: 90,
+	border: {
+		color: "#68c984",
+		width: 1,
+		style: 'dashed',
+		radius: '10rpx'
+	},
+});
+
+const rates = ref([
+	{ value: "1", name: "专科" },
+	{ value: "2", name: "普通本科" },
+	{ value: "3", name: "92高校" },
+	{ value: "4", name: "研究生" },
+]);
+
+const teamData = ref({
+	name: "",
+	icon: "",
+	slogan: "",
+	introduction: "",
+	numbers: 0,
+	matchId: 1,
+	endTime: "",
+	matchLocation: ""
+});
+
+// 搜索选择人数
+const numbers = ref();
+const items = ref([
+	{ text: "0", value: 0 },
+	{ text: "1", value: 1 },
+	{ text: "2", value: 2 },
+	{ text: "3", value: 3 },
+	{ text: "4", value: 4 },
+	{ text: "5", value: 5 },
+	{ text: "6", value: 6 },
+	{ text: "7", value: 7 },
+	{ text: "8", value: 8 },
+	{ text: "9", value: 9 },
+	{ text: "10", value: 10 }
+]);
+
+const logNum = (e) => {
+	const selectedNumber = parseInt(e.value || e);
+	teamData.value.numbers = selectedNumber;
+	console.log('选择的人数：', teamData.value.numbers);
+};
+
+// 截止时间 
+const logTime = (e) => {
+	teamData.value.endTime = e;
+	console.log('选择的截止时间：', teamData.value.endTime);
+};
+
+// 添加文件选择处理
+const onFileSelect = (e) => {
+	console.log('文件选择事件：', e);
+	onFileUploadSuccess(e)
+
+};
+
+// 添加上传进度处理
+const onFileUploadProgress = (e) => {
+	console.log('上传进度：', e);
+};
+
+// 添加上传失败处理
+const onFileUploadFail = (e) => {
+	console.error('上传失败：', e);
+};
+
+// 修改文件上传成功处理
+const onFileUploadSuccess = async (e) => {
+	try {
+		console.log('文件上传事件触发：', e);
+		// 检查是否有文件信息
+		if (!e.tempFiles || !e.tempFiles.length) {
+			console.error('没有获取到文件信息');
+			return;
+		}
+
+		const tempFilePath = e.tempFiles[0].url || e.tempFiles[0].path;
+		const token = uni.getStorageSync('token');
+		
+		uni.uploadFile({
+			url: 'http://117.72.54.182:8898/users/upload',
+			filePath: tempFilePath,
+			name: 'file',
+			header: {
+				'Authorization': token
 			},
-			fail:()=>{
-				// 如果用uni.chooseLocation没有获取到地理位置，则需要获取当前的授权信息，判断是否有地理授权信息
-				uni.getSetting({ //获取用户的当前设置
-					success: (res) => {
-						var status = res.authSetting;
-						if(!status['scope.userLocation']){
-						// 如果授权信息中没有地理位置的授权，则需要弹窗提示用户需要授权地理信息
-							uni.showModal({ //显示模态弹窗，可以只有一个确定按钮，也可以同时有确定和取消按钮。
-								title:"是否授权当前位置",
-								content:"需要获取您的地理位置，请确认授权，否则地图功能将无法使用",
-								success:(tip)=>{
-									if(tip.confirm){ 
-									// 如果用户同意授权地理信息，则打开授权设置页面，判断用户的操作
-										uni.openSetting({ //调起客户端小程序设置界面，返回用户设置的操作结果
-											success:(data)=>{
-											// 如果用户授权了地理信息在，则提示授权成功
-												if(data.authSetting['scope.userLocation']===true){
-													uni.showToast({
-														title:"授权成功",
-														icon:"success",
-														duration:1000
-													})
-													// 授权成功后，然后再次chooseLocation获取信息
-													uni.chooseLocation({
-														success: (res) => {
-															// 将获取到的地址信息存储
-															address.value = res.address
-														}
-													})
-												}else{
-													uni.showToast({
-														title:"授权失败",
-														icon:"none",
-														duration:1000
-													})
-												}
-											}
-										})
-									}
-								}
-							})
-						}
-					},
-					fail: (res) => {
+			success: (uploadRes) => {
+				try {
+					console.log('上传响应：', uploadRes);
+					const data = JSON.parse(uploadRes.data);
+					if (data.code === 200) {
+						teamData.value.icon = data.data.url;
+						console.log('设置图片URL：', teamData.value.icon);
 						uni.showToast({
-							title:"调用授权窗口失败",
-							icon:"none",
-							duration:1000
-						})
+							title: '图片上传成功',
+							icon: 'success'
+						});
+					} else {
+						throw new Error('上传失败: ' + data.message);
 					}
-				})
+				} catch (error) {
+					console.error('解析上传响应失败：', error);
+				}
+			},
+			fail: (error) => {
+				console.error('图片上传失败：', error);
+				uni.showToast({
+					title: '图片上传失败',
+					icon: 'error'
+				});
 			}
-		})
+		});
+	} catch (error) {
+		console.error('图片上传异常：', error);
+	}
+};
+
+// 发布组队信息
+const addTeam = async () => {
+	console.log('发布组队函数被调用');
+	
+	// 验证必要字段
+	if (!teamData.value.icon) {
+		uni.showToast({ title: '请上传队伍图标', icon: 'none' });
+		return;
+	}
+	if (!teamData.value.name) {
+		uni.showToast({ title: '请填写队伍名称', icon: 'none' });
+		return;
+	}
+	if (!teamData.value.slogan) {
+		uni.showToast({ title: '请填写队伍口号', icon: 'none' });
+		return;
+	}
+	if (!teamData.value.introduction) {
+		uni.showToast({ title: '请填写队伍简介', icon: 'none' });
+		return;
+	}
+	if (!teamData.value.endTime) {
+		uni.showToast({ title: '请选择截止时间', icon: 'none' });
+		return;
+	}
+	if (!teamData.value.matchLocation) {
+		uni.showToast({ title: '请选择比赛地点', icon: 'none' });
+		return;
 	}
 	
-	//发布组队信息
-	const publish=async()=>{
-		// 提示发布成功
-		uni.showToast({
-			title:"发布成功",
-			icon:"success",
-			duration:500
-		})
-		//返回首页
-		setTimeout(()=>{
+
+	try {
+		const teamDataToSend = {
+			name: String(teamData.value.name || ""),
+			icon: String(teamData.value.icon || ""), // 确保icon字段被包含
+			slogan: String(teamData.value.slogan || ""),
+			introduction: String(teamData.value.introduction || ""),
+			numbers: parseInt(teamData.value.numbers) || 0,
+			endTime: String(teamData.value.endTime || ""),
+			matchLocation: String(teamData.value.matchLocation || ""),
+			matchId: parseInt(teamData.value.matchId) || 1
+		};
+		
+		console.log('发送的格式化数据：', JSON.stringify(teamDataToSend, null, 2));
+		const res = await createTeamAPI(teamDataToSend);
+		
+		if (res.code === 200) {
+			uni.showToast({
+				title: '发布成功',
+				icon: 'success'
+			});
 			uni.switchTab({
 				url:"/pages/teammateHall/teammateHall"
 			})
-		},1000)
-		
+		} else {
+			uni.showToast({
+				title: '发布失败，请重试',
+				icon: 'error'
+			});
+		}
+	} catch (error) {
+		console.error('创建队伍失败：', error);
+		if (error.response) {
+			console.error('错误响应数据：', error.response.data);
+		}
+		uni.showToast({
+			title: '创建失败',
+			icon: 'error'
+		});
 	}
+};
+
+// 比赛列表数据
+const range = ref([]);
+
+// 获取比赛列表
+const getContestList = async () => {
+	try {
+		const res = await getContest();
+		if (res.data) {
+			// 转换数据格式以适配uni-data-select
+			range.value = res.data.map(item => ({
+				value: item.id,  // 比赛ID作为value
+				text: item.name  // 比赛名称作为显示文本
+			}));
+		}
+	} catch (error) {
+		console.error('获取比赛列表失败：', error);
+		uni.showToast({
+			title: '获取比赛列表失败',
+			icon: 'none'
+		});
+	}
+};
+
+// 处理比赛选择
+const value = ref('');
+const change = (e) => {
+	teamData.value.matchId = parseInt(e);
+	console.log('选择的比赛ID：', teamData.value.matchId);
+};
+
+// 组件挂载时获取比赛列表
+onMounted(() => {
+	getContestList();
+});
+
+// 处理地址选择
+const address = ref('定位您的位置');
+const getMapLocation = () => {
+	uni.chooseLocation({
+		success: (res) => {
+			address.value = res.name;
+			teamData.value.matchLocation = res.name;
+			console.log('选择的地点：', teamData.value.matchLocation);
+		},
+		fail: () => {
+			uni.getSetting({
+				success: (res) => {
+					if (!res.authSetting['scope.userLocation']) {
+						uni.showModal({
+							title: "是否授权当前位置",
+							content: "需要获取您的地理位置，请确认授权",
+							success: (tip) => {
+								if (tip.confirm) {
+									uni.openSetting({
+										success: (data) => {
+											if (data.authSetting['scope.userLocation'] === true) {
+												uni.showToast({ title: "授权成功", icon: "success" });
+												uni.chooseLocation({
+													success: (res) => {
+														address.value = res.name;
+														teamData.value.matchLocation = res.name;
+													}
+												});
+											}
+										}
+									});
+								}
+							}
+						});
+					}
+				}
+			});
+		}
+	});
+};
+
+// 处理人数选择
+const radioChange = (e) => {
+	console.log('选择的组别：', e.detail.value);
+};
+
+const publish=()=>{
+	uni.navigateTo({
+		url:"/pages/teammateHall/teammateHall"
+	})
+}
 </script>
 
 <style lang="scss" scoped>

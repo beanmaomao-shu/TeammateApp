@@ -13,7 +13,8 @@
 				<!-- 队名 -->
 				<view class="teamName">
 					<image src="../../static/images/队伍.png" mode=""></image>
-					<p>一战成名队</p>
+					<p v-if="tobValue==='b'"> {{data[0].name}} </p>
+					<p v-if="tocValue==='c'"> {{data[1].name}} </p>
 				</view>
 				<!-- 头像列表//研讨室跳转 -->
 				<view class="bottom">

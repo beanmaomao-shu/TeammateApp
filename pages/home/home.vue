@@ -11,6 +11,7 @@
 						<view class="name">
 							鸭鸭
 						</view>
+						
 						<!-- 个人中心 -->
 						<view class="authentication">
 							<view class="content"  v-if="isauthenticated">
@@ -26,7 +27,7 @@
 				</view>
 			</view>
 			<view class="functionCard">
-				<view class="box">
+				<view class="box" @click="goToEditProfile">
 					<image  src="../../static/images/编辑.png" mode="aspectFill"></image>
 					<view class="font">编辑名片</view>
 				</view>
@@ -91,8 +92,30 @@
 
 <script setup>
 	import { ref,onMounted  } from 'vue';
+	import {getContest} from "@/api/contest.js"
 	//是否认证
 	const isauthenticated = ref(true);
+	const contestList = ref([]);
+	const getContestList = async()=>{
+		try{
+			const res = await getContest();
+			contestList.value = res.data;
+			console.log("成功")
+		}catch(error){
+			console.log('111222',error);
+		}
+	}
+	console.log('111',contestList.value);
+	onMounted(()=>{
+		getContestList()
+		
+	})
+
+	const goToEditProfile = () => {
+		uni.navigateTo({
+			url: '/pages/editProfile/editProfile'
+		});
+	};
 </script>
 
 <style lang="scss" scoped>

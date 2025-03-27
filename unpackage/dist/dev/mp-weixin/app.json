@@ -13,7 +13,8 @@
     "pages/teamDetail/teamDetail",
     "pages/inviteMate/inviteMate",
     "pages/test/test",
-    "pages/fakedetail/fakedetail"
+    "pages/fakedetail/fakedetail",
+    "pages/editProfile/editProfile"
   ],
   "usingComponents": {
     "van-popup": "/wxcomponents/dist/popup/index",

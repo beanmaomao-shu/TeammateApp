@@ -49,23 +49,20 @@
     /* 快应用特有相关 */
     "quickapp" : {},
     /* 小程序特有相关 */
-   "mp-weixin" : {
-       "appid" : "wxc99881a55ee63f8d",
-       "setting" : {
-           "urlCheck" : false,
-   		"minified" : true
-       },
-       "usingComponents" : true,
-   	"permission" : {
-   			"scope.userLocation" : {
-   				"desc" : "你的位置信息将用于小程序定位"
-   			}
-   		},
-   	    "requiredPrivateInfos" : [
-   	            "getLocation",
-   				"chooseLocation"
-   	     ]
-   },
+    "mp-weixin" : {
+        "appid" : "wxcd8f0b97f5343d75",
+        "setting" : {
+            "urlCheck" : false,
+            "minified" : true
+        },
+        "usingComponents" : true,
+        "permission" : {
+            "scope.userLocation" : {
+                "desc" : "你的位置信息将用于小程序定位"
+            }
+        },
+        "requiredPrivateInfos" : [ "getLocation", "chooseLocation" ]
+    },
     "mp-alipay" : {
         "usingComponents" : true
     },

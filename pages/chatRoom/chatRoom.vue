@@ -33,8 +33,21 @@
         </view>
         <!-- 自己发的信息 -->
         <view class="chat-right" v-if="item.type == 2">
-          <view class="textarea">
+          <!-- 文本消息 -->
+          <view class="textarea" v-if="!item.isImage">
             {{ item.text }}
+            <view class="time">
+              {{ item.time }}
+            </view>
+          </view>
+          <!-- 图片消息 -->
+          <view class="img" v-else>
+            <image 
+              :src="item.text"
+              mode="widthFix" 
+              class="chat-image"
+              @tap="previewImage(item.text)"
+            />
             <view class="time">
               {{ item.time }}
             </view>
@@ -57,10 +70,10 @@
 	  <!-- 功能模块 -->
       <transition name="slide-up">
         <view class="function" v-show="isShowFunction">
-          <view class="icon">
-            <uni-icons type="image" size="40"></uni-icons>
-            <view class="font">相册</view>
-          </view>
+         <view class="icon" @click="chooseAndSendImage">
+           <uni-icons type="image" size="40"></uni-icons>
+           <view class="font">相册</view>
+         </view>
           <view class="icon">
             <uni-icons type="camera" size="40"></uni-icons>
             <view class="font">拍摄</view>
@@ -81,6 +94,7 @@
             <uni-icons type="weixin" size="40"></uni-icons>
             <view class="font">交换微信</view>
           </view>
+         
         </view>
       </transition>
     </view>
@@ -101,8 +115,8 @@ import { ref, watch } from 'vue';
 
 // 消息列表
 const messages = ref([
-  { type: 1, text: 'Hello!', time: '18:32' },
-  { type: 2, text: 'Hi!', time: '18:33' },
+  { type: 1, text: 'Hello!', time: '9:32' },
+  { type: 2, text: 'Hi!', time: '9:33' },
 ]);
 
 // 当前输入的消息
@@ -146,6 +160,37 @@ const dialogConfirm=()=>{
 	
 	messages.value.push({type:2,text:msg,time:currentTime})
 }
+
+// 添加图片预览功能
+const previewImage = (url) => {
+  uni.previewImage({
+    urls: [url],
+    current: url
+  });
+};
+
+// 选择并发送图片
+const chooseAndSendImage = () => {
+  uni.chooseImage({
+    count: 1,
+    sizeType: ['compressed'],
+    sourceType: ['album'],
+    success: (res) => {
+      const tempFilePath = res.tempFilePaths[0];
+      const currentTime = new Date().toLocaleTimeString('zh-CN', { hour12: false }).slice(0, 5);
+      
+      messages.value.push({
+        type: 2,
+        text: tempFilePath,
+        time: currentTime,
+        isImage: true
+      });
+
+      // 关闭功能面板
+      isShowFunction.value = false;
+    }
+  });
+};
 </script>
 
 <style lang="scss" scoped>
@@ -197,7 +242,7 @@ const dialogConfirm=()=>{
       .textarea {
         display: block;
         margin-top: 10rpx;
-        border-radius: 0 15% 15% 15%;
+         border-radius: 15rpx 0% 15rpx 15rpx;
         font-size: 30rpx;
         height: 80rpx;
         background-color: #fff;
@@ -229,7 +274,7 @@ const dialogConfirm=()=>{
         word-wrap: break-word;
         display: block;
         margin-top: 10rpx;
-        border-radius: 15% 0% 15% 15%;
+        border-radius: 15rpx 0% 15rpx 15rpx;
         font-size: 30rpx;
         height: 80rpx;
         background-color: #95ec69;
@@ -237,6 +282,19 @@ const dialogConfirm=()=>{
         padding: 0rpx 12rpx;
         box-shadow: 0 12rpx 12rpx rgba(0, 0, 0, 0.1);
         margin-right: 30rpx;
+		.img{
+			width: 250rpx;
+			height: 290rpx;
+			.chat-image {
+			  max-width: 400rpx;
+			  width: 100%;
+			  height: 100%;
+			  border-radius: 15rpx;
+			  background-color: #95ec69;
+			  box-shadow: 0 12rpx 12rpx rgba(0, 0, 0, 0.1);
+			}
+		}
+        
       }
       .time {
         font-size: 24rpx;
@@ -244,6 +302,7 @@ const dialogConfirm=()=>{
         color: #ccc;
         margin-top: -15rpx;
       }
+	  
     }
   }
 
@@ -321,7 +380,3 @@ const dialogConfirm=()=>{
 }
 </style>
 
-<!-- ！遇到的问题
- 聊天信息过长的话设置了自动换行，但是自动换行时相对应的气泡没有延伸下来。
- 有个问题就是我的time设置在聊天信息框的盒子里了作为一个子元素，导致如果延伸的话会让time也渲染 显得很长
- -->

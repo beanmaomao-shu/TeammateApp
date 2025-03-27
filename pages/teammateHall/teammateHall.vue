@@ -3,20 +3,26 @@
 		<!-- 搜索框 -->
 		<view class="search">
 			<input 
-			v-model="inputValue"
-			type="text" 
-			placeholder="搜索在线赛事组队信息"
-			@input="filterSuggestion"
-			@focus="showSuggestion=true"
-			@blur="showSuggestion=false"
+				v-model="inputValue"
+				type="text" 
+				placeholder="搜索在线赛事组队信息"
+				@input="handleSearch"
+				@focus="showSuggestion = true"
+				@blur="handleBlur"
 			/>
-			<view class="searchButton"  @click="(()=>{navigateToDetail();searchInfo()})">
+			<view class="searchButton" @click="navigateToDetail">
 				<image src="../../static/images/搜索.png" mode=""></image>
 			</view>
-		</view> 
-		<!-- 提示词 -->
-		<ul class="suggesstions" v-if="showSuggestion&&filteredData.length">
-			<li class="list" v-for="(suggestion,index) in filteredData " @click.stop="selectSuggestion(suggestion,$event)">{{suggestion.matchName}}</li>
+		</view>
+		<!-- 搜索建议列表 -->
+		<ul class="suggesstions" v-if="showSuggestion && searchResults.length">
+			<li class="list" 
+				v-for="(suggestion, index) in searchResults" 
+				:key="index" 
+				@click.stop="selectSuggestion(suggestion)"
+			>
+				{{ suggestion.name }}
+			</li>
 			<view class="tip">
 				没有找到想要的比赛? 
 				<view class="tipNav">
@@ -30,20 +36,20 @@
 			color="#AC33C1"
 			background="#F1E6FF"
 		>
-			2024年第十四届亚太地区大学生数学建模竞赛(以下简称“竞赛”)是由中国国际科技促进会物联网工作委员会和北京图象图形学学会联合主办的亚太地区大学生学科类竞赛，竞赛由亚太地区大学生数学建模竞赛组委会负责组织，欢迎各高等院校按照竞赛章程及有关规定组织同学报名参赛。 
+			2024年第十四届亚太地区大学生数学建模竞赛(以下简称"竞赛")是由中国国际科技促进会物联网工作委员会和北京图象图形学学会联合主办的亚太地区大学生学科类竞赛，竞赛由亚太地区大学生数学建模竞赛组委会负责组织，欢迎各高等院校按照竞赛章程及有关规定组织同学报名参赛。 
 			2023年第十三届亚太地区大学生数学建模竞赛共有9700支队伍969所高校2万7千多名学生报名参赛。参赛高校覆盖北京大学、清华大学、浙江大学、同济大学、上海交通大学、复旦大学、四川大学、大连理工大学等全部的39所985高校和114所211高校。除中国大陆高校外本次竞赛还有数十所国外高校参赛。
 		</van-notice-bar>
 		<!-- 轮播图 -->
 		<view class="banner">
 			<swiper class="swiper" 
-			circular 
-			:indicator-dots="true" 
-			indicator-color="#fff"
-			:autoplay="true" 
-			:interval="3000"
-			:duration="500">
-				<swiper-item v-for="(item,index) in matchData" :key="index">
-					<image :src="item.imgUrl" mode="widthFix"></image>
+				circular 
+				:indicator-dots="true" 
+				indicator-color="#fff"
+				:autoplay="true" 
+				:interval="3000"
+				:duration="500">
+				<swiper-item v-for="(item, index) in contestList" :key="index">
+					<image :src="item.poster" class="img" mode="aspectFit"></image>
 				</swiper-item>
 			</swiper>
 		</view>
@@ -53,7 +59,7 @@
 			<view class="listHead">
 				<view class="left">
 					<image src="../../static/images/people.png" mode=""></image>
-					<text >正在组队</text>
+					<text>正在组队</text>
 				</view>
 				<view class="right">
 					<navigator url="/pages/moreDetail/moreDetail" class="moreDetail">
@@ -63,18 +69,17 @@
 				</view>
 			</view>
 			<dash Color="#F1E6FF" Width="700rpx" Height="8rpx"></dash>
-			<!--  -->
 			<!-- 新组建的 -->
 			<view class="teamInfo" v-if="create">
 				<navigator :url="`/pages/teamDetail/teamDetail?tocPageValue=c`">
 					<!--比赛图片 -->
 					<view class="matchImg">
-						<image src='../../static/images/match8.png' mode="widthFix"></image>
+						<image src='../../static/images/match9.png' mode="widthFix"></image>
 					</view>
 					<view class="mainInfo">
 						<!-- 比赛名 -->
 						<view class="matchName">
-							'第三届"中外传播杯"全国大学生英语翻译大赛-英译汉赛道'
+							第二届大学生高校物理挑战赛
 						</view>
 						<!-- 队名 -->
 						<view class="teamName">
@@ -106,12 +111,12 @@
 					<view class="mainInfo">
 						<!-- 比赛名 -->
 						<view class="matchName">
-							2024第十届全国中西部外语翻译大赛
+							2024第十届中西部外语翻译大赛
 						</view>
 						<!-- 队名 -->
 						<view class="teamName">
 							<image src="../../static/images/队伍.png" mode=""></image>
-							<p>让我们说中文队</p>
+							<p>一战成名队</p>
 						</view>
 						<!-- 头像列表//研讨室跳转 -->
 						<view class="bottom">
@@ -131,21 +136,21 @@
 				</navigator>
 			</view>
 			<!-- 默认生成 -->
-			<view class="teamInfo" v-for="(item,index) in matchData" :key="item.id">
+			<view class="teamInfo" v-for="(item, index) in contestList" :key="item.id">
 				<navigator :url="`/pages/teamDetail/teamDetail?toaPageValue=a`">
 					<!--比赛图片 -->
 					<view class="matchImg">
-						<image :src="item.imgUrl" mode="widthFix"></image>
+						<image :src="item.poster" mode="widthFix"></image>
 					</view>
 					<view class="mainInfo">
 						<!-- 比赛名 -->
 						<view class="matchName">
-							{{item.matchName}}
+							{{ item.name }}
 						</view>
 						<!-- 队名 -->
 						<view class="teamName">
 							<image src="../../static/images/队伍.png" mode=""></image>
-							<p>{{item.name}}</p>
+							<p>鸭鸭小队</p>
 						</view>
 						<!-- 头像列表//研讨室跳转 -->
 						<view class="bottom">
@@ -166,12 +171,16 @@
 					</view>
 				</navigator>
 			</view>
-			<!--  -->
 		</view>
-		<view class="issue">
-			<!-- <button @click="toMakeTeam">
-				组队
-			</button> -->
+		<!-- 登录按钮 -->
+		<view class="login-container" v-if="!isLoggedIn">
+			<button 
+				class="login-btn" 
+				open-type="getUserProfile" 
+				@click="handleUserProfile"
+			>
+				微信登录
+			</button>
 		</view>
 		<view class="issue" @click="toMakeTeam">
 			<navigator url="../makeTeam/makeTeam">组队</navigator>
@@ -180,95 +189,186 @@
 </template>
 
 <script setup>
-	import {ref} from 'vue';
-	import { useRouter } from 'vue-router';
-	import {onLoad} from "@dcloudio/uni-app";
-	
-	// 临时生成新组成的队伍
-	const create=ref(false)
-	const toMakeTeam=()=>{
-		setInterval(()=>{
-			create.value=true
-		},1000)
+import { ref ,onMounted} from 'vue';
+import { useRouter } from 'vue-router';
+import { onLoad } from "@dcloudio/uni-app";
+import {getContest} from "@/api/contest.js"
+import { searchContest } from "@/api/search.js"
+import { login } from "@/api/login.js";
+
+const router = useRouter();
+
+const create = ref(false);
+const inputValue = ref('');
+const showSuggestion = ref(false);
+const searchResults = ref([]);
+const filteredData = ref([]);
+const contestList = ref([]);
+let searchTimeout = null;
+const isLoggedIn = ref(false);
+
+const toMakeTeam = () => {
+	setInterval(() => {
+		create.value = true;
+	}, 1000);
+};
+
+//获取比赛信息
+const getContestList = async () => {
+	try {
+		// 检查是否有token
+		const token = uni.getStorageSync('token');
+		if (!token) {
+			// 如果没有token，先进行登录
+			await wxLogin();
+		}
+		// 获取比赛列表
+		const res = await getContest();
+		contestList.value = res.data;
+	} catch (error) {
+		console.error('获取比赛列表失败：', error);
+		uni.showToast({
+			title: '获取比赛信息失败',
+			icon: 'none'
+		});
+	}
+};
+
+// 处理搜索输入 - 实时模糊查询
+const handleSearch = async () => {
+	clearTimeout(searchTimeout);
+	if (!inputValue.value) {
+		searchResults.value = [];
+		showSuggestion.value = false;
+		return;
 	}
 	
-	// 
-	const inputValue=ref('');
-	const router = useRouter();
-	const showSuggestion=ref(false)
-	const matchData=ref([
-		{id:1,matchName:'2024年第十四届APMCM亚太地区大学生数学建模竞赛',name:'听党的就队', imgUrl:'../../static/images/match6.png'},
-		{id:2,matchName:'2024年全国大学生英语翻译大赛（NETCCS）',name:'六级能不能过队', imgUrl:'../../static/images/match3.png'},
-		{id:3,matchName:'2024年第五届"中译国青杯"国际组织文件翻译大赛',name:'超级翻译官队', imgUrl:'../../static/images/match4.png'},
-		{id:4,matchName:'2024创想中国全国大学生创新创业大赛',name:'小呆呆创新队', imgUrl:'../../static/images/match15.png'},
-		{id:5,matchName:'第三届"中外传播杯"全国大学生英语翻译大赛-英译汉赛道',name:'翻译的都队', imgUrl:'../../static/images/match8.png'},
-		{id:6,matchName:'第二届"数学周报"全国大学生数学能力大赛',name:'基本不懂式队', imgUrl:'../../static/images/match13.png'},
-		{id:7,matchName:'2024第二届全国大学生数学竞赛暨创新思维挑战赛',name:'哎我队', imgUrl:'../../static/images/match11.png'},
-		{id:8,matchName:'CCF2024年中国计算机应用技术大赛-全国算法精英大赛',name:'AC队', imgUrl:'../../static/images/match7.png'},
-		{id:9,matchName:'浙大研究院《智能无人机》研学实践项目',name:'让你飞起来队', imgUrl:'../../static/images/match14.png'},
-	])
-	//这个拿来存储筛选后回显的数据
-	const filteredData=ref([])
-	
-	
-	//搜索框跳转搜索详细页面
-	const navigateToDetail=() =>{
-		if(inputValue.value==''){
+	searchTimeout = setTimeout(async () => {
+		try {
+			const res = await searchContest(inputValue.value);
+			if (res.data) {
+				searchResults.value = res.data;
+				console.log(res.data)
+				showSuggestion.value = true;
+			}
+		} catch (error) {
+			console.error('搜索失败：', error);
 			uni.showToast({
-				title: '请输入搜索内容',
-				icon: 'error'
+				title: '搜索失败',
+				icon: 'none'
 			});
 		}
-		else{
-			uni.redirectTo({
-				url: `../searchDetail/searchDetail?value=${inputValue.value}`,
-			});
-			inputValue.value = '';
+	}, 300); // 防抖延迟
+};
+
+// 选择建议项
+const selectSuggestion = (suggestion) => {
+	inputValue.value = suggestion.name;
+	showSuggestion.value = false;
+	navigateToDetail();
+};
+
+// 处理输入框失焦
+const handleBlur = () => {
+	setTimeout(() => {
+		showSuggestion.value = false;
+	}, 200);
+};
+
+// 跳转到搜索详情页
+const navigateToDetail = () => {
+	if (!inputValue.value) {
+		uni.showToast({
+			title: '请输入搜索内容',
+			icon: 'none'
+		});
+		return;
+	}
+	
+	uni.navigateTo({
+		url: `/pages/searchDetail/searchDetail?value=${encodeURIComponent(inputValue.value)}`
+	});
+};
+
+const matchData = ref([
+	{id: 1, matchName: '2024年第十四届APMCM亚太地区大学生数学建模竞赛', name: '听党的就队', imgUrl: '../../static/images/match6.png'},
+	{id: 2, matchName: '2024年全国大学生英语翻译大赛（NETCCS）', name: '六级能不能过队', imgUrl: '../../static/images/match3.png'},
+	{id: 3, matchName: '2024年第五届"中译国青杯"国际组织文件翻译大赛', name: '超级翻译官队', imgUrl: '../../static/images/match4.png'},
+	{id: 4, matchName: '2024创想中国全国大学生创新创业大赛', name: '小呆呆创新队', imgUrl: '../../static/images/match15.png'},
+	{id: 5, matchName: '第三届"中外传播杯"全国大学生英语翻译大赛-英译汉赛道', name: '翻译的都队', imgUrl: '../../static/images/match8.png'},
+	{id: 6, matchName: '第二届"数学周报"全国大学生数学能力大赛', name: '基本不懂式队', imgUrl: '../../static/images/match13.png'},
+	{id: 7, matchName: '2024第二届全国大学生数学竞赛暨创新思维挑战赛', name: '哎我队', imgUrl: '../../static/images/match11.png'},
+	{id: 8, matchName: 'CCF2024年中国计算机应用技术大赛-全国算法精英大赛', name: 'AC队', imgUrl: '../../static/images/match7.png'},
+	{id: 9, matchName: '浙大研究院《智能无人机》研学实践项目', name: '让你飞起来队', imgUrl: '../../static/images/match14.png'},
+]);
+
+// 微信登录
+const wxLogin = async () => {
+	try {
+		// 1. 获取登录code
+		const { code } = await uni.login();
+		if (code) {
+			console.log('获取code成功：', code);
+			
+			// 2. 调用登录接口
+			const res = await login(code);
+			console.log('登录响应：', res);
+			
+			if (res.data && res.data.token) {
+				// 3. 保存登录状态和token
+				isLoggedIn.value = true;
+				uni.setStorageSync('token', res.data.token);
+				console.log( res.data.token)
+				// 可选：保存openid
+				if (res.data.openid) {
+					uni.setStorageSync('openid', res.data.openid);
+				}
+				
+				uni.showToast({
+					title: '登录成功',
+					icon: 'success'
+				});
+				
+				return res.data.token; // 返回token
+			} else {
+				throw new Error('登录失败：未获取到token');
+			}
 		}
-		
+	} catch (error) {
+		console.error('登录失败：', error);
+		uni.showToast({
+			title: '登录失败，请重试',
+			icon: 'none'
+		});
+		throw error; // 继续抛出错误
 	}
-	
-	//搜索输入框筛选逻辑
-	const filterSuggestion=()=>{
-		if(inputValue.value)
-		{
-			filteredData.value=matchData.value.filter(item=>{
-				return item.matchName.toLowerCase().includes(inputValue.value.toLowerCase())
-			})
-		}else{
-			filteredData.value=[]
-		}
+};
+
+// 处理登录按钮点击
+const handleUserProfile = () => {
+	wxLogin();
+};
+
+const centerValue = ref('');
+const props = defineProps({
+	toValue: {
+		type: String,
 	}
-	
-	//点击li回显信息到输入框
-	const selectSuggestion=(suggestion,event)=>{
-		event.stopPropagation()
-		inputValue.value=suggestion.matchName
-		console.log('Selecting suggestion:', suggestion)
-		filteredData.value=[]
+});
+getContestList()
+onLoad(() => {
+	centerValue.value = props.toValue;
+});
+onMounted(async () => {
+	try {
+		// 1. 先执行登录
+		await wxLogin();
+		// 2. 登录成功后获取比赛列表
+		await getContestList();
+	} catch (error) {
+		console.error('初始化失败：', error);
 	}
-	
-	//搜索组队信息
-	const searchInfo=async()=>{
-		// 这里处理输入框的逻辑
-	}
-	//跳转到组队页面
-	// const toMakeTeam=()=>{
-	// 	uni.redirectTo({
-	// 		url:"../makeTeam/makeTeam"
-	// 	})
-	// }
-	
-	//传参
-	const centerValue=ref('');
-	const props=defineProps({
-		toValue:{
-			type:String,
-		}
-	})
-	onLoad(()=>{
-		centerValue.value=props.toValue
-	})
+});
 </script>
 
 <style lang="scss" scoped>
@@ -310,16 +410,19 @@
 			border: 1px solid #6c5ce7;
 			border-top:0px ;
 			left: 40rpx;
-			border-radius: 10rpx;
+			top: 75rpx;
+			border-radius: 0 0 10rpx 10rpx;
 			background-color: #fff;
 			z-index: 1000;
 			overflow-y: auto;
-			box-shadow: 0 15rpx 20rpx rgba(0, 0, 0, 0.3);
+			box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
 			.list{
-				padding: 10rpx;
-				border: 1px solid #f5f5f5;
-				&:hover{
-					background-color: #f0f0f0;
+				padding: 20rpx 30rpx;
+				font-size: 28rpx;
+				color: #333;
+				border-bottom: 1px solid #F1E6FF;
+				&:last-child {
+					border-bottom: none;
 				}
 			}
 			.tip{
@@ -343,9 +446,13 @@
 			margin-bottom: 48rpx;
 			swiper{
 				background-color: #fff;
-				width: 700rpx;
+				width: 100%;
 				height: 476rpx;
 				margin: 0 auto;
+				.img{
+					width: 100%;
+					height: 100%;
+				}
 				swiper-item{
 					image{
 						width: 100%;
@@ -377,7 +484,7 @@
 					display: flex;
 					justify-content: center;
 					align-items: center;
-					width: 96rpgx;
+					width: 96rpx;
 					height: 54rpx;
 					image{
 						width: 32rpx;
@@ -455,8 +562,18 @@
 				}
 			}
 			.matchName{
-				font-size: 30rpx;
-				margin-left: 20rpx;
+				min-height: 80rpx;
+				max-height: 90rpx;
+				padding: 12rpx;
+				font-size: 28rpx;
+				line-height: 1.4;
+				white-space: normal;
+				word-wrap: break-word;
+				display: -webkit-box;
+				-webkit-box-orient: vertical;
+				-webkit-line-clamp: 2;
+				overflow: hidden;
+				text-overflow: ellipsis;
 			}
 			.teamName{
 				display: flex;
@@ -472,4 +589,29 @@
 			}
 		}
 	
+	
+	.login-container {
+		position: fixed;
+		right: 30rpx;
+		bottom: 200rpx;
+		z-index: 999;
+		
+		.login-btn {
+			width: 130rpx;
+			height: 80rpx;
+			background: linear-gradient(90deg, #6c5ce7, rgba(224, 217, 255, 0.8));
+			color: #fff;
+			border-radius: 30rpx;
+			font-size: 26rpx;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			border: 2rpx solid #fff;
+			padding: 0;
+			
+			&::after {
+				border: none;
+			}
+		}
+	}
 </style>

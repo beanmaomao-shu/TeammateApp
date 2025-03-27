@@ -1,12 +1,1 @@
-"use strict";
-const common_vendor = require("../../common/vendor.js");
-const _sfc_main = {
-  __name: "inviteMate",
-  setup(__props) {
-    return (_ctx, _cache) => {
-      return {};
-    };
-  }
-};
-const MiniProgramPage = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["__file", "C:/Users/黎翠儿/Documents/GitHub/TeammateApp/pages/inviteMate/inviteMate.vue"]]);
-wx.createPage(MiniProgramPage);
+"use strict";const e=require("../../common/assets.js");require("../../common/vendor.js");const t={__name:"inviteMate",setup(r){return(_,s)=>({a:e._imports_0$9,b:e._imports_1$6})}};wx.createPage(t);
