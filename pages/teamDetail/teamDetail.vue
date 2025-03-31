@@ -9,18 +9,18 @@
 				<!-- 队伍图标 -->
 				<view class="avatar">
 					<detailTitle img-src='/static/images/图片.png' p-title="队伍图标"></detailTitle>
-					<image class="teamImg" src="../../static/images/队伍图标1.jpg" mode=""></image>
+					<image class="teamImg" :src="teamInfo.icon || '../../static/images/队伍图标1.jpg'" mode=""></image>
 				</view>
 				<view>
 					<!-- 队伍名称 -->
 					<view class="name">
 						<detailTitle img-src='/static/images/别名.png' p-title="队伍名称"></detailTitle>
-						<view class="box">一战成名队</view>
+						<view class="box">{{ teamInfo.name||"鸭鸭小队" }}</view>
 					</view>
 					<!-- 队伍口号 -->
 					<view class="slogan">
 						<detailTitle img-src='/static/images/文字.png' p-title="队伍口号"></detailTitle>
-						<view class="box">Bug 克星，代码任我行！</view>
+						<view class="box">{{ teamInfo.slogan||"加油加油" }}</view>
 					</view>
 				</view>
 			
@@ -28,7 +28,7 @@
 			<!-- 队伍简介 -->
 			<view class="description">
 				<detailTitle img-src='/static/images/简介.png' p-title="队伍简介"></detailTitle>
-				<view class="desArea"> 我们致力于在 [组队相关领域，如竞赛领域、项目开发领域等] 中崭露头角。无论是面对复杂的挑战还是紧迫的时间限制，我们都秉持着团结协作的精神，充分发挥各自的专业知识和技能。成员们擅长 [列举团队成员主要擅长的方面，比如数据分析、创意构思、编程开发等]，在过往的经历中已经积累了一定的经验，为我们在本次组队活动中的表现奠定了坚实的基础</view>
+				<view class="desArea">{{ teamInfo.introduction||"这是一条队伍简介" }}</view>
 			</view>
 		</view>
 		<!-- 分割线 -->
@@ -50,42 +50,38 @@
 			<!-- 人数 -->
 			<view class="numbers">
 				<detailTitle img-src='/static/images/组队人数.png' p-title="组队人数"></detailTitle>
-				<view class="box">
-					{{numbers}}
-				</view>
+				<view class="box">{{ teamInfo.numbers||"4" }}</view>
 			</view>
 			<!-- 截止时间 -->
 			<view class="time">
 				<detailTitle img-src='/static/images/timeout.png' p-title="截止时间"></detailTitle>
-				<view class="box">
-					{{time}}
-				</view>
+				<view class="box">{{ teamInfo.endTime ||'2025.3.29'}}</view>
 			</view>
 			<!-- 定位地址 -->
 			<view class="region">
 				<detailTitle img-src='/static/images/地点.png' p-title="赛区地点"></detailTitle>
 				<view class="box" @click="getMapLocation">
 					<uni-icons type="map-pin-ellipse" size="20"></uni-icons>
-					<p>{{address}}</p>
+					<p>{{ teamInfo.matchLocation ||'四会市人民政府'}}</p>
 				</view>
 			</view>
 		</view>
 		
 		<view class="btnArea">
-			 <view class="enter" v-if="toaValue==='a'">
+			 <view class="enter" v-if="toValue==='a'">
 				 <fcButton img-src='/static/images/申请加入.png' Title="申请加入" Color="#FF5733"></fcButton>
 			 </view>
-			<view class="chat" v-if="toaValue==='a'" @click="toChatPage()">
+			<view class="chat" v-if="toValue==='a'" @click="toChatPage()">
 				<fcButton img-src='/static/images/一起讨论.png' Title="一起讨论" Color="#F3705A"></fcButton>
 			</view>
 
-			<view class="out" v-if="tobValue==='b'"  @click="toggleDialog('error','out')">
+			<view class="out" v-if="toValue==='b'"  @click="toggleDialog('error','out')">
 				<fcButton img-src='/static/images/退出队伍.png' Title="退出队伍" Color="#D43030"></fcButton>
 			</view>
-			<view class="invite" v-if="tocValue==='c'" @click="toInvitePage()" >
+			<view class="invite" v-if="toValue==='c'" @click="toInvitePage()" >
 				<fcButton img-src='/static/images/发送邀请.png' Title="发送邀请" Color="#FF5733"></fcButton>
 			</view>
-			<view class="dissolve" v-if="tocValue==='c'" @click="toggleDialog('error','disband')">
+			<view class="dissolve" v-if="toValue==='c'" @click="toggleDialog('error','disband')">
 				<fcButton img-src='/static/images/解散队伍.png' Title="解散队伍" Color="#FF8D1A" ></fcButton>
 
 			</view>
@@ -107,19 +103,27 @@
 </template>
 
 <script setup>
-	import {ref} from 'vue';
+	import {ref, onMounted} from 'vue';
 	import {onLoad} from "@dcloudio/uni-app";
-
+	import {getDetailTeamAPI,deleteTeamAPI} from "@/api/team.js";
 
 	//队伍简介
-	const numbers=ref('6');
-	const time=ref('2025-2-27 8:30:00');
-	const address=ref('四会市人民政府');
+	const teamInfo = ref({
+		id: '',
+		name: '',
+		icon: '',
+		slogan: '',
+		introduction: '',
+		numbers: 0,
+		endTime: '',
+		matchLocation: '',
+		matchId: 0
+	});
 
 	//跳转按钮
-	const toaValue=ref('');
-	const tobValue=ref('');
-	const tocValue=ref('');
+	
+	const toValue=ref('');
+	const deleteID=ref()
 	
 	//弹窗相关
 	const alertDialog=ref(null)
@@ -128,11 +132,6 @@
 	const popupMsg=ref('')
 	const msgType=ref('success')
 	const popupType=ref('success')
-	
-	const data=ref([
-		{id:1,name:"一战成名队",dsc:"我们致力于在 [组队相关领域，如竞赛领域、项目开发领域等] 中崭露头角。无论是面对复杂的挑战还是紧迫的时间限制，我们都秉持着团结协作的精神，充分发挥各自的专业知识和技能。成员们擅长 [列举团队成员主要擅长的方面，比如数据分析、创意构思、编程开发等]，在过往的经历中已经积累了一定的经验，为我们在本次组队活动中的表现奠定了坚实的基础"},
-		{id:2,name:"对一题就队",dsc:"这么近 那么美 一起到传智杯"}
-	])
 	
 	const toggleDialog =(type,msg)=>{
 		msgType.value=type;
@@ -143,19 +142,55 @@
 		if(msg=='disband')
 		{
 			messageText.value='您确定要解散该团队吗?'
+			
 		}
 	}
 	
-	const dialogConfirm=()=>{
-		showMessage.value.open();
-		popupMsg.value='操作成功';
-		uni.navigateBack()
+	const dialogConfirm = async () => {
+		try {
+			await deleteTeam(deleteID.value)
+			showMessage.value.open()
+			popupMsg.value = '操作成功'
+			
+			// 使用 switchTab 跳转到研讨室页面
+			uni.switchTab({
+				url: '/pages/seminarRoom/seminarRoom'
+			})
+		} catch (error) {
+			console.error('删除失败：', error)
+			popupMsg.value = '操作失败'
+		}
+	}
+
+	// 获取队伍详情
+	const getTeamDetail = async (id) => {
+		try {
+			const res = await getDetailTeamAPI(id);
+			if (res.code === 200 && res.data) {
+				teamInfo.value = res.data;
+				console.log('队伍详情：', teamInfo.value);
+			}
+		} catch (error) {
+			console.error('获取队伍详情失败：', error);
+			uni.showToast({
+				title: '获取队伍信息失败',
+				icon: 'none'
+			});
+		}
+	};
+	//解散队伍
+	const deleteTeam=async(id)=>{
+		const res=await deleteTeamAPI(id)
+		console.log(res.data)
 	}
 
 	onLoad((option)=>{
-		toaValue.value = option.toaPageValue
-		tobValue.value = option.tobPageValue
-		tocValue.value = option.tocPageValue
+		if (option.id) {
+			getTeamDetail(option.id);
+			deleteID.value=option.id
+		}
+	
+		toValue.value = option.tocPageValue
 	})
 	const toChatPage=()=>{
 		uni.navigateTo({

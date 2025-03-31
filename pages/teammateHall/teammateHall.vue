@@ -137,7 +137,7 @@
 			</view>
 			<!-- 默认生成 -->
 			<view class="teamInfo" v-for="(item, index) in contestList" :key="item.id">
-				<navigator :url="`/pages/teamDetail/teamDetail?toaPageValue=a`">
+				<navigator :url="`/pages/teamDetail/teamDetail?id=${item.id}&toaPageValue=a`">
 					<!--比赛图片 -->
 					<view class="matchImg">
 						<image :src="item.poster" mode="widthFix"></image>

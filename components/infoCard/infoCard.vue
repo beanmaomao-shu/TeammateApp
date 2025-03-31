@@ -1,5 +1,5 @@
 <template>
-	<navigator :url="`/pages/teamDetail/teamDetail?tobPageValue=${centerbValue}&tocPageValue=${centercValue}`">
+	<navigator :url="`/pages/teamDetail/teamDetail?id=${id}&tocPageValue=${conValue}`">
 		<view class="infoCard">
 			<view class="info">
 				<view class="avatar">
@@ -20,7 +20,7 @@
 					</view>
 					<!-- 个人中心 -->
 					<view class="authentication" v-if="conValue==='c'">
-						<view class="content"  v-if="isauthenticated">
+						<view class="content" v-if="isauthenticated">
 							<image class="authenImg" src="../../static/images/认证.png" mode="aspectFill"></image>
 							<view class="p">已认证</view>
 						</view>
@@ -38,26 +38,27 @@
 <script setup>
 	import { ref,onMounted  } from 'vue';
 	import {onLoad} from "@dcloudio/uni-app";
-	
+
+	// 定义 emit
+	const emit = defineEmits(['getID']);
+
 	//是否为团队长
 	const isLeader = ref(true);
 	//是否审核通过
 	const isaudited = ref(false);
+	//是否认证
+	const isauthenticated = ref(true);
 
 	
 	//标签显示+跳转组队详情按钮
 	const props = defineProps({
-		toaValue:{
-			type:String,
+		id: {
+			type: [String, Number],
+			required: true
 		},
-		tobValue:{
-			type:String,
-		},
-		tocValue:{
-			type:String,
-		},
-		contentValue:{
-			type:String,
+		contentValue: {
+			type: String,
+			default: ''
 		}
 	})
 	//组队详情按钮显示--中转值
@@ -68,9 +69,7 @@
 	const conValue=ref('');
 	
 	onMounted(()=>{
-		centeraValue.value=props.toaValue;
-		centerbValue.value=props.tobValue;
-		centercValue.value=props.tocValue;
+		centercValue.value=props.toValue;
 		conValue.value=props.contentValue;
 	})
 </script>
