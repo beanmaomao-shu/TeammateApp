@@ -225,6 +225,7 @@ const getContestList = async () => {
 		// 获取比赛列表
 		const res = await getContest();
 		contestList.value = res.data;
+		console.log(res.data);
 	} catch (error) {
 		console.error('获取比赛列表失败：', error);
 		uni.showToast({

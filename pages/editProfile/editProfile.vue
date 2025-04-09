@@ -117,6 +117,12 @@ const getUserInfo = async () => {
         awardsArray = [];
       }
 
+      // 将用户名保存到本地存储，供聊天室使用
+      if (res.data.username) {
+        uni.setStorageSync('username', res.data.username);
+        console.log('用户名已保存到本地存储:', res.data.username);
+      }
+
       profile.value = {
         username: res.data.username || '',
         sex: res.data.sex === '男' ? 1 : (res.data.sex === '女' ? 2 : 0),
@@ -171,6 +177,10 @@ const saveProfile = async () => {
     const res = await editUserInfoAPI(formData);
     
     if (res.code === 200) {
+      // 更新本地存储的用户名
+      uni.setStorageSync('username', formData.username);
+      console.log('用户名已更新到本地存储:', formData.username);
+      
       uni.showToast({
         title: '保存成功',
         icon: 'success'
@@ -353,4 +363,4 @@ onMounted(() => {
     }
   }
 }
-</style> 
+</style>

@@ -4,21 +4,28 @@
     <view class="header">
       <infoCard>
         <template #name>
-          对一题就队
+          {{ teamInfo.name || '对一题就队' }}
         </template>
-		<template #img>
-			<view class="avatar">
-				<image class="avatarImg" src="../../static/images/队伍图标2.jpg" mode="aspectFill"></image>
-			</view>
-		</template>
+        <template #img>
+          <view class="avatar">
+            <image class="avatarImg" :src="teamInfo.icon || '../../static/images/队伍图标2.jpg'" mode="aspectFill"></image>
+          </view>
+        </template>
+        <!-- 添加未读消息数量显示 -->
+        <template #extra v-if="unreadCount > 0">
+          <view class="unread-badge">
+            {{ unreadCount > 99 ? '99+' : unreadCount }}
+          </view>
+        </template>
       </infoCard>
     </view>
 
     <!-- 聊天内容区域 -->
-    <scroll-view class="chat-content" scroll-y>
-		<view class="historyTime">
-			今天 8:36
-		</view>
+    <scroll-view class="chat-content" :class="{ 'content-shrink': isShowFunction }" scroll-y 
+      :scroll-top="scrollTop" @scrolltolower="onScrollToLower" id="chatScroll">
+      <view class="historyTime">
+        今天 8:36
+      </view>
       <!-- 聊天消息会在这里显示 -->
       <view class="chat-body" v-for="(item, index) in messages" :key="index">
         <!-- 别人发的信息 -->
@@ -55,6 +62,8 @@
           <image src="../../static/images/avatar.png" mode="aspectFill"></image>
         </view>
       </view>
+      <!-- 添加底部间距，防止最后一条消息被遮挡 -->
+      <view style="height: 120rpx;"></view>
     </scroll-view>
 
     <!-- 输入框和发送按钮 -->
@@ -111,7 +120,13 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue';
+import { ref, watch, onMounted, onUnmounted, nextTick } from 'vue';
+import { getChatMessages, markMessagesAsRead, getUnreadCount, uploadFile } from '../../api/chat.js';
+import {onLoad} from '@dcloudio/uni-app';
+import {  getUserInfoAPI } from '@/api/userInfo';
+
+// 添加scrollTop变量
+const scrollTop = ref(0);
 
 // 消息列表
 const messages = ref([
@@ -125,47 +140,466 @@ const message = ref('');
 // 控制功能区显示
 const isShowFunction = ref(false);
 
-//控制弹窗
-const isOpen=ref(null)
+// 控制弹窗
+const isOpen = ref(null);
+const msg = ref('');
 
-// 发送消息的方法
-const sendMessage = () => {
-  if (message.value.trim()) {
-    const currentTime = new Date().toLocaleTimeString('zh-CN', { hour12: false }).slice(0, 5);
-    messages.value.push({ type: 2, text: message.value, time: currentTime });
-    message.value = '';
+// WebSocket连接
+let socket = false; // 使用布尔值标记连接状态
+const chatRoomId = ref(null);
+
+// 团队信息
+const teamInfo = ref({});
+
+// 未读消息数量
+const unreadCount = ref(0);
+
+// 用户名
+const currentUsername = ref('');
+
+onLoad((options) => {
+  chatRoomId.value = options.chatRoomId;
+  // 获取用户名
+  getUsernameFromAPI();
+});
+
+// 获取用户名的方法
+const getUsernameFromAPI = async () => {
+  try {
+    const res = await getUserInfoAPI();
+    if (res && res.data && res.data.username) {
+      currentUsername.value = res.data.username;
+      // 同时保存到本地存储，确保其他地方也能使用
+      uni.setStorageSync('username', res.data.username);
+      console.log('获取到的用户名:', currentUsername.value);
+    } else {
+      console.error('获取用户信息失败或用户名为空');
+    }
+  } catch (error) {
+    console.error('获取用户名出错:', error);
   }
 };
+
+// 获取页面参数
+onMounted(() => {
+  console.log('聊天室ID:', chatRoomId.value);
+  console.log('当前用户名:', currentUsername.value);
+  
+  // 如果有chatRoomId，则初始化WebSocket连接并获取历史消息
+  if (chatRoomId.value) {
+    // 获取团队信息
+    getTeamInfo();
+    // 获取未读消息数量
+    getUnreadMessageCount();
+    // 初始化WebSocket
+    initWebSocket();
+    // 加载历史消息
+    loadHistoryMessages();
+    // 标记消息为已读
+    markAsRead();
+  } else {
+    uni.showToast({
+      title: '聊天室ID不存在',
+      icon: 'none'
+    });
+  }
+});
 
 // 显示功能区
 const showFunction = () => {
   isShowFunction.value = !isShowFunction.value;
+  
+  // 如果显示功能区，等待DOM更新后滚动到底部
+  if (isShowFunction.value) {
+    setTimeout(() => {
+      scrollToBottom();
+    }, 300); // 等待过渡动画完成
+  }
+};// 获取团队信息
+const getTeamInfo = () => {
+  // 这里可以根据chatRoomId获取团队信息
+  // 可以从上一个页面传递过来，也可以通过API获取
+  // 暂时使用默认值
+  teamInfo.value = {
+    name: '对一题就队',
+    icon: '../../static/images/队伍图标2.jpg'
+  };
 };
 
-// 输入框相关操作
-const handleInput = () => {
-  // 可以在这里处理输入框的其他逻辑
+// 获取未读消息数量
+const getUnreadMessageCount = async () => {
+  try {
+    if (!chatRoomId.value) return;
+    
+    const res = await getUnreadCount([chatRoomId.value]);
+    if (res.code === 200 && res.data) {
+      const chatRoomData = res.data.find(item => item.chatRoomId === parseInt(chatRoomId.value));
+      if (chatRoomData) {
+        unreadCount.value = chatRoomData.count;
+      }
+    }
+  } catch (error) {
+    console.error('获取未读消息数量失败:', error);
+  }
 };
 
-//功能区的方法
-const exchangeWechat=()=>{
-	console.log('111')
-	isOpen.value.open();
-	msg.value='您确定要交换联系方式吗？'
+// 标记消息为已读
+const markAsRead = async () => {
+  try {
+    if (!chatRoomId.value) return;
+    
+    const res = await markMessagesAsRead(chatRoomId.value);
+    if (res.code === 200) {
+      // 标记成功后，将未读消息数量设为0
+      unreadCount.value = 0;
+    }
+  } catch (error) {
+    console.error('标记消息为已读失败:', error);
+  }
+};
 
-}
-const dialogConfirm=()=>{
-	const msg='我的微信是: yangbaba';
-	const currentTime=new Date().toLocaleTimeString('zh-CN',{hour12:false}).slice(0,5)
-	
-	messages.value.push({type:2,text:msg,time:currentTime})
-}
+// 在组件销毁时关闭WebSocket连接
+onUnmounted(() => {
+  closeWebSocket();
+});
 
-// 添加图片预览功能
-const previewImage = (url) => {
-  uni.previewImage({
-    urls: [url],
-    current: url
+// 初始化WebSocket连接
+const initWebSocket = () => {
+  try {
+    // 获取存储的token
+    const token = uni.getStorageSync('token');
+    // WebSocket连接地址
+    const wsUrl = `ws://117.72.54.182:8898/chat/${chatRoomId.value}`;
+    
+    // 先检查是否已有连接
+    if (socket) {
+      console.log('WebSocket已连接，无需重新连接');
+      return;
+    }
+    
+    // 创建WebSocket连接
+    uni.connectSocket({
+      url: wsUrl,
+      success: () => {
+        console.log('WebSocket连接请求发送成功');
+      },
+      fail: (error) => {
+        console.error('WebSocket连接请求失败:', error);
+      }
+    });
+    
+    // 监听WebSocket连接打开
+    uni.onSocketOpen(function() {
+      console.log('WebSocket连接已打开');
+      socket = true; // 标记连接已建立
+    });
+    
+    // 监听WebSocket错误
+    uni.onSocketError(function(error) {
+      console.error('WebSocket连接错误:', error);
+      socket = false; // 标记连接已断开
+      uni.showToast({
+        title: 'WebSocket连接失败',
+        icon: 'none'
+      });
+      
+      // 5秒后尝试重连
+      setTimeout(() => {
+        if (!socket) {
+          console.log('尝试重新连接WebSocket');
+          initWebSocket();
+        }
+      }, 5000);
+    });
+    
+    // 监听WebSocket接收到服务器的消息
+    uni.onSocketMessage(function(res) {
+      try {
+        const data = JSON.parse(res.data);
+        console.log('收到消息:', data);
+        
+        // 处理接收到的消息
+        if (data.messageType) {  // 使用messageType字段
+          const isImage = data.messageType === 'img';  // 判断是否为图片消息
+          
+          // 从sendTime中提取时分秒
+          let currentTime = '';
+          if (data.sendTime) {
+            // 提取时间部分 (HH:mm:ss)
+            const timeMatch = data.sendTime.match(/\d{2}:\d{2}:\d{2}/);
+            if (timeMatch) {
+              // 只保留时和分
+              currentTime = timeMatch[0].substring(0, 5);
+            } else {
+              // 如果没有匹配到，使用当前时间
+              currentTime = new Date().toLocaleTimeString('zh-CN', { hour12: false }).slice(0, 5);
+            }
+          } else {
+            // 如果没有sendTime字段，使用当前时间
+            currentTime = new Date().toLocaleTimeString('zh-CN', { hour12: false }).slice(0, 5);
+          }
+          
+          // 优先使用组件内的用户名变量，如果为空则尝试从本地存储获取
+          const username = currentUsername.value || uni.getStorageSync('username');
+          console.log('消息判断使用的用户名:', username, '消息中的用户名:', data.username);
+          
+          const newMessage = {
+            type: data.username === username ? 2 : 1,
+            text: data.content,
+            time: currentTime,
+            isImage: isImage
+          };
+          
+          // 避免重复添加自己发送的消息
+          const isDuplicate = messages.value.some(msg => 
+            msg.text === newMessage.text && 
+            msg.type === newMessage.type &&
+            msg.time === newMessage.time
+          );
+          
+          if (!isDuplicate) {
+            messages.value.push(newMessage);
+            scrollToBottom();
+          }
+        }
+      } catch (error) {
+        console.error('解析消息失败:', error);
+      }
+    });
+    
+    // 监听WebSocket关闭
+    uni.onSocketClose(function() {
+      console.log('WebSocket连接已关闭');
+      socket = false; // 标记连接已断开
+      
+      // 3秒后尝试重连
+      setTimeout(() => {
+        if (!socket) {
+          console.log('连接已关闭，尝试重新连接');
+          initWebSocket();
+        }
+      }, 3000);
+    });
+    
+    // 添加心跳检测，保持连接
+    startHeartbeat();
+  } catch (error) {
+    console.error('初始化WebSocket失败:', error);
+  }
+};
+
+// 心跳检测
+let heartbeatTimer = null;
+const startHeartbeat = () => {
+  // 清除可能存在的旧定时器
+  if (heartbeatTimer) {
+    clearInterval(heartbeatTimer);
+  }
+  
+  // 每30秒发送一次心跳
+  heartbeatTimer = setInterval(() => {
+    if (socket) {
+      console.log('发送心跳包');
+      uni.sendSocketMessage({
+        data: JSON.stringify({ type: 'heartbeat', chatRoomId: chatRoomId.value }),
+        fail: (error) => {
+          console.error('心跳发送失败:', error);
+          socket = false;
+          clearInterval(heartbeatTimer);
+          
+          // 尝试重连
+          setTimeout(() => {
+            initWebSocket();
+          }, 1000);
+        }
+      });
+    } else {
+      console.log('WebSocket未连接，尝试重连');
+      clearInterval(heartbeatTimer);
+      initWebSocket();
+    }
+  }, 30000);
+};
+
+// 关闭WebSocket连接
+const closeWebSocket = () => {
+  try {
+    if (socket) {
+      uni.closeSocket({
+        success: () => {
+          console.log('WebSocket关闭成功');
+          socket = false;
+        },
+        fail: (error) => {
+          console.error('WebSocket关闭失败:', error);
+        },
+        complete: () => {
+          socket = false;
+          
+          // 清除心跳定时器
+          if (heartbeatTimer) {
+            clearInterval(heartbeatTimer);
+            heartbeatTimer = null;
+          }
+        }
+      });
+    }
+  } catch (error) {
+    console.error('关闭WebSocket出错:', error);
+  }
+};
+
+// 加载历史消息
+const loadHistoryMessages = async () => {
+  try {
+    const result = await getChatMessages(chatRoomId.value);
+    if (result && result.code === 200 && result.data) {
+      // 清空当前消息列表
+      messages.value = [];
+      
+      // 优先使用组件内的用户名变量，如果为空则尝试从本地存储获取
+      const username = currentUsername.value || uni.getStorageSync('username');
+      console.log('历史消息判断使用的用户名:', username);
+      
+      // 添加历史消息
+      result.data.forEach(item => {
+        // 从sendTime中提取时分秒
+        let messageTime = '';
+        if (item.sendTime) {
+          // 提取时间部分 (HH:mm:ss)
+          const timeMatch = item.sendTime.match(/\d{2}:\d{2}:\d{2}/);
+          if (timeMatch) {
+            // 只保留时和分
+            messageTime = timeMatch[0].substring(0, 5);
+          } else {
+            // 如果没有匹配到，使用timestamp
+            messageTime = new Date(item.timestamp).toLocaleTimeString('zh-CN', { hour12: false }).slice(0, 5);
+          }
+        } else {
+          // 如果没有sendTime字段，使用timestamp
+          messageTime = new Date(item.timestamp).toLocaleTimeString('zh-CN', { hour12: false }).slice(0, 5);
+        }
+        
+        // 判断是否为图片消息，使用messageType字段
+        const isImage = item.messageType === 'img';
+        
+        messages.value.push({
+          type: item.username === username ? 2 : 1, // 使用username判断是否为自己发送的消息
+          text: item.content,
+          time: messageTime,
+          isImage: isImage // 使用正确的判断条件
+        });
+      });
+      
+      // 滚动到底部
+      scrollToBottom();
+    }
+  } catch (error) {
+    console.error('获取历史消息失败:', error);
+    uni.showToast({
+      title: '获取历史消息失败',
+      icon: 'none'
+    });
+  }
+};
+
+// 滚动到底部
+const scrollToBottom = () => {
+  setTimeout(() => {
+    const query = uni.createSelectorQuery();
+    query.select('.chat-content').boundingClientRect();
+    query.exec(function(res) {
+      if (res && res[0]) {
+        uni.pageScrollTo({
+          scrollTop: res[0].height,
+          duration: 300
+        });
+      }
+    });
+  }, 100);
+};
+
+// 发送消息的方法
+const sendMessage = () => {
+  if (message.value.trim()) {
+    // 获取当前时间的时分
+    const currentTime = new Date().toLocaleTimeString('zh-CN', { hour12: false }).slice(0, 5);
+    
+    // 构造消息对象 
+    const messageData = {
+      messageType: 'text',
+      content: message.value,
+      username: currentUsername.value || uni.getStorageSync('username') // 添加用户名
+    };
+    
+    // 发送消息到服务器
+    console.log('发送消息:', JSON.stringify(messageData));
+    uni.sendSocketMessage({
+      data: JSON.stringify(messageData),
+      success: () => {
+        // 本地添加消息
+        const newMessage = { 
+          type: 2, // 2表示自己发送的消息
+          text: message.value, 
+          time: currentTime,
+          isImage: false
+        };
+        
+        messages.value.push(newMessage);
+        
+        // 清空输入框
+        message.value = '';
+        
+        // 滚动到底部
+        scrollToBottom();
+        
+        // 延迟加载历史消息，确保数据库已更新
+        setTimeout(() => {
+          loadHistoryMessages();
+        }, 1000);
+      },
+      fail: (error) => {
+        console.error('发送消息失败:', error);
+        uni.showToast({
+          title: '发送消息失败',
+          icon: 'none'
+        });
+      }
+    });
+  }
+};
+
+// 交换微信确认
+const dialogConfirm = () => {
+  const msgText = '我的微信是: yangbaba';
+  const currentTime = new Date().toLocaleTimeString('zh-CN', { hour12: false }).slice(0, 5);
+  
+  // 构造消息对象
+  const messageData = {
+    messageType: 'text',
+    content: msgText,
+    username: currentUsername.value || uni.getStorageSync('username') // 添加用户名
+  };
+  
+  // 发送消息到服务器
+  uni.sendSocketMessage({
+    data: JSON.stringify(messageData),
+    success: () => {
+      // 本地添加消息
+      messages.value.push({ 
+        type: 2, 
+        text: msgText, 
+        time: currentTime 
+      });
+      
+      // 滚动到底部
+      scrollToBottom();
+      
+      // 延迟加载历史消息
+      setTimeout(() => {
+        loadHistoryMessages();
+      }, 1000);
+    }
   });
 };
 
@@ -179,12 +613,62 @@ const chooseAndSendImage = () => {
       const tempFilePath = res.tempFilePaths[0];
       const currentTime = new Date().toLocaleTimeString('zh-CN', { hour12: false }).slice(0, 5);
       
-      messages.value.push({
-        type: 2,
-        text: tempFilePath,
-        time: currentTime,
-        isImage: true
+      // 显示上传中提示
+      uni.showLoading({
+        title: '图片上传中...'
       });
+      
+      // 使用封装好的上传方法
+      uploadFile(tempFilePath)
+        .then(data => {
+          if (data.code === 200) {
+            const imageUrl = data.data.url;
+            
+            // 构造图片消息
+            const messageData = {
+              messageType: 'img',
+              content: imageUrl,
+              username: currentUsername.value || uni.getStorageSync('username')
+            };
+            
+            // 发送消息到服务器
+            uni.sendSocketMessage({
+              data: JSON.stringify(messageData),
+              success: () => {
+                // 本地添加消息
+                messages.value.push({
+                  type: 2,
+                  text: imageUrl,
+                  time: currentTime,
+                  isImage: true
+                });
+                
+                // 滚动到底部
+                scrollToBottom();
+                
+                // 延迟加载历史消息
+                setTimeout(() => {
+                  loadHistoryMessages();
+                }, 1000);
+              }
+            });
+          } else {
+            uni.showToast({
+              title: '图片上传失败: ' + (data.msg || '未知错误'),
+              icon: 'none'
+            });
+          }
+        })
+        .catch(error => {
+          console.error('上传图片失败:', error);
+          uni.showToast({
+            title: '图片上传失败',
+            icon: 'none'
+          });
+        })
+        .finally(() => {
+          uni.hideLoading(); // 确保无论成功失败都会隐藏加载提示
+        });
 
       // 关闭功能面板
       isShowFunction.value = false;
@@ -223,7 +707,13 @@ const chooseAndSendImage = () => {
     overflow-y: auto;
     padding: 10px;
     border-top: 1px solid #ddd;
-    height: 750rpx;
+    height: calc(100vh - 260rpx); // 使用计算高度，减去头部和输入框高度
+    transition: height 0.3s ease;
+    
+    // 当功能区显示时，减小聊天内容区域高度
+    &.content-shrink {
+      height: calc(100vh - 630rpx); // 减去头部、输入框和功能区高度
+    }
 	.historyTime{
 		padding-top: 20rpx;
 		padding-bottom: 40rpx;
@@ -356,7 +846,7 @@ const chooseAndSendImage = () => {
       padding-left: 30rpx;
       padding-top: 30rpx;
       flex-wrap: wrap;
-	padding-bottom: 20rpx;
+     	padding-bottom: 20rpx;
       .icon {
         margin-right: 60rpx;
         width: 110rpx;
