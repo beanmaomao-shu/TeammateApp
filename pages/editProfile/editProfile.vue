@@ -175,7 +175,7 @@ const saveProfile = async () => {
     console.log('准备提交的数据：', formData);
 
     const res = await editUserInfoAPI(formData);
-    
+    console.log(res)
     if (res.code === 200) {
       // 更新本地存储的用户名
       uni.setStorageSync('username', formData.username);

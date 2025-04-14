@@ -91,6 +91,7 @@
     }
   },
   "setting": {
-    "compileHotReLoad": true
+    "compileHotReLoad": true,
+    "autoAudits": true
   }
 }

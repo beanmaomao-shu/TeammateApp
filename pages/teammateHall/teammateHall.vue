@@ -176,8 +176,8 @@
 		<view class="login-container" v-if="!isLoggedIn">
 			<button 
 				class="login-btn" 
-				open-type="getUserProfile" 
-				@click="handleUserProfile"
+				open-type="getUserInfo" 
+				@getuserinfo="handleGetUserInfo"
 			>
 				微信登录
 			</button>
@@ -307,19 +307,19 @@ const matchData = ref([
 const wxLogin = async () => {
 	try {
 		// 1. 获取登录code
-		const { code } = await uni.login();
-		if (code) {
-			console.log('获取code成功：', code);
+		const loginResult = await uni.login();
+		if (loginResult.code) {
+			console.log('获取code成功：', loginResult.code);
 			
 			// 2. 调用登录接口
-			const res = await login(code);
+			const res = await login(loginResult.code);
 			console.log('登录响应：', res);
 			
 			if (res.data && res.data.token) {
 				// 3. 保存登录状态和token
 				isLoggedIn.value = true;
 				uni.setStorageSync('token', res.data.token);
-				console.log( res.data.token)
+				console.log(res.data.token);
 				// 可选：保存openid
 				if (res.data.openid) {
 					uni.setStorageSync('openid', res.data.openid);
