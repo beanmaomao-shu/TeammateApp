@@ -14,7 +14,8 @@
     "pages/inviteMate/inviteMate",
     "pages/test/test",
     "pages/fakedetail/fakedetail",
-    "pages/editProfile/editProfile"
+    "pages/editProfile/editProfile",
+    "pages/ai/ai"
   ],
   "usingComponents": {
     "van-popup": "/wxcomponents/dist/popup/index",

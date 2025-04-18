@@ -1,1 +1,31 @@
-"use strict";const e=require("../../common/vendor.js"),r={__name:"fcButton",props:{imgSrc:{type:String,default:""},Title:{type:String,default:"加载失败"},Color:{type:String,default:"#000"}},setup(o){const t=o;return(n,p)=>({a:t.imgSrc,b:e.t(t.Title),c:t.Color})}},c=e._export_sfc(r,[["__scopeId","data-v-a91f18cb"]]);wx.createComponent(c);
+"use strict";
+const common_vendor = require("../../common/vendor.js");
+const _sfc_main = {
+  __name: "fcButton",
+  props: {
+    imgSrc: {
+      type: String,
+      default: ""
+    },
+    Title: {
+      type: String,
+      default: "加载失败"
+    },
+    Color: {
+      type: String,
+      default: "#000"
+    }
+  },
+  setup(__props) {
+    const props = __props;
+    return (_ctx, _cache) => {
+      return {
+        a: props.imgSrc,
+        b: common_vendor.t(props.Title),
+        c: props.Color
+      };
+    };
+  }
+};
+const Component = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["__scopeId", "data-v-a91f18cb"], ["__file", "C:/Users/黎翠儿/Desktop/TeammateApp/components/fcButton/fcButton.vue"]]);
+wx.createComponent(Component);

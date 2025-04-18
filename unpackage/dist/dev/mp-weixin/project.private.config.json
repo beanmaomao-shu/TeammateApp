@@ -1,96 +1,22 @@
 {
   "description": "项目私有配置文件。此文件中的内容将覆盖 project.config.json 中的相同字段。项目的改动优先同步到此文件中。详见文档：https://developers.weixin.qq.com/miniprogram/dev/devtools/projectconfig.html",
+  "projectname": "TeammateApp",
+  "setting": {
+    "compileHotReLoad": true,
+    "urlCheck": false
+  },
+  "libVersion": "3.7.8",
   "condition": {
     "miniprogram": {
       "list": [
         {
-          "name": "pages/fakedetail/fakedetail",
-          "pathName": "pages/fakedetail/fakedetail",
-          "query": "",
-          "launchMode": "default",
-          "scene": null
-        },
-        {
-          "name": "pages/faketeamdetail/faketeamdetail",
-          "pathName": "pages/faketeamdetail/faketeamdetail",
-          "query": "",
-          "launchMode": "default",
-          "scene": null
-        },
-        {
-          "name": "pages/seminarRoom/seminarRoom",
-          "pathName": "pages/seminarRoom/seminarRoom",
-          "query": "",
-          "launchMode": "default",
-          "scene": null
-        },
-        {
-          "name": "pages/inviteMate/inviteMate",
-          "pathName": "pages/inviteMate/inviteMate",
-          "query": "",
-          "launchMode": "default",
-          "scene": null
-        },
-        {
-          "name": "pages/makeTeam/makeTeam",
-          "pathName": "pages/makeTeam/makeTeam",
-          "query": "",
-          "launchMode": "default",
-          "scene": null
-        },
-        {
-          "name": "pages/teamDetail/teamDetail",
-          "pathName": "pages/teamDetail/teamDetail",
-          "query": "",
-          "launchMode": "default",
-          "scene": null
-        },
-        {
-          "name": "pages/teamDetail/teamDetail",
-          "pathName": "pages/teamDetail/teamDetail",
-          "query": "",
-          "launchMode": "default",
-          "scene": null
-        },
-        {
-          "name": "pages/teammateHall/teammateHall",
-          "pathName": "pages/teammateHall/teammateHall",
-          "query": "",
-          "launchMode": "default",
-          "scene": null
-        },
-        {
-          "name": "pages/test/test",
-          "pathName": "pages/test/test",
-          "query": "",
-          "launchMode": "default",
-          "scene": null
-        },
-        {
-          "name": "pages/connect/connect",
-          "pathName": "pages/connect/connect",
-          "query": "",
-          "launchMode": "default",
-          "scene": null
-        },
-        {
-          "name": "pages/home/home",
-          "pathName": "pages/home/home",
-          "query": "",
-          "launchMode": "default",
-          "scene": null
-        },
-        {
-          "name": "pages/moreDetail/moreDetail",
-          "pathName": "pages/moreDetail/moreDetail",
+          "name": "pages/ai/ai",
+          "pathName": "pages/ai/ai",
           "query": "",
           "launchMode": "default",
           "scene": null
         }
       ]
     }
-  },
-  "setting": {
-    "compileHotReLoad": true
   }
 }

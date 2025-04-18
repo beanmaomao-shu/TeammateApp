@@ -117,6 +117,14 @@
 				"navigationBarTitleText" : "编辑名片",
 				"enablePullDownRefresh" : false
 			}
+		},
+		{
+			"path" : "pages/ai/ai",
+			"style" : 
+			{
+				"navigationBarTitleText" : "",
+				"enablePullDownRefresh" : false
+			}
 		}
 		
 	],
