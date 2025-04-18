@@ -31,6 +31,7 @@ if (uni.restoreGlobal) {
 }
 (function(vue) {
   "use strict";
+  const ON_SHOW = "onShow";
   const ON_LOAD = "onLoad";
   function formatAppLog(type, filename, ...args) {
     if (uni.__log__) {
@@ -45,6 +46,7 @@ if (uni.restoreGlobal) {
   const createHook = (lifecycle) => (hook, target = vue.getCurrentInstance()) => {
     !vue.isInSSRComponentSetup && vue.injectHook(lifecycle, hook, target);
   };
+  const onShow = /* @__PURE__ */ createHook(ON_SHOW);
   const onLoad = /* @__PURE__ */ createHook(ON_LOAD);
   const _export_sfc = (sfc, props) => {
     const target = sfc.__vccOpts || sfc;
@@ -53,7 +55,7 @@ if (uni.restoreGlobal) {
     }
     return target;
   };
-  const _sfc_main$B = {
+  const _sfc_main$C = {
     __name: "dash",
     props: {
       Color: String,
@@ -75,13 +77,13 @@ if (uni.restoreGlobal) {
       };
     }
   };
-  const __easycom_1$2 = /* @__PURE__ */ _export_sfc(_sfc_main$B, [["__file", "D:/Github/TeammateApp/components/dash/dash.vue"]]);
-  const _imports_0$8 = "/static/images/搜索.png";
-  const _imports_1$7 = "/static/images/people.png";
+  const __easycom_1$2 = /* @__PURE__ */ _export_sfc(_sfc_main$C, [["__file", "D:/Github/TeammateApp/components/dash/dash.vue"]]);
+  const _imports_0$7 = "/static/images/搜索.png";
+  const _imports_1$6 = "/static/images/people.png";
   const _imports_2$4 = "/static/images/more.png";
-  const _imports_3$2 = "/static/images/match8.png";
-  const _imports_0$7 = "/static/images/队伍.png";
-  const _imports_1$6 = "/static/images/avatar.png";
+  const _imports_3$2 = "/static/images/match9.png";
+  const _imports_0$6 = "/static/images/队伍.png";
+  const _imports_0$5 = "/static/images/avatar.png";
   const _imports_5$1 = "/static/images/trending.png";
   const _imports_7$1 = "/static/images/match5.png";
   const _imports_1$5 = "/static/images/avatar1 (1).jpg";
@@ -116,7 +118,82 @@ if (uni.restoreGlobal) {
   function useRouter() {
     return vue.inject(routerKey);
   }
-  const _sfc_main$A = {
+  const baseURL = "http://117.72.54.182:8898";
+  const request = (options) => {
+    return new Promise((resolve, reject) => {
+      const token = uni.getStorageSync("token");
+      let requestData = options.data;
+      if (options.method === "POST" && options.data) {
+        requestData = {
+          ...options.data
+        };
+      }
+      uni.request({
+        ...options,
+        url: baseURL + options.url,
+        data: requestData,
+        // 添加请求头，携带token
+        header: {
+          "Content-Type": "application/json",
+          ...options.header,
+          // 如果有token则添加到请求头
+          ...token ? { "Authorization": token } : {}
+        },
+        success: (res) => {
+          formatAppLog("log", "at utils/request.js:30", "请求响应：", res);
+          if (res.statusCode === 200) {
+            resolve(res.data);
+          } else if (res.statusCode === 401) {
+            uni.removeStorageSync("token");
+            uni.showToast({
+              title: "请重新登录",
+              icon: "none"
+            });
+            reject(res);
+          } else {
+            uni.showToast({
+              title: `请求失败: ${res.statusCode}`,
+              icon: "none"
+            });
+            formatAppLog("error", "at utils/request.js:48", "请求失败详情：", res);
+            reject(res);
+          }
+        },
+        fail: (err) => {
+          formatAppLog("error", "at utils/request.js:54", "网络错误详情：", err);
+          uni.showToast({
+            title: "网络错误",
+            icon: "none"
+          });
+          reject(err);
+        }
+      });
+    });
+  };
+  function getContest() {
+    return request({
+      url: "/matchInfos/list",
+      method: "get"
+    });
+  }
+  const searchContest = (name) => {
+    return request({
+      url: "/matchInfos",
+      method: "GET",
+      data: {
+        name
+      }
+    });
+  };
+  const login = (code) => {
+    return request({
+      url: `/users/login?code=${code}`,
+      // 将code作为query参数
+      method: "POST"
+      // 移除data，因为code需要作为query参数
+    });
+  };
+  const _sfc_main$B = {
     __name: "teammateHall",
     props: {
       toValue: {
@@ -124,16 +201,84 @@ if (uni.restoreGlobal) {
       }
     },
     setup(__props) {
+      useRouter();
       const create = vue.ref(false);
+      const inputValue = vue.ref("");
+      const showSuggestion = vue.ref(false);
+      const searchResults = vue.ref([]);
+      vue.ref([]);
+      const contestList = vue.ref([]);
+      let searchTimeout = null;
+      const isLoggedIn = vue.ref(false);
       const toMakeTeam = () => {
         setInterval(() => {
           create.value = true;
         }, 1e3);
       };
-      const inputValue = vue.ref("");
-      useRouter();
-      const showSuggestion = vue.ref(false);
-      const matchData = vue.ref([
+      const getContestList = async () => {
+        try {
+          const token = uni.getStorageSync("token");
+          if (!token) {
+            await wxLogin();
+          }
+          const res = await getContest();
+          contestList.value = res.data;
+          formatAppLog("log", "at pages/teammateHall/teammateHall.vue:228", res.data);
+        } catch (error) {
+          formatAppLog("error", "at pages/teammateHall/teammateHall.vue:230", "获取比赛列表失败：", error);
+          uni.showToast({
+            title: "获取比赛信息失败",
+            icon: "none"
+          });
+        }
+      };
+      const handleSearch = async () => {
+        clearTimeout(searchTimeout);
+        if (!inputValue.value) {
+          searchResults.value = [];
+          showSuggestion.value = false;
+          return;
+        }
+        searchTimeout = setTimeout(async () => {
+          try {
+            const res = await searchContest(inputValue.value);
+            if (res.data) {
+              searchResults.value = res.data;
+              formatAppLog("log", "at pages/teammateHall/teammateHall.vue:252", res.data);
+              showSuggestion.value = true;
+            }
+          } catch (error) {
+            formatAppLog("error", "at pages/teammateHall/teammateHall.vue:256", "搜索失败：", error);
+            uni.showToast({
+              title: "搜索失败",
+              icon: "none"
+            });
+          }
+        }, 300);
+      };
+      const selectSuggestion = (suggestion) => {
+        inputValue.value = suggestion.name;
+        showSuggestion.value = false;
+        navigateToDetail();
+      };
+      const handleBlur = () => {
+        setTimeout(() => {
+          showSuggestion.value = false;
+        }, 200);
+      };
+      const navigateToDetail = () => {
+        if (!inputValue.value) {
+          uni.showToast({
+            title: "请输入搜索内容",
+            icon: "none"
+          });
+          return;
+        }
+        uni.navigateTo({
+          url: `/pages/searchDetail/searchDetail?value=${encodeURIComponent(inputValue.value)}`
+        });
+      };
+      vue.ref([
         { id: 1, matchName: "2024年第十四届APMCM亚太地区大学生数学建模竞赛", name: "听党的就队", imgUrl: "../../static/images/match6.png" },
         { id: 2, matchName: "2024年全国大学生英语翻译大赛（NETCCS）", name: "六级能不能过队", imgUrl: "../../static/images/match3.png" },
         { id: 3, matchName: '2024年第五届"中译国青杯"国际组织文件翻译大赛', name: "超级翻译官队", imgUrl: "../../static/images/match4.png" },
@@ -144,39 +289,51 @@ if (uni.restoreGlobal) {
         { id: 8, matchName: "CCF2024年中国计算机应用技术大赛-全国算法精英大赛", name: "AC队", imgUrl: "../../static/images/match7.png" },
         { id: 9, matchName: "浙大研究院《智能无人机》研学实践项目", name: "让你飞起来队", imgUrl: "../../static/images/match14.png" }
       ]);
-      const filteredData = vue.ref([]);
-      const filterSuggestion = () => {
-        if (inputValue.value) {
-          filteredData.value = matchData.value.filter((item) => {
-            return item.matchName.toLowerCase().includes(inputValue.value.toLowerCase());
-          });
-        } else {
-          filteredData.value = [];
-        }
-      };
-      const selectSuggestion = (suggestion, event) => {
-        event.stopPropagation();
-        inputValue.value = suggestion.matchName;
-        formatAppLog("log", "at pages/teammateHall/teammateHall.vue:235", "Selecting suggestion:", suggestion);
-        filteredData.value = [];
-      };
-      const searchInfo = async () => {
-      };
-      const wxLogin = () => {
-        wx.login({
-          success(res) {
-            if (res.code) {
-              formatAppLog("log", "at pages/teammateHall/teammateHall.vue:254", res.code);
+      const wxLogin = async () => {
+        try {
+          const loginResult = await uni.login();
+          if (loginResult.code) {
+            formatAppLog("log", "at pages/teammateHall/teammateHall.vue:312", "获取code成功：", loginResult.code);
+            const res = await login(loginResult.code);
+            formatAppLog("log", "at pages/teammateHall/teammateHall.vue:316", "登录响应：", res);
+            if (res.data && res.data.token) {
+              isLoggedIn.value = true;
+              uni.setStorageSync("token", res.data.token);
+              formatAppLog("log", "at pages/teammateHall/teammateHall.vue:322", res.data.token);
+              if (res.data.openid) {
+                uni.setStorageSync("openid", res.data.openid);
+              }
+              uni.showToast({
+                title: "登录成功",
+                icon: "success"
+              });
+              return res.data.token;
             } else {
-              formatAppLog("log", "at pages/teammateHall/teammateHall.vue:256", "登录失败！" + res.errMsg);
+              throw new Error("登录失败：未获取到token");
             }
           }
-        });
+        } catch (error) {
+          formatAppLog("error", "at pages/teammateHall/teammateHall.vue:339", "登录失败：", error);
+          uni.showToast({
+            title: "登录失败，请重试",
+            icon: "none"
+          });
+          throw error;
+        }
       };
       const centerValue = vue.ref("");
       const props = __props;
+      getContestList();
       onLoad(() => {
         centerValue.value = props.toValue;
+      });
+      vue.onMounted(async () => {
+        try {
+          await wxLogin();
+          await getContestList();
+        } catch (error) {
+          formatAppLog("error", "at pages/teammateHall/teammateHall.vue:370", "初始化失败：", error);
+        }
       });
       return (_ctx, _cache) => {
         const _component_van_notice_bar = vue.resolveComponent("van-notice-bar");
@@ -190,9 +347,9 @@ if (uni.restoreGlobal) {
                 "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => inputValue.value = $event),
                 type: "text",
                 placeholder: "搜索在线赛事组队信息",
-                onInput: filterSuggestion,
+                onInput: handleSearch,
                 onFocus: _cache[1] || (_cache[1] = ($event) => showSuggestion.value = true),
-                onBlur: _cache[2] || (_cache[2] = ($event) => showSuggestion.value = false)
+                onBlur: handleBlur
               },
               null,
               544
@@ -202,32 +359,31 @@ if (uni.restoreGlobal) {
             ]),
             vue.createElementVNode("view", {
               class: "searchButton",
-              onClick: _cache[3] || (_cache[3] = ($event) => {
-                searchInfo();
-              })
+              onClick: navigateToDetail
             }, [
               vue.createElementVNode("image", {
-                src: _imports_0$8,
+                src: _imports_0$7,
                 mode: ""
               })
             ])
           ]),
-          vue.createCommentVNode(" 提示词 "),
-          showSuggestion.value && filteredData.value.length ? (vue.openBlock(), vue.createElementBlock("ul", {
+          vue.createCommentVNode(" 搜索建议列表 "),
+          showSuggestion.value && searchResults.value.length ? (vue.openBlock(), vue.createElementBlock("ul", {
             key: 0,
             class: "suggesstions"
           }, [
             (vue.openBlock(true), vue.createElementBlock(
               vue.Fragment,
               null,
-              vue.renderList(filteredData.value, (suggestion, index) => {
+              vue.renderList(searchResults.value, (suggestion, index) => {
                 return vue.openBlock(), vue.createElementBlock("li", {
                   class: "list",
-                  onClick: vue.withModifiers(($event) => selectSuggestion(suggestion, $event), ["stop"])
-                }, vue.toDisplayString(suggestion.matchName), 9, ["onClick"]);
+                  key: index,
+                  onClick: vue.withModifiers(($event) => selectSuggestion(suggestion), ["stop"])
+                }, vue.toDisplayString(suggestion.name), 9, ["onClick"]);
               }),
-              256
-              /* UNKEYED_FRAGMENT */
+              128
+              /* KEYED_FRAGMENT */
             )),
             vue.createElementVNode("view", { class: "tip" }, [
               vue.createTextVNode(" 没有找到想要的比赛? "),
@@ -241,7 +397,7 @@ if (uni.restoreGlobal) {
             background: "#F1E6FF"
           }, {
             default: vue.withCtx(() => [
-              vue.createTextVNode(" 2024年第十四届亚太地区大学生数学建模竞赛(以下简称“竞赛”)是由中国国际科技促进会物联网工作委员会和北京图象图形学学会联合主办的亚太地区大学生学科类竞赛，竞赛由亚太地区大学生数学建模竞赛组委会负责组织，欢迎各高等院校按照竞赛章程及有关规定组织同学报名参赛。 2023年第十三届亚太地区大学生数学建模竞赛共有9700支队伍969所高校2万7千多名学生报名参赛。参赛高校覆盖北京大学、清华大学、浙江大学、同济大学、上海交通大学、复旦大学、四川大学、大连理工大学等全部的39所985高校和114所211高校。除中国大陆高校外本次竞赛还有数十所国外高校参赛。 ")
+              vue.createTextVNode(' 2024年第十四届亚太地区大学生数学建模竞赛(以下简称"竞赛")是由中国国际科技促进会物联网工作委员会和北京图象图形学学会联合主办的亚太地区大学生学科类竞赛，竞赛由亚太地区大学生数学建模竞赛组委会负责组织，欢迎各高等院校按照竞赛章程及有关规定组织同学报名参赛。 2023年第十三届亚太地区大学生数学建模竞赛共有9700支队伍969所高校2万7千多名学生报名参赛。参赛高校覆盖北京大学、清华大学、浙江大学、同济大学、上海交通大学、复旦大学、四川大学、大连理工大学等全部的39所985高校和114所211高校。除中国大陆高校外本次竞赛还有数十所国外高校参赛。 ')
             ]),
             _: 1
             /* STABLE */
@@ -260,11 +416,12 @@ if (uni.restoreGlobal) {
               (vue.openBlock(true), vue.createElementBlock(
                 vue.Fragment,
                 null,
-                vue.renderList(matchData.value, (item, index) => {
+                vue.renderList(contestList.value, (item, index) => {
                   return vue.openBlock(), vue.createElementBlock("swiper-item", { key: index }, [
                     vue.createElementVNode("image", {
-                      src: item.imgUrl,
-                      mode: "widthFix"
+                      src: item.poster,
+                      class: "img",
+                      mode: "aspectFit"
                     }, null, 8, ["src"])
                   ]);
                 }),
@@ -283,7 +440,7 @@ if (uni.restoreGlobal) {
             vue.createElementVNode("view", { class: "listHead" }, [
               vue.createElementVNode("view", { class: "left" }, [
                 vue.createElementVNode("image", {
-                  src: _imports_1$7,
+                  src: _imports_1$6,
                   mode: ""
                 }),
                 vue.createElementVNode("text", null, "正在组队")
@@ -321,11 +478,11 @@ if (uni.restoreGlobal) {
                 ]),
                 vue.createElementVNode("view", { class: "mainInfo" }, [
                   vue.createCommentVNode(" 比赛名 "),
-                  vue.createElementVNode("view", { class: "matchName" }, ` '第三届"中外传播杯"全国大学生英语翻译大赛-英译汉赛道' `),
+                  vue.createElementVNode("view", { class: "matchName" }, " 第二届大学生高校物理挑战赛 "),
                   vue.createCommentVNode(" 队名 "),
                   vue.createElementVNode("view", { class: "teamName" }, [
                     vue.createElementVNode("image", {
-                      src: _imports_0$7,
+                      src: _imports_0$6,
                       mode: ""
                     }),
                     vue.createElementVNode("p", null, "一战成名队")
@@ -334,7 +491,7 @@ if (uni.restoreGlobal) {
                   vue.createElementVNode("view", { class: "bottom" }, [
                     vue.createElementVNode("view", { class: "avatars" }, [
                       vue.createElementVNode("img", {
-                        src: _imports_1$6,
+                        src: _imports_0$5,
                         alt: ""
                       })
                     ]),
@@ -363,14 +520,14 @@ if (uni.restoreGlobal) {
                 ]),
                 vue.createElementVNode("view", { class: "mainInfo" }, [
                   vue.createCommentVNode(" 比赛名 "),
-                  vue.createElementVNode("view", { class: "matchName" }, " 2024第十届全国中西部外语翻译大赛 "),
+                  vue.createElementVNode("view", { class: "matchName" }, " 2024第十届中西部外语翻译大赛 "),
                   vue.createCommentVNode(" 队名 "),
                   vue.createElementVNode("view", { class: "teamName" }, [
                     vue.createElementVNode("image", {
-                      src: _imports_0$7,
+                      src: _imports_0$6,
                       mode: ""
                     }),
-                    vue.createElementVNode("p", null, "让我们说中文队")
+                    vue.createElementVNode("p", null, "一战成名队")
                   ]),
                   vue.createCommentVNode(" 头像列表//研讨室跳转 "),
                   vue.createElementVNode("view", { class: "bottom" }, [
@@ -408,16 +565,18 @@ if (uni.restoreGlobal) {
             (vue.openBlock(true), vue.createElementBlock(
               vue.Fragment,
               null,
-              vue.renderList(matchData.value, (item, index) => {
+              vue.renderList(contestList.value, (item, index) => {
                 return vue.openBlock(), vue.createElementBlock("view", {
                   class: "teamInfo",
                   key: item.id
                 }, [
-                  vue.createElementVNode("navigator", { url: `/pages/teamDetail/teamDetail?toaPageValue=a` }, [
+                  vue.createElementVNode("navigator", {
+                    url: `/pages/teamDetail/teamDetail?id=${item.id}&toaPageValue=a`
+                  }, [
                     vue.createCommentVNode("比赛图片 "),
                     vue.createElementVNode("view", { class: "matchImg" }, [
                       vue.createElementVNode("image", {
-                        src: item.imgUrl,
+                        src: item.poster,
                         mode: "widthFix"
                       }, null, 8, ["src"])
                     ]),
@@ -426,23 +585,17 @@ if (uni.restoreGlobal) {
                       vue.createElementVNode(
                         "view",
                         { class: "matchName" },
-                        vue.toDisplayString(item.matchName),
+                        vue.toDisplayString(item.name),
                         1
                         /* TEXT */
                       ),
                       vue.createCommentVNode(" 队名 "),
                       vue.createElementVNode("view", { class: "teamName" }, [
                         vue.createElementVNode("image", {
-                          src: _imports_0$7,
+                          src: _imports_0$6,
                           mode: ""
                         }),
-                        vue.createElementVNode(
-                          "p",
-                          null,
-                          vue.toDisplayString(item.name),
-                          1
-                          /* TEXT */
-                        )
+                        vue.createElementVNode("p", null, "鸭鸭小队")
                       ]),
                       vue.createCommentVNode(" 头像列表//研讨室跳转 "),
                       vue.createElementVNode("view", { class: "bottom" }, [
@@ -456,11 +609,11 @@ if (uni.restoreGlobal) {
                             alt: ""
                           }),
                           vue.createElementVNode("img", {
-                            src: _imports_1$6,
+                            src: _imports_0$5,
                             alt: ""
                           }),
                           vue.createElementVNode("img", {
-                            src: _imports_1$6,
+                            src: _imports_0$5,
                             alt: ""
                           }),
                           vue.createElementVNode("img", {
@@ -479,19 +632,30 @@ if (uni.restoreGlobal) {
                         ])
                       ])
                     ])
-                  ])
+                  ], 8, ["url"])
                 ]);
               }),
               128
               /* KEYED_FRAGMENT */
             ))
           ]),
-          vue.createElementVNode("view", { class: "issue" }, [
-            vue.createElementVNode("button", {
-              onClick: wxLogin,
-              "open-type": "getUserInfo"
-            }, "微信登录")
-          ]),
+          vue.createCommentVNode(" 登录按钮 "),
+          !isLoggedIn.value ? (vue.openBlock(), vue.createElementBlock("view", {
+            key: 1,
+            class: "login-container"
+          }, [
+            vue.createElementVNode(
+              "button",
+              {
+                class: "login-btn",
+                "open-type": "getUserInfo",
+                onGetuserinfo: _cache[2] || (_cache[2] = (...args) => _ctx.handleGetUserInfo && _ctx.handleGetUserInfo(...args))
+              },
+              " 微信登录 ",
+              32
+              /* NEED_HYDRATION */
+            )
+          ])) : vue.createCommentVNode("v-if", true),
           vue.createElementVNode("view", {
             class: "issue",
             onClick: toMakeTeam
@@ -502,8 +666,8 @@ if (uni.restoreGlobal) {
       };
     }
   };
-  const PagesTeammateHallTeammateHall = /* @__PURE__ */ _export_sfc(_sfc_main$A, [["__scopeId", "data-v-305e4dd3"], ["__file", "D:/Github/TeammateApp/pages/teammateHall/teammateHall.vue"]]);
-  const _sfc_main$z = {
+  const PagesTeammateHallTeammateHall = /* @__PURE__ */ _export_sfc(_sfc_main$B, [["__scopeId", "data-v-305e4dd3"], ["__file", "D:/Github/TeammateApp/pages/teammateHall/teammateHall.vue"]]);
+  const _sfc_main$A = {
     name: "UniSegmentedControl",
     emits: ["clickItem"],
     props: {
@@ -601,42 +765,38 @@ if (uni.restoreGlobal) {
       /* CLASS, STYLE */
     );
   }
-  const __easycom_0$5 = /* @__PURE__ */ _export_sfc(_sfc_main$z, [["render", _sfc_render$j], ["__scopeId", "data-v-86aa1171"], ["__file", "D:/Github/TeammateApp/uni_modules/uni-segmented-control/components/uni-segmented-control/uni-segmented-control.vue"]]);
+  const __easycom_0$6 = /* @__PURE__ */ _export_sfc(_sfc_main$A, [["render", _sfc_render$j], ["__scopeId", "data-v-86aa1171"], ["__file", "D:/Github/TeammateApp/uni_modules/uni-segmented-control/components/uni-segmented-control/uni-segmented-control.vue"]]);
   const _imports_1$3 = "/static/images/认证.png";
   const _imports_2$1 = "/static/images/未认证.png";
-  const _sfc_main$y = {
+  const _sfc_main$z = {
     __name: "infoCard",
     props: {
-      toaValue: {
-        type: String
-      },
-      tobValue: {
-        type: String
-      },
-      tocValue: {
-        type: String
+      id: {
+        type: [String, Number],
+        required: true
       },
       contentValue: {
-        type: String
+        type: String,
+        default: ""
       }
     },
-    setup(__props) {
+    emits: ["getID"],
+    setup(__props, { emit: __emit }) {
       const isLeader = vue.ref(true);
       const isaudited = vue.ref(false);
+      const isauthenticated = vue.ref(true);
       const props = __props;
-      const centeraValue = vue.ref("");
-      const centerbValue = vue.ref("");
+      vue.ref("");
+      vue.ref("");
       const centercValue = vue.ref("");
       const conValue = vue.ref("");
       vue.onMounted(() => {
-        centeraValue.value = props.toaValue;
-        centerbValue.value = props.tobValue;
-        centercValue.value = props.tocValue;
+        centercValue.value = props.toValue;
         conValue.value = props.contentValue;
       });
       return (_ctx, _cache) => {
         return vue.openBlock(), vue.createElementBlock("navigator", {
-          url: `/pages/teamDetail/teamDetail?tobPageValue=${centerbValue.value}&tocPageValue=${centercValue.value}`
+          url: `/pages/teamDetail/teamDetail?id=${__props.id}&tocPageValue=${conValue.value}`
         }, [
           vue.createElementVNode("view", { class: "infoCard" }, [
             vue.createElementVNode("view", { class: "info" }, [
@@ -679,7 +839,7 @@ if (uni.restoreGlobal) {
                   key: 2,
                   class: "authentication"
                 }, [
-                  _ctx.isauthenticated ? (vue.openBlock(), vue.createElementBlock("view", {
+                  isauthenticated.value ? (vue.openBlock(), vue.createElementBlock("view", {
                     key: 0,
                     class: "content"
                   }, [
@@ -690,7 +850,7 @@ if (uni.restoreGlobal) {
                     }),
                     vue.createElementVNode("view", { class: "p" }, "已认证")
                   ])) : vue.createCommentVNode("v-if", true),
-                  !_ctx.isauthenticated ? (vue.openBlock(), vue.createElementBlock("view", {
+                  !isauthenticated.value ? (vue.openBlock(), vue.createElementBlock("view", {
                     key: 1,
                     class: "content"
                   }, [
@@ -709,33 +869,212 @@ if (uni.restoreGlobal) {
       };
     }
   };
-  const __easycom_0$4 = /* @__PURE__ */ _export_sfc(_sfc_main$y, [["__scopeId", "data-v-d0ce716f"], ["__file", "D:/Github/TeammateApp/components/infoCard/infoCard.vue"]]);
-  const _imports_0$6 = "/static/images/background.png";
+  const __easycom_0$5 = /* @__PURE__ */ _export_sfc(_sfc_main$z, [["__scopeId", "data-v-d0ce716f"], ["__file", "D:/Github/TeammateApp/components/infoCard/infoCard.vue"]]);
+  const _imports_0$4 = "/static/images/background.png";
   const _imports_1$2 = "/static/images/default.png";
-  const _imports_0$5 = "/static/images/队伍图标1.jpg";
-  const _imports_0$4 = "/static/images/队伍图标2.jpg";
-  const _sfc_main$x = {
+  function createTeamAPI(data) {
+    const formattedData = {
+      name: String(data.name || ""),
+      icon: String(data.icon || ""),
+      slogan: String(data.slogan || ""),
+      introduction: String(data.introduction || ""),
+      numbers: Number(data.numbers || 0),
+      endTime: String(data.endTime || ""),
+      matchLocation: String(data.matchLocation || ""),
+      matchId: Number(data.matchId || 0)
+    };
+    formatAppLog("log", "at api/team.js:15", formattedData, "api");
+    return request({
+      url: "/teams",
+      method: "POST",
+      header: {
+        "Content-Type": "application/json"
+      },
+      data
+    });
+  }
+  function getCreateTeamAPI() {
+    return request({
+      url: "/teams/create/list",
+      method: "GET"
+    });
+  }
+  function getJoinTeamAPI() {
+    return request({
+      url: "/teams/join/list",
+      method: "GET"
+    });
+  }
+  function getDetailTeamAPI(id) {
+    return request({
+      url: `/teams/${id}`
+    });
+  }
+  function deleteTeamAPI(id) {
+    return request({
+      url: `/teams/${id}`,
+      method: "DELETE"
+    });
+  }
+  const getChatMessages = (chatRoomId) => {
+    return request({
+      url: `/ws/${chatRoomId}`,
+      method: "GET"
+    });
+  };
+  const getUnreadCount = (chatRoomIds) => {
+    return request({
+      url: "/ws/unread",
+      method: "GET",
+      params: { chatRoomIds }
+    });
+  };
+  const markMessagesAsRead = (chatRoomId) => {
+    return request({
+      url: `/ws/markRead/${chatRoomId}`,
+      method: "PUT"
+    });
+  };
+  const uploadFile$1 = (filePath) => {
+    return new Promise((resolve, reject) => {
+      const token = uni.getStorageSync("token");
+      formatAppLog("log", "at api/chat.js:33", "上传图片使用的token:", token);
+      uni.uploadFile({
+        url: "http://117.72.54.182:8898/users/upload",
+        filePath,
+        name: "file",
+        header: {
+          "Authorization": token
+        },
+        formData: {},
+        success: (res) => {
+          formatAppLog("log", "at api/chat.js:44", "上传响应状态码:", res.statusCode);
+          formatAppLog("log", "at api/chat.js:45", "上传响应数据:", res.data);
+          try {
+            if (res.statusCode !== 200) {
+              reject(new Error(`上传失败，状态码: ${res.statusCode}`));
+              return;
+            }
+            if (!res.data) {
+              reject(new Error("服务器返回数据为空"));
+              return;
+            }
+            const data = JSON.parse(res.data);
+            resolve(data);
+          } catch (error) {
+            reject(error);
+          }
+        },
+        fail: (error) => {
+          formatAppLog("error", "at api/chat.js:68", "上传请求失败:", error);
+          reject(error);
+        }
+      });
+    });
+  };
+  const _sfc_main$y = {
     __name: "seminarRoom",
     setup(__props) {
       const current = vue.ref(0);
       const items = vue.ref(["我创建的团队", "我加入的团队"]);
       const styleType = vue.ref("button");
       const activeColor = vue.ref("#AC33C1");
+      const createTeams = vue.ref([]);
+      const joinTeams = vue.ref([]);
       const onClickItem = (e2) => {
         if (current.value !== e2.currentIndex) {
           current.value = e2.currentIndex;
         }
       };
-      const isCreateTeam = vue.ref(true);
-      const isEnterTeam = vue.ref(true);
-      vue.onMounted(() => {
-        setInterval(() => {
-          isCreateTeam.value = false;
-        }, 3e3);
+      vue.ref(true);
+      vue.ref(true);
+      const getCreateTeam = async () => {
+        try {
+          const res = await getCreateTeamAPI();
+          formatAppLog("log", "at pages/seminarRoom/seminarRoom.vue:130", "获取创建的团队：", res);
+          if (res.code === 200 && res.data) {
+            createTeams.value = res.data.map((team) => ({
+              id: team.id,
+              name: team.name,
+              icon: team.icon,
+              chatRoomId: team.chatRoomId,
+              // 确保包含chatRoomId
+              isLeader: true,
+              // 在创建的团队中都是队长
+              unreadCount: 0
+              // 初始化未读消息数量
+            }));
+            await getUnreadMessages();
+          }
+        } catch (error) {
+          formatAppLog("error", "at pages/seminarRoom/seminarRoom.vue:144", "获取创建的团队失败：", error);
+          uni.showToast({
+            title: "获取团队信息失败",
+            icon: "none"
+          });
+        }
+      };
+      const getJoinTeam = async () => {
+        try {
+          const res = await getJoinTeamAPI();
+          formatAppLog("log", "at pages/seminarRoom/seminarRoom.vue:156", "获取加入的团队：", res);
+          if (res.code === 200 && res.data) {
+            joinTeams.value = res.data.map((team) => ({
+              ...team,
+              unreadCount: 0
+              // 初始化未读消息数量
+            }));
+            await getUnreadMessages();
+          }
+        } catch (error) {
+          formatAppLog("error", "at pages/seminarRoom/seminarRoom.vue:166", "获取加入的团队失败：", error);
+          uni.showToast({
+            title: "获取加入的团队失败",
+            icon: "none"
+          });
+        }
+      };
+      const getUnreadMessages = async () => {
+        try {
+          const allChatRoomIds = [
+            ...createTeams.value.map((team) => team.chatRoomId),
+            ...joinTeams.value.map((team) => team.chatRoomId)
+          ].filter((id) => id);
+          if (allChatRoomIds.length === 0)
+            return;
+          formatAppLog("log", "at pages/seminarRoom/seminarRoom.vue:186", "所有聊天室ID：", allChatRoomIds);
+          const res = await getUnreadCount(allChatRoomIds);
+          formatAppLog("log", "at pages/seminarRoom/seminarRoom.vue:188", "获取未读消息数量：", res);
+          if (res.code === 200 && res.data) {
+            createTeams.value = createTeams.value.map((team) => {
+              const unreadInfo = res.data.find((item) => item.chatRoomId === team.chatRoomId);
+              return {
+                ...team,
+                unreadCount: unreadInfo ? unreadInfo.count : 0
+              };
+            });
+            joinTeams.value = joinTeams.value.map((team) => {
+              const unreadInfo = res.data.find((item) => item.chatRoomId === team.chatRoomId);
+              return {
+                ...team,
+                unreadCount: unreadInfo ? unreadInfo.count : 0
+              };
+            });
+          }
+        } catch (error) {
+          formatAppLog("error", "at pages/seminarRoom/seminarRoom.vue:210", "获取未读消息数量失败：", error);
+        }
+      };
+      const handleGetID = (id) => {
+        formatAppLog("log", "at pages/seminarRoom/seminarRoom.vue:215", "从 infoCard 获取到的 ID：", id);
+      };
+      onShow(() => {
+        getCreateTeam();
+        getJoinTeam();
       });
       return (_ctx, _cache) => {
-        const _component_uni_segmented_control = resolveEasycom(vue.resolveDynamicComponent("uni-segmented-control"), __easycom_0$5);
-        const _component_infoCard = resolveEasycom(vue.resolveDynamicComponent("infoCard"), __easycom_0$4);
+        const _component_uni_segmented_control = resolveEasycom(vue.resolveDynamicComponent("uni-segmented-control"), __easycom_0$6);
+        const _component_infoCard = resolveEasycom(vue.resolveDynamicComponent("infoCard"), __easycom_0$5);
         const _component_uni_section = vue.resolveComponent("uni-section");
         return vue.openBlock(), vue.createElementBlock("view", { class: "seminarRoomLayout" }, [
           vue.createElementVNode("view", { class: "tabControl" }, [
@@ -757,13 +1096,13 @@ if (uni.restoreGlobal) {
                   vue.createCommentVNode(" 创建的团队 "),
                   current.value === 0 ? (vue.openBlock(), vue.createElementBlock("view", { key: 0 }, [
                     vue.createCommentVNode(" 无创建团队 "),
-                    !isCreateTeam.value ? (vue.openBlock(), vue.createElementBlock("view", {
+                    createTeams.value.length === 0 ? (vue.openBlock(), vue.createElementBlock("view", {
                       key: 0,
                       class: "createTeam empty"
                     }, [
                       vue.createElementVNode("image", {
                         class: "bg",
-                        src: _imports_0$6,
+                        src: _imports_0$4,
                         mode: ""
                       }),
                       vue.createElementVNode("image", {
@@ -773,51 +1112,85 @@ if (uni.restoreGlobal) {
                       }, [
                         vue.createElementVNode("view", { class: "font" }, " 你还没有创建任何团队呢~ ")
                       ])
-                    ])) : vue.createCommentVNode("v-if", true),
-                    vue.createCommentVNode(" 有创建团队 "),
-                    isCreateTeam.value ? (vue.openBlock(), vue.createElementBlock("view", {
-                      key: 1,
-                      class: "createTeam"
-                    }, [
-                      vue.createElementVNode("view", { class: "teamList" }, [
-                        vue.createElementVNode("navigator", {
-                          url: "/pages/chatRoom/chatRoom",
-                          class: "team"
-                        }, [
-                          vue.createVNode(_component_infoCard, {
-                            tocValue: "c",
-                            contentValue: "a"
-                          }, {
-                            name: vue.withCtx(() => [
-                              vue.createTextVNode("一战成名队")
-                            ]),
-                            img: vue.withCtx(() => [
-                              vue.createElementVNode("view", { class: "avatar" }, [
-                                vue.createElementVNode("image", {
-                                  class: "avatarImg",
-                                  src: _imports_0$5,
-                                  mode: "aspectFill"
-                                })
-                              ])
-                            ]),
-                            _: 1
-                            /* STABLE */
-                          }),
-                          vue.createElementVNode("view", { class: "enterButton" }, " >> 进入研讨室 ")
+                    ])) : (vue.openBlock(), vue.createElementBlock(
+                      vue.Fragment,
+                      { key: 1 },
+                      [
+                        vue.createCommentVNode(" 有创建团队 "),
+                        vue.createElementVNode("view", { class: "createTeam" }, [
+                          (vue.openBlock(true), vue.createElementBlock(
+                            vue.Fragment,
+                            null,
+                            vue.renderList(createTeams.value, (team, index) => {
+                              return vue.openBlock(), vue.createElementBlock("view", {
+                                class: "teamList",
+                                key: team.id
+                              }, [
+                                vue.createElementVNode("navigator", {
+                                  url: `/pages/chatRoom/chatRoom?chatRoomId=${team.chatRoomId}`,
+                                  class: "team"
+                                }, [
+                                  vue.createVNode(_component_infoCard, {
+                                    id: team.id,
+                                    contentValue: "c",
+                                    onGetID: handleGetID
+                                  }, vue.createSlots({
+                                    name: vue.withCtx(() => [
+                                      vue.createTextVNode(
+                                        vue.toDisplayString(team.name),
+                                        1
+                                        /* TEXT */
+                                      )
+                                    ]),
+                                    img: vue.withCtx(() => [
+                                      vue.createElementVNode("view", { class: "avatar" }, [
+                                        vue.createElementVNode("image", {
+                                          class: "avatarImg",
+                                          src: team.icon || "../../static/images/队伍图标1.jpg",
+                                          mode: "aspectFill"
+                                        }, null, 8, ["src"])
+                                      ])
+                                    ]),
+                                    _: 2
+                                    /* DYNAMIC */
+                                  }, [
+                                    team.unreadCount && team.unreadCount > 0 ? {
+                                      name: "extra",
+                                      fn: vue.withCtx(() => [
+                                        vue.createElementVNode(
+                                          "view",
+                                          { class: "unread-badge" },
+                                          vue.toDisplayString(team.unreadCount > 99 ? "99+" : team.unreadCount),
+                                          1
+                                          /* TEXT */
+                                        )
+                                      ]),
+                                      key: "0"
+                                    } : void 0
+                                  ]), 1032, ["id"]),
+                                  vue.createElementVNode("view", { class: "enterButton" }, " >> 进入研讨室 ")
+                                ], 8, ["url"])
+                              ]);
+                            }),
+                            128
+                            /* KEYED_FRAGMENT */
+                          ))
                         ])
-                      ])
-                    ])) : vue.createCommentVNode("v-if", true)
+                      ],
+                      2112
+                      /* STABLE_FRAGMENT, DEV_ROOT_FRAGMENT */
+                    ))
                   ])) : vue.createCommentVNode("v-if", true),
                   vue.createCommentVNode(" 加入的团队 "),
                   current.value === 1 ? (vue.openBlock(), vue.createElementBlock("view", { key: 1 }, [
                     vue.createCommentVNode(" 无加入团队 "),
-                    !isEnterTeam.value ? (vue.openBlock(), vue.createElementBlock("view", {
+                    joinTeams.value.length === 0 ? (vue.openBlock(), vue.createElementBlock("view", {
                       key: 0,
                       class: "enterTeam empty"
                     }, [
                       vue.createElementVNode("image", {
                         class: "bg",
-                        src: _imports_0$6,
+                        src: _imports_0$4,
                         mode: ""
                       }),
                       vue.createElementVNode("image", {
@@ -827,37 +1200,73 @@ if (uni.restoreGlobal) {
                       }, [
                         vue.createElementVNode("view", { class: "font" }, " 你还没有加入任何团队呢~ ")
                       ])
-                    ])) : vue.createCommentVNode("v-if", true),
-                    vue.createElementVNode("view", { class: "enterTeam" }, [
-                      vue.createCommentVNode(" 有加入团队 "),
-                      isEnterTeam.value ? (vue.openBlock(), vue.createElementBlock("view", {
-                        key: 0,
-                        class: "teamList"
-                      }, [
-                        vue.createElementVNode("navigator", {
-                          url: "/pages/chatRoom/chatRoom",
-                          class: "team"
-                        }, [
-                          vue.createVNode(_component_infoCard, { tobValue: "b" }, {
-                            name: vue.withCtx(() => [
-                              vue.createTextVNode("对一题就队")
-                            ]),
-                            img: vue.withCtx(() => [
-                              vue.createElementVNode("view", { class: "avatar" }, [
-                                vue.createElementVNode("image", {
-                                  class: "avatarImg",
-                                  src: _imports_0$4,
-                                  mode: "aspectFill"
-                                })
-                              ])
-                            ]),
-                            _: 1
-                            /* STABLE */
-                          }),
-                          vue.createElementVNode("view", { class: "enterButton" }, " >> 进入研讨室 ")
+                    ])) : (vue.openBlock(), vue.createElementBlock(
+                      vue.Fragment,
+                      { key: 1 },
+                      [
+                        vue.createCommentVNode(" 有加入团队 "),
+                        vue.createElementVNode("view", { class: "enterTeam" }, [
+                          (vue.openBlock(true), vue.createElementBlock(
+                            vue.Fragment,
+                            null,
+                            vue.renderList(joinTeams.value, (team, index) => {
+                              return vue.openBlock(), vue.createElementBlock("view", {
+                                class: "teamList",
+                                key: team.id
+                              }, [
+                                vue.createElementVNode("navigator", {
+                                  url: `/pages/chatRoom/chatRoom?chatRoomId=${team.chatRoomId}`,
+                                  class: "team"
+                                }, [
+                                  vue.createVNode(_component_infoCard, {
+                                    id: team.id,
+                                    contentValue: "b"
+                                  }, vue.createSlots({
+                                    name: vue.withCtx(() => [
+                                      vue.createTextVNode(
+                                        vue.toDisplayString(team.name),
+                                        1
+                                        /* TEXT */
+                                      )
+                                    ]),
+                                    img: vue.withCtx(() => [
+                                      vue.createElementVNode("view", { class: "avatar" }, [
+                                        vue.createElementVNode("image", {
+                                          class: "avatarImg",
+                                          src: team.icon || "../../static/images/队伍图标2.jpg",
+                                          mode: "aspectFill"
+                                        }, null, 8, ["src"])
+                                      ])
+                                    ]),
+                                    _: 2
+                                    /* DYNAMIC */
+                                  }, [
+                                    team.unreadCount && team.unreadCount > 0 ? {
+                                      name: "extra",
+                                      fn: vue.withCtx(() => [
+                                        vue.createElementVNode(
+                                          "view",
+                                          { class: "unread-badge" },
+                                          vue.toDisplayString(team.unreadCount > 99 ? "99+" : team.unreadCount),
+                                          1
+                                          /* TEXT */
+                                        )
+                                      ]),
+                                      key: "0"
+                                    } : void 0
+                                  ]), 1032, ["id"]),
+                                  vue.createElementVNode("view", { class: "enterButton" }, " >> 进入研讨室 ")
+                                ], 8, ["url"])
+                              ]);
+                            }),
+                            128
+                            /* KEYED_FRAGMENT */
+                          ))
                         ])
-                      ])) : vue.createCommentVNode("v-if", true)
-                    ])
+                      ],
+                      2112
+                      /* STABLE_FRAGMENT, DEV_ROOT_FRAGMENT */
+                    ))
                   ])) : vue.createCommentVNode("v-if", true)
                 ])
               ]),
@@ -869,7 +1278,7 @@ if (uni.restoreGlobal) {
       };
     }
   };
-  const PagesSeminarRoomSeminarRoom = /* @__PURE__ */ _export_sfc(_sfc_main$x, [["__scopeId", "data-v-779b4231"], ["__file", "D:/Github/TeammateApp/pages/seminarRoom/seminarRoom.vue"]]);
+  const PagesSeminarRoomSeminarRoom = /* @__PURE__ */ _export_sfc(_sfc_main$y, [["__scopeId", "data-v-779b4231"], ["__file", "D:/Github/TeammateApp/pages/seminarRoom/seminarRoom.vue"]]);
   const _imports_3 = "/static/images/编辑.png";
   const _imports_4 = "/static/images/info_center.png";
   const _imports_5 = "/static/images/tongxunlu.png";
@@ -878,10 +1287,29 @@ if (uni.restoreGlobal) {
   const _imports_8 = "/static/images/help.png";
   const _imports_9 = "/static/images/comment.png";
   const _imports_10 = "/static/images/Home.png";
-  const _sfc_main$w = {
+  const _sfc_main$x = {
     __name: "home",
     setup(__props) {
       const isauthenticated = vue.ref(true);
+      const contestList = vue.ref([]);
+      const getContestList = async () => {
+        try {
+          const res = await getContest();
+          contestList.value = res.data;
+          formatAppLog("log", "at pages/home/home.vue:103", "成功");
+        } catch (error) {
+          formatAppLog("log", "at pages/home/home.vue:105", "111222", error);
+        }
+      };
+      formatAppLog("log", "at pages/home/home.vue:108", "111", contestList.value);
+      vue.onMounted(() => {
+        getContestList();
+      });
+      const goToEditProfile = () => {
+        uni.navigateTo({
+          url: "/pages/editProfile/editProfile"
+        });
+      };
       return (_ctx, _cache) => {
         return vue.openBlock(), vue.createElementBlock("view", { class: "homeLayout" }, [
           vue.createCommentVNode(" 头像板块 "),
@@ -891,7 +1319,7 @@ if (uni.restoreGlobal) {
                 vue.createElementVNode("view", { class: "avatar" }, [
                   vue.createElementVNode("image", {
                     class: "avatarImg",
-                    src: _imports_1$6,
+                    src: _imports_0$5,
                     mode: "aspectFill"
                   })
                 ]),
@@ -926,7 +1354,10 @@ if (uni.restoreGlobal) {
               ])
             ]),
             vue.createElementVNode("view", { class: "functionCard" }, [
-              vue.createElementVNode("view", { class: "box" }, [
+              vue.createElementVNode("view", {
+                class: "box",
+                onClick: goToEditProfile
+              }, [
                 vue.createElementVNode("image", {
                   src: _imports_3,
                   mode: "aspectFill"
@@ -1005,9 +1436,9 @@ if (uni.restoreGlobal) {
       };
     }
   };
-  const PagesHomeHome = /* @__PURE__ */ _export_sfc(_sfc_main$w, [["__scopeId", "data-v-07e72d3c"], ["__file", "D:/Github/TeammateApp/pages/home/home.vue"]]);
+  const PagesHomeHome = /* @__PURE__ */ _export_sfc(_sfc_main$x, [["__scopeId", "data-v-07e72d3c"], ["__file", "D:/Github/TeammateApp/pages/home/home.vue"]]);
   const _imports_0$3 = "/static/images/match16.png";
-  const _sfc_main$v = {
+  const _sfc_main$w = {
     __name: "teamInfo",
     props: {
       toValue: {
@@ -1040,10 +1471,23 @@ if (uni.restoreGlobal) {
                   vue.createCommentVNode(" 队名 "),
                   vue.createElementVNode("view", { class: "teamName" }, [
                     vue.createElementVNode("image", {
-                      src: _imports_0$7,
+                      src: _imports_0$6,
                       mode: ""
                     }),
-                    vue.createElementVNode("p", null, "一战成名队")
+                    _ctx.tobValue === "b" ? (vue.openBlock(), vue.createElementBlock(
+                      "p",
+                      { key: 0 },
+                      vue.toDisplayString(_ctx.data[0].name),
+                      1
+                      /* TEXT */
+                    )) : vue.createCommentVNode("v-if", true),
+                    _ctx.tocValue === "c" ? (vue.openBlock(), vue.createElementBlock(
+                      "p",
+                      { key: 1 },
+                      vue.toDisplayString(_ctx.data[1].name),
+                      1
+                      /* TEXT */
+                    )) : vue.createCommentVNode("v-if", true)
                   ]),
                   vue.createCommentVNode(" 头像列表//研讨室跳转 "),
                   vue.createElementVNode("view", { class: "bottom" }, [
@@ -1057,7 +1501,7 @@ if (uni.restoreGlobal) {
                         alt: ""
                       }),
                       vue.createElementVNode("img", {
-                        src: _imports_1$6,
+                        src: _imports_0$5,
                         alt: ""
                       }),
                       vue.createElementVNode("img", {
@@ -1065,7 +1509,7 @@ if (uni.restoreGlobal) {
                         alt: ""
                       }),
                       vue.createElementVNode("img", {
-                        src: _imports_1$6,
+                        src: _imports_0$5,
                         alt: ""
                       }),
                       vue.createElementVNode("img", {
@@ -1093,7 +1537,7 @@ if (uni.restoreGlobal) {
       };
     }
   };
-  const ComponentsTeamInfoTeamInfo = /* @__PURE__ */ _export_sfc(_sfc_main$v, [["__scopeId", "data-v-9fbcd1e2"], ["__file", "D:/Github/TeammateApp/components/teamInfo/teamInfo.vue"]]);
+  const ComponentsTeamInfoTeamInfo = /* @__PURE__ */ _export_sfc(_sfc_main$w, [["__scopeId", "data-v-9fbcd1e2"], ["__file", "D:/Github/TeammateApp/components/teamInfo/teamInfo.vue"]]);
   const fontData = [
     {
       "font_class": "arrow-down",
@@ -1744,7 +2188,7 @@ if (uni.restoreGlobal) {
     const reg = /^[0-9]*$/g;
     return typeof val === "number" || reg.test(val) ? val + "px" : val;
   };
-  const _sfc_main$u = {
+  const _sfc_main$v = {
     name: "UniIcons",
     emits: ["click"],
     props: {
@@ -1813,7 +2257,7 @@ if (uni.restoreGlobal) {
       /* CLASS, STYLE */
     );
   }
-  const __easycom_2$1 = /* @__PURE__ */ _export_sfc(_sfc_main$u, [["render", _sfc_render$i], ["__scopeId", "data-v-d31e1c47"], ["__file", "D:/Github/TeammateApp/uni_modules/uni-icons/components/uni-icons/uni-icons.vue"]]);
+  const __easycom_0$4 = /* @__PURE__ */ _export_sfc(_sfc_main$v, [["render", _sfc_render$i], ["__scopeId", "data-v-d31e1c47"], ["__file", "D:/Github/TeammateApp/uni_modules/uni-icons/components/uni-icons/uni-icons.vue"]]);
   const popup = {
     data() {
       return {};
@@ -2153,7 +2597,7 @@ if (uni.restoreGlobal) {
   const {
     t: t$4
   } = initVueI18n(messages$1);
-  const _sfc_main$t = {
+  const _sfc_main$u = {
     name: "uniPopupDialog",
     mixins: [popup],
     emits: ["confirm", "close", "update:modelValue", "input"],
@@ -2367,7 +2811,7 @@ if (uni.restoreGlobal) {
       ])
     ]);
   }
-  const __easycom_6 = /* @__PURE__ */ _export_sfc(_sfc_main$t, [["render", _sfc_render$h], ["__scopeId", "data-v-d78c88b7"], ["__file", "D:/Github/TeammateApp/uni_modules/uni-popup/components/uni-popup-dialog/uni-popup-dialog.vue"]]);
+  const __easycom_6 = /* @__PURE__ */ _export_sfc(_sfc_main$u, [["render", _sfc_render$h], ["__scopeId", "data-v-d78c88b7"], ["__file", "D:/Github/TeammateApp/uni_modules/uni-popup/components/uni-popup-dialog/uni-popup-dialog.vue"]]);
   class MPAnimation {
     constructor(options, _this) {
       this.options = options;
@@ -2480,7 +2924,7 @@ if (uni.restoreGlobal) {
     clearTimeout(_this.timer);
     return new MPAnimation(option, _this);
   }
-  const _sfc_main$s = {
+  const _sfc_main$t = {
     name: "uniTransition",
     emits: ["click", "change"],
     props: {
@@ -2744,8 +3188,8 @@ if (uni.restoreGlobal) {
       [vue.vShow, $data.isShow]
     ]);
   }
-  const __easycom_0$3 = /* @__PURE__ */ _export_sfc(_sfc_main$s, [["render", _sfc_render$g], ["__file", "D:/Github/TeammateApp/uni_modules/uni-transition/components/uni-transition/uni-transition.vue"]]);
-  const _sfc_main$r = {
+  const __easycom_0$3 = /* @__PURE__ */ _export_sfc(_sfc_main$t, [["render", _sfc_render$g], ["__file", "D:/Github/TeammateApp/uni_modules/uni-transition/components/uni-transition/uni-transition.vue"]]);
+  const _sfc_main$s = {
     name: "uniPopup",
     components: {},
     emits: ["change", "maskClick"],
@@ -3158,10 +3602,24 @@ if (uni.restoreGlobal) {
       /* CLASS */
     )) : vue.createCommentVNode("v-if", true);
   }
-  const __easycom_5$1 = /* @__PURE__ */ _export_sfc(_sfc_main$r, [["render", _sfc_render$f], ["__scopeId", "data-v-4dd3c44b"], ["__file", "D:/Github/TeammateApp/uni_modules/uni-popup/components/uni-popup/uni-popup.vue"]]);
-  const _sfc_main$q = {
+  const __easycom_5$1 = /* @__PURE__ */ _export_sfc(_sfc_main$s, [["render", _sfc_render$f], ["__scopeId", "data-v-4dd3c44b"], ["__file", "D:/Github/TeammateApp/uni_modules/uni-popup/components/uni-popup/uni-popup.vue"]]);
+  const editUserInfoAPI = (data) => {
+    return request({
+      url: "/users/card",
+      method: "PUT",
+      data
+    });
+  };
+  const getUserInfoAPI = () => {
+    return request({
+      url: "/users/card",
+      method: "GET"
+    });
+  };
+  const _sfc_main$r = {
     __name: "chatRoom",
     setup(__props) {
+      const scrollTop = vue.ref(0);
       const messages2 = vue.ref([
         { type: 1, text: "Hello!", time: "9:32" },
         { type: 2, text: "Hi!", time: "9:33" }
@@ -3169,57 +3627,450 @@ if (uni.restoreGlobal) {
       const message = vue.ref("");
       const isShowFunction = vue.ref(false);
       const isOpen = vue.ref(null);
+      vue.ref("");
+      let socket = false;
+      const chatRoomId = vue.ref(null);
+      const teamInfo = vue.ref({});
+      const unreadCount = vue.ref(0);
+      const currentUsername = vue.ref("");
+      onLoad((options) => {
+        chatRoomId.value = options.chatRoomId;
+        getUsernameFromAPI();
+      });
+      const getUsernameFromAPI = async () => {
+        try {
+          const res = await getUserInfoAPI();
+          if (res && res.data && res.data.username) {
+            currentUsername.value = res.data.username;
+            uni.setStorageSync("username", res.data.username);
+            formatAppLog("log", "at pages/chatRoom/chatRoom.vue:174", "获取到的用户名:", currentUsername.value);
+          } else {
+            formatAppLog("error", "at pages/chatRoom/chatRoom.vue:176", "获取用户信息失败或用户名为空");
+          }
+        } catch (error) {
+          formatAppLog("error", "at pages/chatRoom/chatRoom.vue:179", "获取用户名出错:", error);
+        }
+      };
+      vue.onMounted(() => {
+        formatAppLog("log", "at pages/chatRoom/chatRoom.vue:185", "聊天室ID:", chatRoomId.value);
+        formatAppLog("log", "at pages/chatRoom/chatRoom.vue:186", "当前用户名:", currentUsername.value);
+        if (chatRoomId.value) {
+          getTeamInfo();
+          getUnreadMessageCount();
+          initWebSocket();
+          loadHistoryMessages();
+          markAsRead();
+        } else {
+          uni.showToast({
+            title: "聊天室ID不存在",
+            icon: "none"
+          });
+        }
+      });
+      const showFunction = () => {
+        isShowFunction.value = !isShowFunction.value;
+        if (isShowFunction.value) {
+          setTimeout(() => {
+            scrollToBottom();
+          }, 300);
+        }
+      };
+      const getTeamInfo = () => {
+        teamInfo.value = {
+          name: "对一题就队",
+          icon: "../../static/images/队伍图标2.jpg"
+        };
+      };
+      const getUnreadMessageCount = async () => {
+        try {
+          if (!chatRoomId.value)
+            return;
+          const res = await getUnreadCount([chatRoomId.value]);
+          if (res.code === 200 && res.data) {
+            const chatRoomData = res.data.find((item) => item.chatRoomId === parseInt(chatRoomId.value));
+            if (chatRoomData) {
+              unreadCount.value = chatRoomData.count;
+            }
+          }
+        } catch (error) {
+          formatAppLog("error", "at pages/chatRoom/chatRoom.vue:242", "获取未读消息数量失败:", error);
+        }
+      };
+      const markAsRead = async () => {
+        try {
+          if (!chatRoomId.value)
+            return;
+          const res = await markMessagesAsRead(chatRoomId.value);
+          if (res.code === 200) {
+            unreadCount.value = 0;
+          }
+        } catch (error) {
+          formatAppLog("error", "at pages/chatRoom/chatRoom.vue:257", "标记消息为已读失败:", error);
+        }
+      };
+      vue.onUnmounted(() => {
+        closeWebSocket();
+      });
+      const initWebSocket = () => {
+        try {
+          const token = uni.getStorageSync("token");
+          const wsUrl = `ws://117.72.54.182:8898/chat/${chatRoomId.value}`;
+          if (socket) {
+            formatAppLog("log", "at pages/chatRoom/chatRoom.vue:276", "WebSocket已连接，无需重新连接");
+            return;
+          }
+          uni.connectSocket({
+            url: wsUrl,
+            success: () => {
+              formatAppLog("log", "at pages/chatRoom/chatRoom.vue:284", "WebSocket连接请求发送成功");
+            },
+            fail: (error) => {
+              formatAppLog("error", "at pages/chatRoom/chatRoom.vue:287", "WebSocket连接请求失败:", error);
+            }
+          });
+          uni.onSocketOpen(function() {
+            formatAppLog("log", "at pages/chatRoom/chatRoom.vue:293", "WebSocket连接已打开");
+            socket = true;
+          });
+          uni.onSocketError(function(error) {
+            formatAppLog("error", "at pages/chatRoom/chatRoom.vue:299", "WebSocket连接错误:", error);
+            socket = false;
+            uni.showToast({
+              title: "WebSocket连接失败",
+              icon: "none"
+            });
+            setTimeout(() => {
+              if (!socket) {
+                formatAppLog("log", "at pages/chatRoom/chatRoom.vue:309", "尝试重新连接WebSocket");
+                initWebSocket();
+              }
+            }, 5e3);
+          });
+          uni.onSocketMessage(function(res) {
+            try {
+              const data = JSON.parse(res.data);
+              formatAppLog("log", "at pages/chatRoom/chatRoom.vue:319", "收到消息:", data);
+              if (data.messageType) {
+                const isImage = data.messageType === "img";
+                let currentTime = "";
+                if (data.sendTime) {
+                  const timeMatch = data.sendTime.match(/\d{2}:\d{2}:\d{2}/);
+                  if (timeMatch) {
+                    currentTime = timeMatch[0].substring(0, 5);
+                  } else {
+                    currentTime = (/* @__PURE__ */ new Date()).toLocaleTimeString("zh-CN", { hour12: false }).slice(0, 5);
+                  }
+                } else {
+                  currentTime = (/* @__PURE__ */ new Date()).toLocaleTimeString("zh-CN", { hour12: false }).slice(0, 5);
+                }
+                const username = currentUsername.value || uni.getStorageSync("username");
+                formatAppLog("log", "at pages/chatRoom/chatRoom.vue:344", "消息判断使用的用户名:", username, "消息中的用户名:", data.username);
+                const newMessage = {
+                  type: data.username === username ? 2 : 1,
+                  text: data.content,
+                  time: currentTime,
+                  isImage
+                };
+                const isDuplicate = messages2.value.some(
+                  (msg) => msg.text === newMessage.text && msg.type === newMessage.type && msg.time === newMessage.time
+                );
+                if (!isDuplicate) {
+                  messages2.value.push(newMessage);
+                  scrollToBottom();
+                }
+              }
+            } catch (error) {
+              formatAppLog("error", "at pages/chatRoom/chatRoom.vue:366", "解析消息失败:", error);
+            }
+          });
+          uni.onSocketClose(function() {
+            formatAppLog("log", "at pages/chatRoom/chatRoom.vue:372", "WebSocket连接已关闭");
+            socket = false;
+            setTimeout(() => {
+              if (!socket) {
+                formatAppLog("log", "at pages/chatRoom/chatRoom.vue:378", "连接已关闭，尝试重新连接");
+                initWebSocket();
+              }
+            }, 3e3);
+          });
+          startHeartbeat();
+        } catch (error) {
+          formatAppLog("error", "at pages/chatRoom/chatRoom.vue:387", "初始化WebSocket失败:", error);
+        }
+      };
+      let heartbeatTimer = null;
+      const startHeartbeat = () => {
+        if (heartbeatTimer) {
+          clearInterval(heartbeatTimer);
+        }
+        heartbeatTimer = setInterval(() => {
+          if (socket) {
+            formatAppLog("log", "at pages/chatRoom/chatRoom.vue:402", "发送心跳包");
+            uni.sendSocketMessage({
+              data: JSON.stringify({ type: "heartbeat", chatRoomId: chatRoomId.value }),
+              fail: (error) => {
+                formatAppLog("error", "at pages/chatRoom/chatRoom.vue:406", "心跳发送失败:", error);
+                socket = false;
+                clearInterval(heartbeatTimer);
+                setTimeout(() => {
+                  initWebSocket();
+                }, 1e3);
+              }
+            });
+          } else {
+            formatAppLog("log", "at pages/chatRoom/chatRoom.vue:417", "WebSocket未连接，尝试重连");
+            clearInterval(heartbeatTimer);
+            initWebSocket();
+          }
+        }, 3e4);
+      };
+      const closeWebSocket = () => {
+        try {
+          if (socket) {
+            uni.closeSocket({
+              success: () => {
+                formatAppLog("log", "at pages/chatRoom/chatRoom.vue:430", "WebSocket关闭成功");
+                socket = false;
+              },
+              fail: (error) => {
+                formatAppLog("error", "at pages/chatRoom/chatRoom.vue:434", "WebSocket关闭失败:", error);
+              },
+              complete: () => {
+                socket = false;
+                if (heartbeatTimer) {
+                  clearInterval(heartbeatTimer);
+                  heartbeatTimer = null;
+                }
+              }
+            });
+          }
+        } catch (error) {
+          formatAppLog("error", "at pages/chatRoom/chatRoom.vue:448", "关闭WebSocket出错:", error);
+        }
+      };
+      const loadHistoryMessages = async () => {
+        try {
+          const result = await getChatMessages(chatRoomId.value);
+          if (result && result.code === 200 && result.data) {
+            messages2.value = [];
+            const username = currentUsername.value || uni.getStorageSync("username");
+            formatAppLog("log", "at pages/chatRoom/chatRoom.vue:462", "历史消息判断使用的用户名:", username);
+            result.data.forEach((item) => {
+              let messageTime = "";
+              if (item.sendTime) {
+                const timeMatch = item.sendTime.match(/\d{2}:\d{2}:\d{2}/);
+                if (timeMatch) {
+                  messageTime = timeMatch[0].substring(0, 5);
+                } else {
+                  messageTime = new Date(item.timestamp).toLocaleTimeString("zh-CN", { hour12: false }).slice(0, 5);
+                }
+              } else {
+                messageTime = new Date(item.timestamp).toLocaleTimeString("zh-CN", { hour12: false }).slice(0, 5);
+              }
+              const isImage = item.messageType === "img";
+              messages2.value.push({
+                type: item.username === username ? 2 : 1,
+                // 使用username判断是否为自己发送的消息
+                text: item.content,
+                time: messageTime,
+                isImage
+                // 使用正确的判断条件
+              });
+            });
+            scrollToBottom();
+          }
+        } catch (error) {
+          formatAppLog("error", "at pages/chatRoom/chatRoom.vue:498", "获取历史消息失败:", error);
+          uni.showToast({
+            title: "获取历史消息失败",
+            icon: "none"
+          });
+        }
+      };
+      const scrollToBottom = () => {
+        setTimeout(() => {
+          const query = uni.createSelectorQuery();
+          query.select(".chat-content").boundingClientRect();
+          query.exec(function(res) {
+            if (res && res[0]) {
+              uni.pageScrollTo({
+                scrollTop: res[0].height,
+                duration: 300
+              });
+            }
+          });
+        }, 100);
+      };
       const sendMessage = () => {
         if (message.value.trim()) {
           const currentTime = (/* @__PURE__ */ new Date()).toLocaleTimeString("zh-CN", { hour12: false }).slice(0, 5);
-          messages2.value.push({ type: 2, text: message.value, time: currentTime });
-          message.value = "";
+          const messageData = {
+            messageType: "text",
+            content: message.value,
+            username: currentUsername.value || uni.getStorageSync("username")
+            // 添加用户名
+          };
+          formatAppLog("log", "at pages/chatRoom/chatRoom.vue:536", "发送消息:", JSON.stringify(messageData));
+          uni.sendSocketMessage({
+            data: JSON.stringify(messageData),
+            success: () => {
+              const newMessage = {
+                type: 2,
+                // 2表示自己发送的消息
+                text: message.value,
+                time: currentTime,
+                isImage: false
+              };
+              messages2.value.push(newMessage);
+              message.value = "";
+              scrollToBottom();
+              setTimeout(() => {
+                loadHistoryMessages();
+              }, 1e3);
+            },
+            fail: (error) => {
+              formatAppLog("error", "at pages/chatRoom/chatRoom.vue:562", "发送消息失败:", error);
+              uni.showToast({
+                title: "发送消息失败",
+                icon: "none"
+              });
+            }
+          });
         }
       };
-      const showFunction = () => {
-        isShowFunction.value = !isShowFunction.value;
-      };
-      const handleInput = () => {
-      };
-      const exchangeWechat = () => {
-        formatAppLog("log", "at pages/chatRoom/chatRoom.vue:138", "111");
-        isOpen.value.open();
-        msg.value = "您确定要交换联系方式吗？";
-      };
       const dialogConfirm = () => {
-        const msg2 = "我的微信是: yangbaba";
+        const msgText = "我的微信是: yangbaba";
         const currentTime = (/* @__PURE__ */ new Date()).toLocaleTimeString("zh-CN", { hour12: false }).slice(0, 5);
-        messages2.value.push({ type: 2, text: msg2, time: currentTime });
+        const messageData = {
+          messageType: "text",
+          content: msgText,
+          username: currentUsername.value || uni.getStorageSync("username")
+          // 添加用户名
+        };
+        uni.sendSocketMessage({
+          data: JSON.stringify(messageData),
+          success: () => {
+            messages2.value.push({
+              type: 2,
+              text: msgText,
+              time: currentTime
+            });
+            scrollToBottom();
+            setTimeout(() => {
+              loadHistoryMessages();
+            }, 1e3);
+          }
+        });
+      };
+      const chooseAndSendImage = () => {
+        uni.chooseImage({
+          count: 1,
+          sizeType: ["compressed"],
+          sourceType: ["album"],
+          success: (res) => {
+            const tempFilePath = res.tempFilePaths[0];
+            const currentTime = (/* @__PURE__ */ new Date()).toLocaleTimeString("zh-CN", { hour12: false }).slice(0, 5);
+            uni.showLoading({
+              title: "图片上传中..."
+            });
+            uploadFile$1(tempFilePath).then((data) => {
+              if (data.code === 200) {
+                const imageUrl = data.data.url;
+                const messageData = {
+                  messageType: "img",
+                  content: imageUrl,
+                  username: currentUsername.value || uni.getStorageSync("username")
+                };
+                uni.sendSocketMessage({
+                  data: JSON.stringify(messageData),
+                  success: () => {
+                    messages2.value.push({
+                      type: 2,
+                      text: imageUrl,
+                      time: currentTime,
+                      isImage: true
+                    });
+                    scrollToBottom();
+                    setTimeout(() => {
+                      loadHistoryMessages();
+                    }, 1e3);
+                  }
+                });
+              } else {
+                uni.showToast({
+                  title: "图片上传失败: " + (data.msg || "未知错误"),
+                  icon: "none"
+                });
+              }
+            }).catch((error) => {
+              formatAppLog("error", "at pages/chatRoom/chatRoom.vue:663", "上传图片失败:", error);
+              uni.showToast({
+                title: "图片上传失败",
+                icon: "none"
+              });
+            }).finally(() => {
+              uni.hideLoading();
+            });
+            isShowFunction.value = false;
+          }
+        });
       };
       return (_ctx, _cache) => {
-        const _component_infoCard = resolveEasycom(vue.resolveDynamicComponent("infoCard"), __easycom_0$4);
-        const _component_uni_icons = resolveEasycom(vue.resolveDynamicComponent("uni-icons"), __easycom_2$1);
+        const _component_infoCard = resolveEasycom(vue.resolveDynamicComponent("infoCard"), __easycom_0$5);
+        const _component_uni_icons = resolveEasycom(vue.resolveDynamicComponent("uni-icons"), __easycom_0$4);
         const _component_uni_popup_dialog = resolveEasycom(vue.resolveDynamicComponent("uni-popup-dialog"), __easycom_6);
         const _component_uni_popup = resolveEasycom(vue.resolveDynamicComponent("uni-popup"), __easycom_5$1);
         return vue.openBlock(), vue.createElementBlock("view", { class: "chat-page" }, [
           vue.createCommentVNode(" 头部信息卡 "),
           vue.createElementVNode("view", { class: "header" }, [
-            vue.createVNode(_component_infoCard, null, {
-              name: vue.withCtx(() => [
-                vue.createTextVNode(" 对一题就队 ")
+            vue.createVNode(
+              _component_infoCard,
+              null,
+              vue.createSlots({
+                name: vue.withCtx(() => [
+                  vue.createTextVNode(
+                    vue.toDisplayString(teamInfo.value.name || "对一题就队"),
+                    1
+                    /* TEXT */
+                  )
+                ]),
+                img: vue.withCtx(() => [
+                  vue.createElementVNode("view", { class: "avatar" }, [
+                    vue.createElementVNode("image", {
+                      class: "avatarImg",
+                      src: teamInfo.value.icon || "../../static/images/队伍图标2.jpg",
+                      mode: "aspectFill"
+                    }, null, 8, ["src"])
+                  ])
+                ]),
+                _: 2
+                /* DYNAMIC */
+              }, [
+                unreadCount.value > 0 ? {
+                  name: "extra",
+                  fn: vue.withCtx(() => [
+                    vue.createElementVNode(
+                      "view",
+                      { class: "unread-badge" },
+                      vue.toDisplayString(unreadCount.value > 99 ? "99+" : unreadCount.value),
+                      1
+                      /* TEXT */
+                    )
+                  ]),
+                  key: "0"
+                } : void 0
               ]),
-              img: vue.withCtx(() => [
-                vue.createElementVNode("view", { class: "avatar" }, [
-                  vue.createElementVNode("image", {
-                    class: "avatarImg",
-                    src: _imports_0$4,
-                    mode: "aspectFill"
-                  })
-                ])
-              ]),
-              _: 1
-              /* STABLE */
-            })
+              1024
+              /* DYNAMIC_SLOTS */
+            )
           ]),
           vue.createCommentVNode(" 聊天内容区域 "),
           vue.createElementVNode("scroll-view", {
-            class: "chat-content",
-            "scroll-y": ""
+            class: vue.normalizeClass(["chat-content", { "content-shrink": isShowFunction.value }]),
+            "scroll-y": "",
+            "scroll-top": scrollTop.value,
+            onScrolltolower: _cache[0] || (_cache[0] = (...args) => _ctx.onScrollToLower && _ctx.onScrollToLower(...args)),
+            id: "chatScroll"
           }, [
             vue.createElementVNode("view", { class: "historyTime" }, " 今天 8:36 "),
             vue.createCommentVNode(" 聊天消息会在这里显示 "),
@@ -3260,7 +4111,11 @@ if (uni.restoreGlobal) {
                     key: 1,
                     class: "chat-right"
                   }, [
-                    vue.createElementVNode("view", { class: "textarea" }, [
+                    vue.createCommentVNode(" 文本消息 "),
+                    !item.isImage ? (vue.openBlock(), vue.createElementBlock("view", {
+                      key: 0,
+                      class: "textarea"
+                    }, [
                       vue.createTextVNode(
                         vue.toDisplayString(item.text) + " ",
                         1
@@ -3273,9 +4128,32 @@ if (uni.restoreGlobal) {
                         1
                         /* TEXT */
                       )
-                    ]),
+                    ])) : (vue.openBlock(), vue.createElementBlock(
+                      vue.Fragment,
+                      { key: 1 },
+                      [
+                        vue.createCommentVNode(" 图片消息 "),
+                        vue.createElementVNode("view", { class: "img" }, [
+                          vue.createElementVNode("image", {
+                            src: item.text,
+                            mode: "widthFix",
+                            class: "chat-image",
+                            onClick: ($event) => _ctx.previewImage(item.text)
+                          }, null, 8, ["src", "onClick"]),
+                          vue.createElementVNode(
+                            "view",
+                            { class: "time" },
+                            vue.toDisplayString(item.time),
+                            1
+                            /* TEXT */
+                          )
+                        ])
+                      ],
+                      2112
+                      /* STABLE_FRAGMENT, DEV_ROOT_FRAGMENT */
+                    )),
                     vue.createElementVNode("image", {
-                      src: _imports_1$6,
+                      src: _imports_0$5,
                       mode: "aspectFill"
                     })
                   ])) : vue.createCommentVNode("v-if", true)
@@ -3283,8 +4161,10 @@ if (uni.restoreGlobal) {
               }),
               128
               /* KEYED_FRAGMENT */
-            ))
-          ]),
+            )),
+            vue.createCommentVNode(" 添加底部间距，防止最后一条消息被遮挡 "),
+            vue.createElementVNode("view", { style: { "height": "120rpx" } })
+          ], 42, ["scroll-top"]),
           vue.createCommentVNode(" 输入框和发送按钮 "),
           vue.createElementVNode(
             "view",
@@ -3298,9 +4178,9 @@ if (uni.restoreGlobal) {
                   "input",
                   {
                     type: "text",
-                    "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => message.value = $event),
+                    "onUpdate:modelValue": _cache[1] || (_cache[1] = ($event) => message.value = $event),
                     placeholder: "输入消息...",
-                    onInput: handleInput
+                    onInput: _cache[2] || (_cache[2] = (...args) => _ctx.handleInput && _ctx.handleInput(...args))
                   },
                   null,
                   544
@@ -3347,7 +4227,10 @@ if (uni.restoreGlobal) {
                     "view",
                     { class: "function" },
                     [
-                      vue.createElementVNode("view", { class: "icon" }, [
+                      vue.createElementVNode("view", {
+                        class: "icon",
+                        onClick: chooseAndSendImage
+                      }, [
                         vue.createVNode(_component_uni_icons, {
                           type: "image",
                           size: "40"
@@ -3384,7 +4267,7 @@ if (uni.restoreGlobal) {
                       ]),
                       vue.createElementVNode("view", {
                         class: "icon",
-                        onClick: exchangeWechat
+                        onClick: _cache[3] || (_cache[3] = (...args) => _ctx.exchangeWechat && _ctx.exchangeWechat(...args))
                       }, [
                         vue.createVNode(_component_uni_icons, {
                           type: "weixin",
@@ -3433,8 +4316,8 @@ if (uni.restoreGlobal) {
       };
     }
   };
-  const PagesChatRoomChatRoom = /* @__PURE__ */ _export_sfc(_sfc_main$q, [["__scopeId", "data-v-9b186cfb"], ["__file", "D:/Github/TeammateApp/pages/chatRoom/chatRoom.vue"]]);
-  const _sfc_main$p = {
+  const PagesChatRoomChatRoom = /* @__PURE__ */ _export_sfc(_sfc_main$r, [["__scopeId", "data-v-9b186cfb"], ["__file", "D:/Github/TeammateApp/pages/chatRoom/chatRoom.vue"]]);
+  const _sfc_main$q = {
     name: "UniBadge",
     emits: ["click"],
     props: {
@@ -3574,7 +4457,7 @@ if (uni.restoreGlobal) {
       )) : vue.createCommentVNode("v-if", true)
     ]);
   }
-  const __easycom_0$2 = /* @__PURE__ */ _export_sfc(_sfc_main$p, [["render", _sfc_render$e], ["__scopeId", "data-v-c97cb896"], ["__file", "D:/Github/TeammateApp/uni_modules/uni-badge/components/uni-badge/uni-badge.vue"]]);
+  const __easycom_0$2 = /* @__PURE__ */ _export_sfc(_sfc_main$q, [["render", _sfc_render$e], ["__scopeId", "data-v-c97cb896"], ["__file", "D:/Github/TeammateApp/uni_modules/uni-badge/components/uni-badge/uni-badge.vue"]]);
   const pages = [
     {
       path: "pages/teammateHall/teammateHall",
@@ -3670,6 +4553,13 @@ if (uni.restoreGlobal) {
       path: "pages/fakedetail/fakedetail",
       style: {
         navigationBarTitleText: "组队详情",
+        enablePullDownRefresh: false
+      }
+    },
+    {
+      path: "pages/editProfile/editProfile",
+      style: {
+        navigationBarTitleText: "编辑名片",
         enablePullDownRefresh: false
       }
     }
@@ -6445,7 +7335,7 @@ ${i3}
     } }), Cs(Js), Js.addInterceptor = N, Js.removeInterceptor = D, Js.interceptObject = F;
   })();
   var Vs = Js;
-  const _sfc_main$o = {
+  const _sfc_main$p = {
     name: "uni-data-select",
     mixins: [Vs.mixinDatacom || {}],
     props: {
@@ -6698,7 +7588,7 @@ ${i3}
     }
   };
   function _sfc_render$d(_ctx, _cache, $props, $setup, $data, $options) {
-    const _component_uni_icons = resolveEasycom(vue.resolveDynamicComponent("uni-icons"), __easycom_2$1);
+    const _component_uni_icons = resolveEasycom(vue.resolveDynamicComponent("uni-icons"), __easycom_0$4);
     return vue.openBlock(), vue.createElementBlock("view", { class: "uni-stat__select" }, [
       $props.label ? (vue.openBlock(), vue.createElementBlock(
         "span",
@@ -6837,7 +7727,7 @@ ${i3}
       )
     ]);
   }
-  const __easycom_1$1 = /* @__PURE__ */ _export_sfc(_sfc_main$o, [["render", _sfc_render$d], ["__scopeId", "data-v-ddf9e0a2"], ["__file", "D:/Github/TeammateApp/uni_modules/uni-data-select/components/uni-data-select/uni-data-select.vue"]]);
+  const __easycom_1$1 = /* @__PURE__ */ _export_sfc(_sfc_main$p, [["render", _sfc_render$d], ["__scopeId", "data-v-ddf9e0a2"], ["__file", "D:/Github/TeammateApp/uni_modules/uni-data-select/components/uni-data-select/uni-data-select.vue"]]);
   const ERR_MSG_OK = "chooseAndUploadFile:ok";
   const ERR_MSG_FAIL = "chooseAndUploadFile:fail";
   function chooseImage(opts) {
@@ -7119,7 +8009,7 @@ ${i3}
     }
     return filedata;
   };
-  const _sfc_main$n = {
+  const _sfc_main$o = {
     name: "uploadImage",
     emits: ["uploadFiles", "choose", "delFile"],
     props: {
@@ -7359,8 +8249,8 @@ ${i3}
       )) : vue.createCommentVNode("v-if", true)
     ]);
   }
-  const uploadImage = /* @__PURE__ */ _export_sfc(_sfc_main$n, [["render", _sfc_render$c], ["__scopeId", "data-v-bdfc07e0"], ["__file", "D:/Github/TeammateApp/uni_modules/uni-file-picker/components/uni-file-picker/upload-image.vue"]]);
-  const _sfc_main$m = {
+  const uploadImage = /* @__PURE__ */ _export_sfc(_sfc_main$o, [["render", _sfc_render$c], ["__scopeId", "data-v-bdfc07e0"], ["__file", "D:/Github/TeammateApp/uni_modules/uni-file-picker/components/uni-file-picker/upload-image.vue"]]);
+  const _sfc_main$n = {
     name: "uploadFile",
     emits: ["uploadFiles", "choose", "delFile"],
     props: {
@@ -7578,8 +8468,8 @@ ${i3}
       )) : vue.createCommentVNode("v-if", true)
     ]);
   }
-  const uploadFile = /* @__PURE__ */ _export_sfc(_sfc_main$m, [["render", _sfc_render$b], ["__scopeId", "data-v-a54939c6"], ["__file", "D:/Github/TeammateApp/uni_modules/uni-file-picker/components/uni-file-picker/upload-file.vue"]]);
-  const _sfc_main$l = {
+  const uploadFile = /* @__PURE__ */ _export_sfc(_sfc_main$n, [["render", _sfc_render$b], ["__scopeId", "data-v-a54939c6"], ["__file", "D:/Github/TeammateApp/uni_modules/uni-file-picker/components/uni-file-picker/upload-file.vue"]]);
+  const _sfc_main$m = {
     name: "uniFilePicker",
     components: {
       uploadImage,
@@ -8156,7 +9046,7 @@ ${i3}
       }, 8, ["readonly", "list-styles", "files-list", "showType", "delIcon", "onUploadFiles", "onChoose", "onDelFile"])) : vue.createCommentVNode("v-if", true)
     ]);
   }
-  const __easycom_2 = /* @__PURE__ */ _export_sfc(_sfc_main$l, [["render", _sfc_render$a], ["__scopeId", "data-v-6223573f"], ["__file", "D:/Github/TeammateApp/uni_modules/uni-file-picker/components/uni-file-picker/uni-file-picker.vue"]]);
+  const __easycom_2 = /* @__PURE__ */ _export_sfc(_sfc_main$m, [["render", _sfc_render$a], ["__scopeId", "data-v-6223573f"], ["__file", "D:/Github/TeammateApp/uni_modules/uni-file-picker/components/uni-file-picker/uni-file-picker.vue"]]);
   let Calendar$1 = class Calendar {
     constructor({
       selected,
@@ -8513,7 +9403,7 @@ ${i3}
     }
     return value;
   }
-  const _sfc_main$k = {
+  const _sfc_main$l = {
     props: {
       weeks: {
         type: Object,
@@ -8603,7 +9493,7 @@ ${i3}
       /* CLASS, NEED_HYDRATION */
     );
   }
-  const calendarItem = /* @__PURE__ */ _export_sfc(_sfc_main$k, [["render", _sfc_render$9], ["__scopeId", "data-v-3c762a01"], ["__file", "D:/Github/TeammateApp/uni_modules/uni-datetime-picker/components/uni-datetime-picker/calendar-item.vue"]]);
+  const calendarItem = /* @__PURE__ */ _export_sfc(_sfc_main$l, [["render", _sfc_render$9], ["__scopeId", "data-v-3c762a01"], ["__file", "D:/Github/TeammateApp/uni_modules/uni-datetime-picker/components/uni-datetime-picker/calendar-item.vue"]]);
   const en$1 = {
     "uni-datetime-picker.selectDate": "select date",
     "uni-datetime-picker.selectTime": "select time",
@@ -8678,7 +9568,7 @@ ${i3}
   const {
     t: t$2
   } = initVueI18n(i18nMessages);
-  const _sfc_main$j = {
+  const _sfc_main$k = {
     name: "UniDatetimePicker",
     data() {
       return {
@@ -9559,11 +10449,11 @@ ${i3}
       )) : vue.createCommentVNode("v-if", true)
     ]);
   }
-  const TimePicker = /* @__PURE__ */ _export_sfc(_sfc_main$j, [["render", _sfc_render$8], ["__scopeId", "data-v-1d532b70"], ["__file", "D:/Github/TeammateApp/uni_modules/uni-datetime-picker/components/uni-datetime-picker/time-picker.vue"]]);
+  const TimePicker = /* @__PURE__ */ _export_sfc(_sfc_main$k, [["render", _sfc_render$8], ["__scopeId", "data-v-1d532b70"], ["__file", "D:/Github/TeammateApp/uni_modules/uni-datetime-picker/components/uni-datetime-picker/time-picker.vue"]]);
   const {
     t: t$1
   } = initVueI18n(i18nMessages);
-  const _sfc_main$i = {
+  const _sfc_main$j = {
     components: {
       calendarItem,
       timePicker: TimePicker
@@ -10047,7 +10937,7 @@ ${i3}
   function _sfc_render$7(_ctx, _cache, $props, $setup, $data, $options) {
     const _component_calendar_item = vue.resolveComponent("calendar-item");
     const _component_time_picker = vue.resolveComponent("time-picker");
-    const _component_uni_icons = resolveEasycom(vue.resolveDynamicComponent("uni-icons"), __easycom_2$1);
+    const _component_uni_icons = resolveEasycom(vue.resolveDynamicComponent("uni-icons"), __easycom_0$4);
     return vue.openBlock(), vue.createElementBlock(
       "view",
       {
@@ -10337,8 +11227,8 @@ ${i3}
       /* NEED_HYDRATION */
     );
   }
-  const Calendar = /* @__PURE__ */ _export_sfc(_sfc_main$i, [["render", _sfc_render$7], ["__scopeId", "data-v-1d379219"], ["__file", "D:/Github/TeammateApp/uni_modules/uni-datetime-picker/components/uni-datetime-picker/calendar.vue"]]);
-  const _sfc_main$h = {
+  const Calendar = /* @__PURE__ */ _export_sfc(_sfc_main$j, [["render", _sfc_render$7], ["__scopeId", "data-v-1d379219"], ["__file", "D:/Github/TeammateApp/uni_modules/uni-datetime-picker/components/uni-datetime-picker/calendar.vue"]]);
+  const _sfc_main$i = {
     name: "UniDatetimePicker",
     options: {
       virtualHost: true
@@ -10995,7 +11885,7 @@ ${i3}
     }
   };
   function _sfc_render$6(_ctx, _cache, $props, $setup, $data, $options) {
-    const _component_uni_icons = resolveEasycom(vue.resolveDynamicComponent("uni-icons"), __easycom_2$1);
+    const _component_uni_icons = resolveEasycom(vue.resolveDynamicComponent("uni-icons"), __easycom_0$4);
     const _component_time_picker = vue.resolveComponent("time-picker");
     const _component_Calendar = vue.resolveComponent("Calendar");
     return vue.openBlock(), vue.createElementBlock("view", { class: "uni-date" }, [
@@ -11338,7 +12228,7 @@ ${i3}
       }, null, 8, ["date", "defTime", "start-date", "end-date", "selectableTimes", "startPlaceholder", "endPlaceholder", "default-value", "pleStatus", "range", "hasTime", "hideSecond", "onConfirm", "onMaskClose", "onChange"])) : vue.createCommentVNode("v-if", true)
     ]);
   }
-  const __easycom_3$1 = /* @__PURE__ */ _export_sfc(_sfc_main$h, [["render", _sfc_render$6], ["__scopeId", "data-v-9802168a"], ["__file", "D:/Github/TeammateApp/uni_modules/uni-datetime-picker/components/uni-datetime-picker/uni-datetime-picker.vue"]]);
+  const __easycom_3$1 = /* @__PURE__ */ _export_sfc(_sfc_main$i, [["render", _sfc_render$6], ["__scopeId", "data-v-9802168a"], ["__file", "D:/Github/TeammateApp/uni_modules/uni-datetime-picker/components/uni-datetime-picker/uni-datetime-picker.vue"]]);
   const en = {
     "uni-load-more.contentdown": "Pull up to show more",
     "uni-load-more.contentrefresh": "loading...",
@@ -11366,7 +12256,7 @@ ${i3}
   const {
     t
   } = initVueI18n(messages);
-  const _sfc_main$g = {
+  const _sfc_main$h = {
     name: "UniLoadMore",
     emits: ["clickLoadMore"],
     props: {
@@ -11523,7 +12413,7 @@ ${i3}
       )) : vue.createCommentVNode("v-if", true)
     ]);
   }
-  const __easycom_0$1 = /* @__PURE__ */ _export_sfc(_sfc_main$g, [["render", _sfc_render$5], ["__scopeId", "data-v-9245e42c"], ["__file", "D:/Github/TeammateApp/uni_modules/uni-load-more/components/uni-load-more/uni-load-more.vue"]]);
+  const __easycom_0$1 = /* @__PURE__ */ _export_sfc(_sfc_main$h, [["render", _sfc_render$5], ["__scopeId", "data-v-9245e42c"], ["__file", "D:/Github/TeammateApp/uni_modules/uni-load-more/components/uni-load-more/uni-load-more.vue"]]);
   const dataPicker = {
     props: {
       localdata: {
@@ -12068,7 +12958,7 @@ ${i3}
       }
     }
   };
-  const _sfc_main$f = {
+  const _sfc_main$g = {
     name: "UniDataPickerView",
     emits: ["nodeclick", "change", "datachange", "update:modelValue"],
     mixins: [dataPicker],
@@ -12262,8 +13152,8 @@ ${i3}
       ])
     ]);
   }
-  const DataPickerView = /* @__PURE__ */ _export_sfc(_sfc_main$f, [["render", _sfc_render$4], ["__scopeId", "data-v-91ec6a82"], ["__file", "D:/Github/TeammateApp/uni_modules/uni-data-picker/components/uni-data-pickerview/uni-data-pickerview.vue"]]);
-  const _sfc_main$e = {
+  const DataPickerView = /* @__PURE__ */ _export_sfc(_sfc_main$g, [["render", _sfc_render$4], ["__scopeId", "data-v-91ec6a82"], ["__file", "D:/Github/TeammateApp/uni_modules/uni-data-picker/components/uni-data-pickerview/uni-data-pickerview.vue"]]);
+  const _sfc_main$f = {
     name: "UniDataPicker",
     emits: ["popupopened", "popupclosed", "nodeclick", "input", "change", "update:modelValue", "inputclick"],
     mixins: [dataPicker],
@@ -12469,7 +13359,7 @@ ${i3}
   };
   function _sfc_render$3(_ctx, _cache, $props, $setup, $data, $options) {
     const _component_uni_load_more = resolveEasycom(vue.resolveDynamicComponent("uni-load-more"), __easycom_0$1);
-    const _component_uni_icons = resolveEasycom(vue.resolveDynamicComponent("uni-icons"), __easycom_2$1);
+    const _component_uni_icons = resolveEasycom(vue.resolveDynamicComponent("uni-icons"), __easycom_0$4);
     const _component_data_picker_view = vue.resolveComponent("data-picker-view");
     return vue.openBlock(), vue.createElementBlock("view", { class: "uni-data-tree" }, [
       vue.createElementVNode("view", {
@@ -12633,8 +13523,8 @@ ${i3}
       ])) : vue.createCommentVNode("v-if", true)
     ]);
   }
-  const __easycom_5 = /* @__PURE__ */ _export_sfc(_sfc_main$e, [["render", _sfc_render$3], ["__scopeId", "data-v-2653531e"], ["__file", "D:/Github/TeammateApp/uni_modules/uni-data-picker/components/uni-data-picker/uni-data-picker.vue"]]);
-  const _sfc_main$d = {
+  const __easycom_5 = /* @__PURE__ */ _export_sfc(_sfc_main$f, [["render", _sfc_render$3], ["__scopeId", "data-v-2653531e"], ["__file", "D:/Github/TeammateApp/uni_modules/uni-data-picker/components/uni-data-picker/uni-data-picker.vue"]]);
+  const _sfc_main$e = {
     __name: "fcButton",
     props: {
       imgSrc: {
@@ -12679,8 +13569,8 @@ ${i3}
       };
     }
   };
-  const __easycom_3 = /* @__PURE__ */ _export_sfc(_sfc_main$d, [["__scopeId", "data-v-a91f18cb"], ["__file", "D:/Github/TeammateApp/components/fcButton/fcButton.vue"]]);
-  const _sfc_main$c = {
+  const __easycom_3 = /* @__PURE__ */ _export_sfc(_sfc_main$e, [["__scopeId", "data-v-a91f18cb"], ["__file", "D:/Github/TeammateApp/components/fcButton/fcButton.vue"]]);
+  const _sfc_main$d = {
     __name: "makeTeam",
     setup(__props) {
       const imageStyles = vue.ref({
@@ -12693,115 +13583,220 @@ ${i3}
           radius: "10rpx"
         }
       });
-      const range = vue.ref([
-        { value: 0, text: "2024年第十四届APMCM大学生数学建模竞赛" },
-        { value: 1, text: "2024年全国大学生英语翻译大赛（NETCCS）" },
-        { value: 2, text: "2024年第五届中译国青杯国际组织文件翻译大赛" },
-        { value: 3, text: "2024创想中国全国大学生创新创业大赛" },
-        { value: 5, text: "第三届中外传播杯全国大学生英语翻译大赛" },
-        { value: 6, text: "第二届“数学周报”全国大学生数学能力大赛" },
-        { value: 7, text: "2024第二届全国大学生数学竞赛暨创新思维挑战赛" },
-        { value: 8, text: "CCF2024年中国计算机应用技术大赛算法精英大赛" },
-        { value: 9, text: "浙大研究院《智能无人机》研学实践项目" }
-      ]);
       const rates = vue.ref([
         { value: "1", name: "专科" },
         { value: "2", name: "普通本科" },
         { value: "3", name: "92高校" },
         { value: "4", name: "研究生" }
       ]);
-      const numbers = vue.ref();
+      const teamData = vue.ref({
+        name: "",
+        icon: "",
+        slogan: "",
+        introduction: "",
+        numbers: 0,
+        matchId: 1,
+        endTime: "",
+        matchLocation: ""
+      });
+      vue.ref();
       const items = vue.ref([
-        {
-          text: "0",
-          value: 0
-        },
-        {
-          text: "1",
-          value: 1
-        },
-        {
-          text: "2",
-          value: 2
-        },
-        {
-          text: "3",
-          value: 3
-        },
-        {
-          text: "4",
-          value: 4
-        },
-        {
-          text: "5",
-          value: 5
-        },
-        {
-          text: "6",
-          value: 6
-        },
-        {
-          text: "7",
-          value: 7
-        },
-        {
-          text: "8",
-          value: 8
-        },
-        {
-          text: "9",
-          value: 9
-        },
-        {
-          text: "10",
-          value: 10
-        }
+        { text: "0", value: 0 },
+        { text: "1", value: 1 },
+        { text: "2", value: 2 },
+        { text: "3", value: 3 },
+        { text: "4", value: 4 },
+        { text: "5", value: 5 },
+        { text: "6", value: 6 },
+        { text: "7", value: 7 },
+        { text: "8", value: 8 },
+        { text: "9", value: 9 },
+        { text: "10", value: 10 }
       ]);
-      const logNum = () => {
-        formatAppLog("log", "at pages/makeTeam/makeTeam.vue:193", numbers.value);
+      const logNum = (e2) => {
+        const selectedNumber = parseInt(e2.value || e2);
+        teamData.value.numbers = selectedNumber;
+        formatAppLog("log", "at pages/makeTeam/makeTeam.vue:166", "选择的人数：", teamData.value.numbers);
       };
-      const single = vue.ref();
       const logTime = (e2) => {
-        single.value = e2;
-        formatAppLog("log", "at pages/makeTeam/makeTeam.vue:199", e2);
+        teamData.value.endTime = e2;
+        formatAppLog("log", "at pages/makeTeam/makeTeam.vue:172", "选择的截止时间：", teamData.value.endTime);
       };
+      const onFileSelect = (e2) => {
+        formatAppLog("log", "at pages/makeTeam/makeTeam.vue:177", "文件选择事件：", e2);
+        onFileUploadSuccess(e2);
+      };
+      const onFileUploadProgress = (e2) => {
+        formatAppLog("log", "at pages/makeTeam/makeTeam.vue:184", "上传进度：", e2);
+      };
+      const onFileUploadFail = (e2) => {
+        formatAppLog("error", "at pages/makeTeam/makeTeam.vue:189", "上传失败：", e2);
+      };
+      const onFileUploadSuccess = async (e2) => {
+        try {
+          formatAppLog("log", "at pages/makeTeam/makeTeam.vue:195", "文件上传事件触发：", e2);
+          if (!e2.tempFiles || !e2.tempFiles.length) {
+            formatAppLog("error", "at pages/makeTeam/makeTeam.vue:198", "没有获取到文件信息");
+            return;
+          }
+          const tempFilePath = e2.tempFiles[0].url || e2.tempFiles[0].path;
+          const token = uni.getStorageSync("token");
+          uni.uploadFile({
+            url: "http://117.72.54.182:8898/users/upload",
+            filePath: tempFilePath,
+            name: "file",
+            header: {
+              "Authorization": token
+            },
+            success: (uploadRes) => {
+              try {
+                formatAppLog("log", "at pages/makeTeam/makeTeam.vue:214", "上传响应：", uploadRes);
+                const data = JSON.parse(uploadRes.data);
+                if (data.code === 200) {
+                  teamData.value.icon = data.data.url;
+                  formatAppLog("log", "at pages/makeTeam/makeTeam.vue:218", "设置图片URL：", teamData.value.icon);
+                  uni.showToast({
+                    title: "图片上传成功",
+                    icon: "success"
+                  });
+                } else {
+                  throw new Error("上传失败: " + data.message);
+                }
+              } catch (error) {
+                formatAppLog("error", "at pages/makeTeam/makeTeam.vue:227", "解析上传响应失败：", error);
+              }
+            },
+            fail: (error) => {
+              formatAppLog("error", "at pages/makeTeam/makeTeam.vue:231", "图片上传失败：", error);
+              uni.showToast({
+                title: "图片上传失败",
+                icon: "error"
+              });
+            }
+          });
+        } catch (error) {
+          formatAppLog("error", "at pages/makeTeam/makeTeam.vue:239", "图片上传异常：", error);
+        }
+      };
+      const addTeam = async () => {
+        formatAppLog("log", "at pages/makeTeam/makeTeam.vue:245", "发布组队函数被调用");
+        if (!teamData.value.icon) {
+          uni.showToast({ title: "请上传队伍图标", icon: "none" });
+          return;
+        }
+        if (!teamData.value.name) {
+          uni.showToast({ title: "请填写队伍名称", icon: "none" });
+          return;
+        }
+        if (!teamData.value.slogan) {
+          uni.showToast({ title: "请填写队伍口号", icon: "none" });
+          return;
+        }
+        if (!teamData.value.introduction) {
+          uni.showToast({ title: "请填写队伍简介", icon: "none" });
+          return;
+        }
+        if (!teamData.value.endTime) {
+          uni.showToast({ title: "请选择截止时间", icon: "none" });
+          return;
+        }
+        if (!teamData.value.matchLocation) {
+          uni.showToast({ title: "请选择比赛地点", icon: "none" });
+          return;
+        }
+        try {
+          const teamDataToSend = {
+            name: String(teamData.value.name || ""),
+            icon: String(teamData.value.icon || ""),
+            // 确保icon字段被包含
+            slogan: String(teamData.value.slogan || ""),
+            introduction: String(teamData.value.introduction || ""),
+            numbers: parseInt(teamData.value.numbers) || 0,
+            endTime: String(teamData.value.endTime || ""),
+            matchLocation: String(teamData.value.matchLocation || ""),
+            matchId: parseInt(teamData.value.matchId) || 1
+          };
+          formatAppLog("log", "at pages/makeTeam/makeTeam.vue:286", "发送的格式化数据：", JSON.stringify(teamDataToSend, null, 2));
+          const res = await createTeamAPI(teamDataToSend);
+          if (res.code === 200) {
+            uni.showToast({
+              title: "发布成功",
+              icon: "success"
+            });
+            uni.switchTab({
+              url: "/pages/teammateHall/teammateHall"
+            });
+          } else {
+            uni.showToast({
+              title: "发布失败，请重试",
+              icon: "error"
+            });
+          }
+        } catch (error) {
+          formatAppLog("error", "at pages/makeTeam/makeTeam.vue:304", "创建队伍失败：", error);
+          if (error.response) {
+            formatAppLog("error", "at pages/makeTeam/makeTeam.vue:306", "错误响应数据：", error.response.data);
+          }
+          uni.showToast({
+            title: "创建失败",
+            icon: "error"
+          });
+        }
+      };
+      const range = vue.ref([]);
+      const getContestList = async () => {
+        try {
+          const res = await getContest();
+          if (res.data) {
+            range.value = res.data.map((item) => ({
+              value: item.id,
+              // 比赛ID作为value
+              text: item.name
+              // 比赛名称作为显示文本
+            }));
+          }
+        } catch (error) {
+          formatAppLog("error", "at pages/makeTeam/makeTeam.vue:330", "获取比赛列表失败：", error);
+          uni.showToast({
+            title: "获取比赛列表失败",
+            icon: "none"
+          });
+        }
+      };
+      const value = vue.ref("");
+      const change = (e2) => {
+        teamData.value.matchId = parseInt(e2);
+        formatAppLog("log", "at pages/makeTeam/makeTeam.vue:342", "选择的比赛ID：", teamData.value.matchId);
+      };
+      vue.onMounted(() => {
+        getContestList();
+      });
       const address = vue.ref("定位您的位置");
       const getMapLocation = () => {
         uni.chooseLocation({
           success: (res) => {
             address.value = res.name;
+            teamData.value.matchLocation = res.name;
+            formatAppLog("log", "at pages/makeTeam/makeTeam.vue:357", "选择的地点：", teamData.value.matchLocation);
           },
           fail: () => {
             uni.getSetting({
-              //获取用户的当前设置
               success: (res) => {
-                var status = res.authSetting;
-                if (!status["scope.userLocation"]) {
+                if (!res.authSetting["scope.userLocation"]) {
                   uni.showModal({
-                    //显示模态弹窗，可以只有一个确定按钮，也可以同时有确定和取消按钮。
                     title: "是否授权当前位置",
-                    content: "需要获取您的地理位置，请确认授权，否则地图功能将无法使用",
+                    content: "需要获取您的地理位置，请确认授权",
                     success: (tip) => {
                       if (tip.confirm) {
                         uni.openSetting({
-                          //调起客户端小程序设置界面，返回用户设置的操作结果
                           success: (data) => {
                             if (data.authSetting["scope.userLocation"] === true) {
-                              uni.showToast({
-                                title: "授权成功",
-                                icon: "success",
-                                duration: 1e3
-                              });
+                              uni.showToast({ title: "授权成功", icon: "success" });
                               uni.chooseLocation({
                                 success: (res2) => {
-                                  address.value = res2.address;
+                                  address.value = res2.name;
+                                  teamData.value.matchLocation = res2.name;
                                 }
-                              });
-                            } else {
-                              uni.showToast({
-                                title: "授权失败",
-                                icon: "none",
-                                duration: 1e3
                               });
                             }
                           }
@@ -12810,36 +13805,20 @@ ${i3}
                     }
                   });
                 }
-              },
-              fail: (res) => {
-                uni.showToast({
-                  title: "调用授权窗口失败",
-                  icon: "none",
-                  duration: 1e3
-                });
               }
             });
           }
         });
       };
-      const publish = async () => {
-        uni.showToast({
-          title: "发布成功",
-          icon: "success",
-          duration: 500
-        });
-        setTimeout(() => {
-          uni.switchTab({
-            url: "/pages/teammateHall/teammateHall"
-          });
-        }, 1e3);
+      const radioChange = (e2) => {
+        formatAppLog("log", "at pages/makeTeam/makeTeam.vue:393", "选择的组别：", e2.detail.value);
       };
       return (_ctx, _cache) => {
         const _component_uni_badge = resolveEasycom(vue.resolveDynamicComponent("uni-badge"), __easycom_0$2);
         const _component_uni_data_select = resolveEasycom(vue.resolveDynamicComponent("uni-data-select"), __easycom_1$1);
         const _component_uni_file_picker = resolveEasycom(vue.resolveDynamicComponent("uni-file-picker"), __easycom_2);
         const _component_uni_datetime_picker = resolveEasycom(vue.resolveDynamicComponent("uni-datetime-picker"), __easycom_3$1);
-        const _component_uni_icons = resolveEasycom(vue.resolveDynamicComponent("uni-icons"), __easycom_2$1);
+        const _component_uni_icons = resolveEasycom(vue.resolveDynamicComponent("uni-icons"), __easycom_0$4);
         const _component_uni_data_picker = resolveEasycom(vue.resolveDynamicComponent("uni-data-picker"), __easycom_5);
         const _component_fcButton = resolveEasycom(vue.resolveDynamicComponent("fcButton"), __easycom_3);
         return vue.openBlock(), vue.createElementBlock("view", { class: "layout" }, [
@@ -12854,11 +13833,11 @@ ${i3}
               vue.createTextVNode(" 选择 比赛 ")
             ]),
             vue.createVNode(_component_uni_data_select, {
-              modelValue: _ctx.value,
-              "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => _ctx.value = $event),
+              modelValue: value.value,
+              "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => value.value = $event),
               localdata: range.value,
-              onChange: _ctx.change
-            }, null, 8, ["modelValue", "localdata", "onChange"])
+              onChange: change
+            }, null, 8, ["modelValue", "localdata"])
           ]),
           vue.createCommentVNode(" 1队伍图标 "),
           vue.createElementVNode("view", { class: "avatar" }, [
@@ -12875,7 +13854,12 @@ ${i3}
                 limit: "1",
                 title: "",
                 fileMediatype: "image",
-                "image-styles": imageStyles.value
+                "image-styles": imageStyles.value,
+                action: "http://117.72.54.182:8898/users/upload",
+                onSelect: onFileSelect,
+                onSuccess: onFileUploadSuccess,
+                onProgress: onFileUploadProgress,
+                onFail: onFileUploadFail
               }, null, 8, ["image-styles"])
             ])
           ]),
@@ -12889,10 +13873,19 @@ ${i3}
               }),
               vue.createTextVNode(". 请输入队伍名称: "),
               vue.createElementVNode("view", { class: "inputContainer" }, [
-                vue.createElementVNode("input", {
-                  type: "text",
-                  placeholder: "吉伊粉丝后援团"
-                })
+                vue.withDirectives(vue.createElementVNode(
+                  "input",
+                  {
+                    "onUpdate:modelValue": _cache[1] || (_cache[1] = ($event) => teamData.value.name = $event),
+                    type: "text",
+                    placeholder: "吉伊粉丝后援团"
+                  },
+                  null,
+                  512
+                  /* NEED_PATCH */
+                ), [
+                  [vue.vModelText, teamData.value.name]
+                ])
               ])
             ])
           ]),
@@ -12906,10 +13899,19 @@ ${i3}
               }),
               vue.createTextVNode(". 请输入队伍口号 "),
               vue.createElementVNode("view", { class: "inputContainer" }, [
-                vue.createElementVNode("input", {
-                  type: "text",
-                  placeholder: "开什么玩笑..."
-                })
+                vue.withDirectives(vue.createElementVNode(
+                  "input",
+                  {
+                    "onUpdate:modelValue": _cache[2] || (_cache[2] = ($event) => teamData.value.slogan = $event),
+                    type: "text",
+                    placeholder: "开什么玩笑..."
+                  },
+                  null,
+                  512
+                  /* NEED_PATCH */
+                ), [
+                  [vue.vModelText, teamData.value.slogan]
+                ])
               ])
             ])
           ]),
@@ -12925,9 +13927,7 @@ ${i3}
             vue.createElementVNode("view", { class: "list" }, [
               vue.createElementVNode(
                 "radio-group",
-                {
-                  onChange: _cache[1] || (_cache[1] = (...args) => _ctx.radioChange && _ctx.radioChange(...args))
-                },
+                { onChange: radioChange },
                 [
                   (vue.openBlock(true), vue.createElementBlock(
                     vue.Fragment,
@@ -12967,13 +13967,22 @@ ${i3}
                 customStyle: { background: "#8707ff" }
               }),
               vue.createTextVNode(". 请输入队伍简介 "),
-              vue.createElementVNode("textarea", {
-                name: "",
-                id: "",
-                cols: "30",
-                rows: "10",
-                placeholder: "叭叭叭叭叭叭(140字以内)"
-              })
+              vue.withDirectives(vue.createElementVNode(
+                "textarea",
+                {
+                  "onUpdate:modelValue": _cache[3] || (_cache[3] = ($event) => teamData.value.introduction = $event),
+                  name: "",
+                  id: "",
+                  cols: "30",
+                  rows: "10",
+                  placeholder: "叭叭叭叭叭叭(140字以内)"
+                },
+                null,
+                512
+                /* NEED_PATCH */
+              ), [
+                [vue.vModelText, teamData.value.introduction]
+              ])
             ])
           ]),
           vue.createCommentVNode(" 6组队要求 "),
@@ -12989,7 +13998,7 @@ ${i3}
               vue.createElementVNode("view", { class: "box" }, [
                 vue.createVNode(_component_uni_datetime_picker, {
                   type: "date",
-                  value: single.value,
+                  value: teamData.value.endTime,
                   onChange: logTime
                 }, null, 8, ["value"])
               ])
@@ -13017,8 +14026,8 @@ ${i3}
               vue.createTextVNode(" 限制人数 : "),
               vue.createElementVNode("view", { class: "box" }, [
                 vue.createVNode(_component_uni_data_picker, {
-                  modelValue: numbers.value,
-                  "onUpdate:modelValue": _cache[2] || (_cache[2] = ($event) => numbers.value = $event),
+                  modelValue: teamData.value.numbers,
+                  "onUpdate:modelValue": _cache[4] || (_cache[4] = ($event) => teamData.value.numbers = $event),
                   localdata: items.value,
                   "popup-title": "请选择组队人数",
                   onChange: logNum
@@ -13028,7 +14037,7 @@ ${i3}
             vue.createElementVNode("view", { class: "btn" }, [
               vue.createElementVNode("view", {
                 class: "publish",
-                onClick: publish
+                onClick: addTeam
               }, [
                 vue.createVNode(_component_fcButton, {
                   "img-src": "/static/images/发布.png",
@@ -13042,17 +14051,45 @@ ${i3}
       };
     }
   };
-  const PagesMakeTeamMakeTeam = /* @__PURE__ */ _export_sfc(_sfc_main$c, [["__scopeId", "data-v-f62f500a"], ["__file", "D:/Github/TeammateApp/pages/makeTeam/makeTeam.vue"]]);
-  const _sfc_main$b = {
+  const PagesMakeTeamMakeTeam = /* @__PURE__ */ _export_sfc(_sfc_main$d, [["__scopeId", "data-v-f62f500a"], ["__file", "D:/Github/TeammateApp/pages/makeTeam/makeTeam.vue"]]);
+  const _sfc_main$c = {
     __name: "searchDetail",
     setup(__props) {
-      const dataFromSourcePage = vue.ref("");
-      const matchData = vue.ref([
-        { id: 2, matchName: "2024年全国大学生英语翻译大赛（NETCCS）", name: "六级能不能过队", imgUrl: "../../static/images/match3.png" }
-      ]);
+      const searchKeyword = vue.ref("");
+      const matchData = vue.ref([]);
+      let searchTimeout = null;
       onLoad((options) => {
-        dataFromSourcePage.value = options.value;
+        if (options.value) {
+          searchKeyword.value = decodeURIComponent(options.value);
+          doSearch();
+        }
       });
+      const handleSearch = () => {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+          doSearch();
+        }, 300);
+      };
+      const doSearch = async () => {
+        if (!searchKeyword.value) {
+          matchData.value = [];
+          return;
+        }
+        try {
+          const res = await searchContest(searchKeyword.value);
+          if (res.data) {
+            matchData.value = res.data;
+          } else {
+            matchData.value = [];
+          }
+        } catch (error) {
+          formatAppLog("error", "at pages/searchDetail/searchDetail.vue:104", "搜索失败：", error);
+          uni.showToast({
+            title: "搜索失败",
+            icon: "none"
+          });
+        }
+      };
       return (_ctx, _cache) => {
         return vue.openBlock(), vue.createElementBlock("view", { class: "searchDetail" }, [
           vue.createCommentVNode(" 搜索框 "),
@@ -13060,111 +14097,122 @@ ${i3}
             vue.withDirectives(vue.createElementVNode(
               "input",
               {
-                "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => dataFromSourcePage.value = $event),
+                "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => searchKeyword.value = $event),
                 placeholder: "搜索在线赛事组队信息",
-                type: "text"
+                type: "text",
+                onInput: handleSearch
               },
               null,
-              512
-              /* NEED_PATCH */
+              544
+              /* NEED_HYDRATION, NEED_PATCH */
             ), [
-              [vue.vModelText, dataFromSourcePage.value]
+              [vue.vModelText, searchKeyword.value]
             ]),
             vue.createElementVNode("view", null, [
-              vue.createElementVNode("button", { class: "searchButton" }, [
+              vue.createElementVNode("button", {
+                class: "searchButton",
+                onClick: doSearch
+              }, [
                 vue.createElementVNode("image", {
-                  src: _imports_0$8,
+                  src: _imports_0$7,
                   mode: ""
                 })
               ])
             ])
           ]),
-          (vue.openBlock(true), vue.createElementBlock(
-            vue.Fragment,
-            null,
-            vue.renderList(matchData.value, (item, index) => {
-              return vue.openBlock(), vue.createElementBlock("view", {
-                class: "teamInfo",
-                toValue: "a",
-                key: item.id
-              }, [
-                vue.createElementVNode("navigator", { url: `/pages/teamDetail/teamDetail?toPageValue=a` }, [
-                  vue.createCommentVNode("比赛图片 "),
-                  vue.createElementVNode("view", { class: "matchImg" }, [
-                    vue.createElementVNode("image", {
-                      src: item.imgUrl,
-                      mode: "widthFix"
-                    }, null, 8, ["src"])
-                  ]),
-                  vue.createElementVNode("view", { class: "mainInfo" }, [
-                    vue.createCommentVNode(" 比赛名 "),
-                    vue.createElementVNode(
-                      "view",
-                      { class: "matchName" },
-                      vue.toDisplayString(item.matchName),
-                      1
-                      /* TEXT */
-                    ),
-                    vue.createCommentVNode(" 队名 "),
-                    vue.createElementVNode("view", { class: "teamName" }, [
+          vue.createCommentVNode(" 搜索结果列表 "),
+          matchData.value.length > 0 ? (vue.openBlock(), vue.createElementBlock("view", { key: 0 }, [
+            (vue.openBlock(true), vue.createElementBlock(
+              vue.Fragment,
+              null,
+              vue.renderList(matchData.value, (item, index) => {
+                return vue.openBlock(), vue.createElementBlock("view", {
+                  class: "teamInfo",
+                  key: item.id
+                }, [
+                  vue.createElementVNode("navigator", { url: `/pages/teamDetail/teamDetail?toPageValue=a` }, [
+                    vue.createCommentVNode("比赛图片 "),
+                    vue.createElementVNode("view", { class: "matchImg" }, [
                       vue.createElementVNode("image", {
-                        src: _imports_0$7,
-                        mode: ""
-                      }),
+                        src: item.poster,
+                        mode: "widthFix"
+                      }, null, 8, ["src"])
+                    ]),
+                    vue.createElementVNode("view", { class: "mainInfo" }, [
+                      vue.createCommentVNode(" 比赛名 "),
                       vue.createElementVNode(
-                        "p",
-                        null,
+                        "view",
+                        { class: "matchName" },
                         vue.toDisplayString(item.name),
                         1
                         /* TEXT */
-                      )
-                    ]),
-                    vue.createCommentVNode(" 头像列表//研讨室跳转 "),
-                    vue.createElementVNode("view", { class: "bottom" }, [
-                      vue.createElementVNode("view", { class: "avatars" }, [
-                        vue.createElementVNode("img", {
-                          src: _imports_1$4,
-                          alt: ""
+                      ),
+                      vue.createCommentVNode(" 队名 "),
+                      vue.createElementVNode("view", { class: "teamName" }, [
+                        vue.createElementVNode("image", {
+                          src: _imports_0$6,
+                          mode: ""
                         }),
-                        vue.createElementVNode("img", {
-                          src: _imports_2$2,
-                          alt: ""
-                        }),
-                        vue.createElementVNode("img", {
-                          src: _imports_1$6,
-                          alt: ""
-                        }),
-                        vue.createElementVNode("img", {
-                          src: _imports_1$6,
-                          alt: ""
-                        }),
-                        vue.createElementVNode("img", {
-                          src: _imports_4$1,
-                          alt: ""
-                        })
+                        vue.createElementVNode("p", null, "鸭鸭小队")
                       ]),
-                      vue.createElementVNode("view", { class: "goChat" }, [
-                        vue.createElementVNode("navigator", { url: "/pages/chatRoom/chatRoom" }, [
-                          vue.createElementVNode("image", {
-                            src: _imports_5$1,
-                            mode: ""
+                      vue.createCommentVNode(" 头像列表//研讨室跳转 "),
+                      vue.createElementVNode("view", { class: "bottom" }, [
+                        vue.createElementVNode("view", { class: "avatars" }, [
+                          vue.createElementVNode("img", {
+                            src: _imports_1$4,
+                            alt: ""
                           }),
-                          vue.createElementVNode("p", null, "一起讨论>")
+                          vue.createElementVNode("img", {
+                            src: _imports_2$2,
+                            alt: ""
+                          }),
+                          vue.createElementVNode("img", {
+                            src: _imports_0$5,
+                            alt: ""
+                          }),
+                          vue.createElementVNode("img", {
+                            src: _imports_0$5,
+                            alt: ""
+                          }),
+                          vue.createElementVNode("img", {
+                            src: _imports_4$1,
+                            alt: ""
+                          })
+                        ]),
+                        vue.createElementVNode("view", { class: "goChat" }, [
+                          vue.createElementVNode("navigator", { url: "/pages/chatRoom/chatRoom" }, [
+                            vue.createElementVNode("image", {
+                              src: _imports_5$1,
+                              mode: ""
+                            }),
+                            vue.createElementVNode("p", null, "一起讨论>")
+                          ])
                         ])
                       ])
                     ])
                   ])
-                ])
-              ]);
-            }),
-            128
-            /* KEYED_FRAGMENT */
+                ]);
+              }),
+              128
+              /* KEYED_FRAGMENT */
+            ))
+          ])) : (vue.openBlock(), vue.createElementBlock(
+            vue.Fragment,
+            { key: 1 },
+            [
+              vue.createCommentVNode(" 无搜索结果提示 "),
+              vue.createElementVNode("view", { class: "no-result" }, [
+                vue.createElementVNode("text", null, "暂无相关比赛信息")
+              ])
+            ],
+            2112
+            /* STABLE_FRAGMENT, DEV_ROOT_FRAGMENT */
           ))
         ]);
       };
     }
   };
-  const PagesSearchDetailSearchDetail = /* @__PURE__ */ _export_sfc(_sfc_main$b, [["__scopeId", "data-v-ce5e1149"], ["__file", "D:/Github/TeammateApp/pages/searchDetail/searchDetail.vue"]]);
+  const PagesSearchDetailSearchDetail = /* @__PURE__ */ _export_sfc(_sfc_main$c, [["__scopeId", "data-v-ce5e1149"], ["__file", "D:/Github/TeammateApp/pages/searchDetail/searchDetail.vue"]]);
   const dropdownMenuProps = {
     value: {
       type: Object,
@@ -13200,7 +14248,7 @@ ${i3}
       default: () => []
     }
   };
-  const _sfc_main$a = {
+  const _sfc_main$b = {
     emits: ["change"],
     props: dropdownMenuProps,
     setup(props, { emit, expose }) {
@@ -13567,40 +14615,52 @@ ${i3}
       /* STYLE */
     );
   }
-  const __easycom_1 = /* @__PURE__ */ _export_sfc(_sfc_main$a, [["render", _sfc_render$2], ["__scopeId", "data-v-988ec59d"], ["__file", "D:/Github/TeammateApp/uni_modules/wei-dropdown-menu/components/wei-dropdown-menu/wei-dropdown-menu.vue"]]);
-  const _sfc_main$9 = {
+  const __easycom_1 = /* @__PURE__ */ _export_sfc(_sfc_main$b, [["render", _sfc_render$2], ["__scopeId", "data-v-988ec59d"], ["__file", "D:/Github/TeammateApp/uni_modules/wei-dropdown-menu/components/wei-dropdown-menu/wei-dropdown-menu.vue"]]);
+  const _sfc_main$a = {
     __name: "moreDetail",
     setup(__props) {
       const recentMatchValue = vue.ref({});
       const matchCategoryValue = vue.ref({});
       vue.ref({});
-      const matchData = vue.ref([
-        { id: 1, matchName: "2024年第十四届APMCM亚太地区大学生数学建模竞赛", name: "一战成名队", imgUrl: "../../static/images/match6.png" },
-        { id: 2, matchName: "2024年全国大学生英语翻译大赛（NETCCS）", name: "六级能不能过队", imgUrl: "../../static/images/match3.png" },
-        { id: 3, matchName: '2024年第五届"中译国青杯"国际组织文件翻译大赛', name: "超级翻译官队", imgUrl: "../../static/images/match4.png" },
-        { id: 4, matchName: "2024创想中国全国大学生创新创业大赛", name: "小呆呆创新队", imgUrl: "../../static/images/match15.png" },
-        { id: 5, matchName: '第三届"中外传播杯"全国大学生英语翻译大赛-英译汉赛道', name: "翻译的都队", imgUrl: "../../static/images/match8.png" },
-        { id: 6, matchName: '第二届"数学周报"全国大学生数学能力大赛', name: "基本不懂式队", imgUrl: "../../static/images/match13.png" },
-        { id: 7, matchName: "2024第二届全国大学生数学竞赛暨创新思维挑战赛", name: "哎我队", imgUrl: "../../static/images/match11.png" },
-        { id: 8, matchName: "CCF2024年中国计算机应用技术大赛-全国算法精英大赛", name: "AC队", imgUrl: "../../static/images/match7.png" },
-        { id: 9, matchName: "浙大研究院《智能无人机》研学实践项目", name: "让你飞起来队", imgUrl: "../../static/images/match14.png" }
-      ]);
-      const data = vue.ref([
-        { id: 1, matchName: "2024年全国大学生英语翻译大赛（NETCCS）", name: "六级能不能过队", imgUrl: "../../static/images/match3.png" },
-        { id: 2, matchName: '2024年第五届"中译国青杯"国际组织文件翻译大赛', name: "超级翻译官队", imgUrl: "../../static/images/match4.png" },
-        { id: 3, matchName: '第三届"中外传播杯"全国大学生英语翻译大赛-英译汉赛道', name: "翻译的都队", imgUrl: "../../static/images/match8.png" }
-      ]);
-      const show = vue.ref(false);
-      const changeMatch = (e2) => {
-        formatAppLog("log", "at pages/moreDetail/moreDetail.vue:127", e2.value.recentMatch);
+      const selectedType = vue.ref();
+      const contestData = vue.ref([]);
+      const selectedLocation = vue.ref();
+      vue.ref(false);
+      const changeMatch = () => {
+        selectedType.value = "";
+        selectedLocation.value = "";
+        matchCategoryValue.value = {};
+        teamRegionValue.value = {};
       };
-      const changeCategory = (e2) => {
-        if (e2.value.matchCategory == 3) {
-          show.value = true;
+      const getData = async () => {
+        try {
+          const res = await getContest();
+          contestData.value = res.data;
+          formatAppLog("log", "at pages/moreDetail/moreDetail.vue:92", contestData.value);
+        } catch (error) {
+          formatAppLog("log", "at pages/moreDetail/moreDetail.vue:94", "111", error);
         }
       };
+      const changeCategory = (e2) => {
+        formatAppLog("log", "at pages/moreDetail/moreDetail.vue:99", "选择的类型：", e2);
+        const typeMap = {
+          "0": "IT",
+          "1": "理科",
+          "2": "文学",
+          "3": "外语"
+        };
+        selectedType.value = typeMap[e2.value.matchCategory];
+        formatAppLog("log", "at pages/moreDetail/moreDetail.vue:107", "筛选类型：", selectedType.value);
+      };
       const changeRegion = (e2) => {
-        formatAppLog("log", "at pages/moreDetail/moreDetail.vue:136", e2.value.teamRegion);
+        formatAppLog("log", "at pages/moreDetail/moreDetail.vue:110", "选择的地区：", e2);
+        const locationMap = {
+          "0": "广东",
+          "1": "上海",
+          "2": "湖南"
+        };
+        selectedLocation.value = locationMap[e2.value.teamRegion];
+        formatAppLog("log", "at pages/moreDetail/moreDetail.vue:117", "筛选地区：", selectedLocation.value);
       };
       const recentMatchData = vue.ref([
         {
@@ -13608,19 +14668,9 @@ ${i3}
           title: "近期比赛",
           options: [
             {
-              label: "APMCM亚太大学生数学建模竞赛",
-              value: "0",
-              tip: "显示在最右边的提示"
-            },
-            {
-              label: "CCF CAT中国计算机应用技术大赛",
-              value: "1",
-              tip: "显示在最右边的提示"
-            },
-            {
-              label: "“天柱山杯”国际传播翻译大赛",
-              value: "2",
-              tip: "显示在最右边的提示"
+              label: "全部比赛",
+              value: "all",
+              tip: "显示全部比赛"
             }
           ]
         }
@@ -13631,29 +14681,24 @@ ${i3}
           title: "比赛类别",
           options: [
             {
-              label: "工科",
+              label: "IT",
               value: "0",
-              tip: "显示在最右边的提示"
+              tip: "IT类比赛"
             },
             {
               label: "理科",
               value: "1",
-              tip: "显示在最右边的提示"
+              tip: "理科类比赛"
             },
             {
               label: "文学",
               value: "2",
-              tip: "显示在最右边的提示"
+              tip: "文学类比赛"
             },
             {
               label: "外语",
               value: "3",
-              tip: "显示在最右边的提示"
-            },
-            {
-              label: "媒体",
-              value: "4",
-              tip: "显示在最右边的提示"
+              tip: "外语类比赛"
             }
           ]
         }
@@ -13666,21 +14711,38 @@ ${i3}
             {
               label: "广东",
               value: "0",
-              tip: "显示在最右边的提示"
+              tip: "广东赛区"
             },
             {
               label: "上海",
               value: "1",
-              tip: "显示在最右边的提示"
+              tip: "上海赛区"
             },
             {
               label: "湖南",
               value: "2",
-              tip: "显示在最右边的提示"
+              tip: "湖南赛区"
             }
           ]
         }
       ]);
+      vue.ref("");
+      const filteredContestData = vue.computed(() => {
+        if (!selectedType.value && !selectedLocation.value) {
+          return contestData.value;
+        }
+        let result = contestData.value;
+        if (selectedType.value) {
+          result = result.filter((item) => item.type === selectedType.value);
+        }
+        if (selectedLocation.value) {
+          result = result.filter((item) => item.location === selectedLocation.value);
+        }
+        return result;
+      });
+      vue.onMounted(() => {
+        getData();
+      });
       return (_ctx, _cache) => {
         const _component_dash = resolveEasycom(vue.resolveDynamicComponent("dash"), __easycom_1$2);
         const _component_wei_dropdown_menu = resolveEasycom(vue.resolveDynamicComponent("wei-dropdown-menu"), __easycom_1);
@@ -13710,19 +14772,21 @@ ${i3}
               onChange: changeRegion
             }, null, 8, ["data", "value"])
           ]),
-          !show.value ? (vue.openBlock(true), vue.createElementBlock(
+          (vue.openBlock(true), vue.createElementBlock(
             vue.Fragment,
-            { key: 0 },
-            vue.renderList(matchData.value, (item, index) => {
+            null,
+            vue.renderList(filteredContestData.value, (item) => {
               return vue.openBlock(), vue.createElementBlock("view", {
                 class: "teamInfo",
                 key: item.id
               }, [
-                vue.createElementVNode("navigator", { url: `/pages/teamDetail/teamDetail?toaPageValue=a` }, [
+                vue.createElementVNode("navigator", {
+                  url: `/pages/teamDetail/teamDetail?id=${item.id}`
+                }, [
                   vue.createCommentVNode("比赛图片 "),
                   vue.createElementVNode("view", { class: "matchImg" }, [
                     vue.createElementVNode("image", {
-                      src: item.imgUrl,
+                      src: item.poster,
                       mode: "widthFix"
                     }, null, 8, ["src"])
                   ]),
@@ -13731,24 +14795,27 @@ ${i3}
                     vue.createElementVNode(
                       "view",
                       { class: "matchName" },
-                      vue.toDisplayString(item.matchName),
+                      vue.toDisplayString(item.name),
                       1
                       /* TEXT */
                     ),
                     vue.createCommentVNode(" 队名 "),
-                    vue.createElementVNode("view", { class: "teamName" }, [
+                    item.teamList && item.teamList.length ? (vue.openBlock(), vue.createElementBlock("view", {
+                      key: 0,
+                      class: "teamName"
+                    }, [
                       vue.createElementVNode("image", {
-                        src: _imports_0$7,
+                        src: _imports_0$6,
                         mode: ""
                       }),
                       vue.createElementVNode(
                         "p",
                         null,
-                        vue.toDisplayString(item.name),
+                        vue.toDisplayString(item.teamList[0].name),
                         1
                         /* TEXT */
                       )
-                    ]),
+                    ])) : vue.createCommentVNode("v-if", true),
                     vue.createCommentVNode(" 头像列表//研讨室跳转 "),
                     vue.createElementVNode("view", { class: "bottom" }, [
                       vue.createElementVNode("view", { class: "avatars" }, [
@@ -13761,11 +14828,11 @@ ${i3}
                           alt: ""
                         }),
                         vue.createElementVNode("img", {
-                          src: _imports_1$6,
+                          src: _imports_0$5,
                           alt: ""
                         }),
                         vue.createElementVNode("img", {
-                          src: _imports_1$6,
+                          src: _imports_0$5,
                           alt: ""
                         }),
                         vue.createElementVNode("img", {
@@ -13784,101 +14851,21 @@ ${i3}
                       ])
                     ])
                   ])
-                ])
+                ], 8, ["url"])
               ]);
             }),
             128
             /* KEYED_FRAGMENT */
-          )) : vue.createCommentVNode("v-if", true),
-          show.value ? (vue.openBlock(true), vue.createElementBlock(
-            vue.Fragment,
-            { key: 1 },
-            vue.renderList(data.value, (item, index) => {
-              return vue.openBlock(), vue.createElementBlock("view", {
-                class: "teamInfo",
-                key: item.id
-              }, [
-                vue.createElementVNode("navigator", { url: `/pages/teamDetail/teamDetail?toaPageValue=a` }, [
-                  vue.createCommentVNode("比赛图片 "),
-                  vue.createElementVNode("view", { class: "matchImg" }, [
-                    vue.createElementVNode("image", {
-                      src: item.imgUrl,
-                      mode: "widthFix"
-                    }, null, 8, ["src"])
-                  ]),
-                  vue.createElementVNode("view", { class: "mainInfo" }, [
-                    vue.createCommentVNode(" 比赛名 "),
-                    vue.createElementVNode(
-                      "view",
-                      { class: "matchName" },
-                      vue.toDisplayString(item.matchName),
-                      1
-                      /* TEXT */
-                    ),
-                    vue.createCommentVNode(" 队名 "),
-                    vue.createElementVNode("view", { class: "teamName" }, [
-                      vue.createElementVNode("image", {
-                        src: _imports_0$7,
-                        mode: ""
-                      }),
-                      vue.createElementVNode(
-                        "p",
-                        null,
-                        vue.toDisplayString(item.name),
-                        1
-                        /* TEXT */
-                      )
-                    ]),
-                    vue.createCommentVNode(" 头像列表//研讨室跳转 "),
-                    vue.createElementVNode("view", { class: "bottom" }, [
-                      vue.createElementVNode("view", { class: "avatars" }, [
-                        vue.createElementVNode("img", {
-                          src: _imports_1$4,
-                          alt: ""
-                        }),
-                        vue.createElementVNode("img", {
-                          src: _imports_2$2,
-                          alt: ""
-                        }),
-                        vue.createElementVNode("img", {
-                          src: _imports_1$6,
-                          alt: ""
-                        }),
-                        vue.createElementVNode("img", {
-                          src: _imports_1$6,
-                          alt: ""
-                        }),
-                        vue.createElementVNode("img", {
-                          src: _imports_4$1,
-                          alt: ""
-                        })
-                      ]),
-                      vue.createElementVNode("view", { class: "goChat" }, [
-                        vue.createElementVNode("navigator", { url: "/pages/chatRoom/chatRoom" }, [
-                          vue.createElementVNode("image", {
-                            src: _imports_5$1,
-                            mode: ""
-                          }),
-                          vue.createElementVNode("p", null, "一起讨论>")
-                        ])
-                      ])
-                    ])
-                  ])
-                ])
-              ]);
-            }),
-            128
-            /* KEYED_FRAGMENT */
-          )) : vue.createCommentVNode("v-if", true)
+          ))
         ]);
       };
     }
   };
-  const PagesMoreDetailMoreDetail = /* @__PURE__ */ _export_sfc(_sfc_main$9, [["__scopeId", "data-v-c2e090e7"], ["__file", "D:/Github/TeammateApp/pages/moreDetail/moreDetail.vue"]]);
+  const PagesMoreDetailMoreDetail = /* @__PURE__ */ _export_sfc(_sfc_main$a, [["__scopeId", "data-v-c2e090e7"], ["__file", "D:/Github/TeammateApp/pages/moreDetail/moreDetail.vue"]]);
   const _imports_0$2 = "/static/images/connect_phone.png";
   const _imports_1$1 = "/static/images/connect_wechat.png";
   const _imports_2 = "/static/images/connect_infocard.png";
-  const _sfc_main$8 = {
+  const _sfc_main$9 = {
     __name: "connect",
     setup(__props) {
       const phone = vue.ref("17752261391");
@@ -14060,13 +15047,13 @@ ${i3}
       };
     }
   };
-  const PagesConnectConnect = /* @__PURE__ */ _export_sfc(_sfc_main$8, [["__scopeId", "data-v-ea8c7664"], ["__file", "D:/Github/TeammateApp/pages/connect/connect.vue"]]);
-  const _sfc_main$7 = {};
+  const PagesConnectConnect = /* @__PURE__ */ _export_sfc(_sfc_main$9, [["__scopeId", "data-v-ea8c7664"], ["__file", "D:/Github/TeammateApp/pages/connect/connect.vue"]]);
+  const _sfc_main$8 = {};
   function _sfc_render$1(_ctx, _cache) {
     return vue.openBlock(), vue.createElementBlock("view", { class: "newsCenter" });
   }
-  const PagesNewsCenterNewsCenter = /* @__PURE__ */ _export_sfc(_sfc_main$7, [["render", _sfc_render$1], ["__file", "D:/Github/TeammateApp/pages/newsCenter/newsCenter.vue"]]);
-  const _sfc_main$6 = {
+  const PagesNewsCenterNewsCenter = /* @__PURE__ */ _export_sfc(_sfc_main$8, [["render", _sfc_render$1], ["__file", "D:/Github/TeammateApp/pages/newsCenter/newsCenter.vue"]]);
+  const _sfc_main$7 = {
     __name: "detailTitle",
     props: {
       imgSrc: String,
@@ -14100,8 +15087,8 @@ ${i3}
       };
     }
   };
-  const __easycom_0 = /* @__PURE__ */ _export_sfc(_sfc_main$6, [["__scopeId", "data-v-e9261bcc"], ["__file", "D:/Github/TeammateApp/components/detailTitle/detailTitle.vue"]]);
-  const _sfc_main$5 = {
+  const __easycom_0 = /* @__PURE__ */ _export_sfc(_sfc_main$7, [["__scopeId", "data-v-e9261bcc"], ["__file", "D:/Github/TeammateApp/components/detailTitle/detailTitle.vue"]]);
+  const _sfc_main$6 = {
     name: "uniPopupMessage",
     mixins: [popup],
     props: {
@@ -14174,41 +15161,77 @@ ${i3}
       )
     ]);
   }
-  const __easycom_4 = /* @__PURE__ */ _export_sfc(_sfc_main$5, [["render", _sfc_render], ["__scopeId", "data-v-a4566996"], ["__file", "D:/Github/TeammateApp/uni_modules/uni-popup/components/uni-popup-message/uni-popup-message.vue"]]);
-  const _sfc_main$4 = {
+  const __easycom_4 = /* @__PURE__ */ _export_sfc(_sfc_main$6, [["render", _sfc_render], ["__scopeId", "data-v-a4566996"], ["__file", "D:/Github/TeammateApp/uni_modules/uni-popup/components/uni-popup-message/uni-popup-message.vue"]]);
+  const _sfc_main$5 = {
     __name: "teamDetail",
     setup(__props) {
-      const numbers = vue.ref("6");
-      const time = vue.ref("2024-12-12 8:30:00");
-      const address = vue.ref("北京市朝阳区");
-      const toaValue = vue.ref("");
-      const tobValue = vue.ref("");
-      const tocValue = vue.ref("");
+      const teamInfo = vue.ref({
+        id: "",
+        name: "",
+        icon: "",
+        slogan: "",
+        introduction: "",
+        numbers: 0,
+        endTime: "",
+        matchLocation: "",
+        matchId: 0
+      });
+      const toValue = vue.ref("");
+      const deleteID = vue.ref();
       const alertDialog = vue.ref(null);
       const showMessage = vue.ref(null);
       const messageText = vue.ref("");
       const popupMsg = vue.ref("");
       const msgType = vue.ref("success");
       const popupType = vue.ref("success");
-      const toggleDialog = (type, msg2) => {
+      const toggleDialog = (type, msg) => {
         msgType.value = type;
         alertDialog.value.open();
-        if (msg2 == "out") {
+        if (msg == "out") {
           messageText.value = "您确定要退出该团队吗？";
         }
-        if (msg2 == "disband") {
+        if (msg == "disband") {
           messageText.value = "您确定要解散该团队吗?";
         }
       };
-      const dialogConfirm = () => {
-        showMessage.value.open();
-        popupMsg.value = "操作成功";
-        uni.navigateBack();
+      const dialogConfirm = async () => {
+        try {
+          await deleteTeam(deleteID.value);
+          showMessage.value.open();
+          popupMsg.value = "操作成功";
+          uni.switchTab({
+            url: "/pages/seminarRoom/seminarRoom"
+          });
+        } catch (error) {
+          formatAppLog("error", "at pages/teamDetail/teamDetail.vue:160", "删除失败：", error);
+          popupMsg.value = "操作失败";
+        }
+      };
+      const getTeamDetail = async (id) => {
+        try {
+          const res = await getDetailTeamAPI(id);
+          if (res.code === 200 && res.data) {
+            teamInfo.value = res.data;
+            formatAppLog("log", "at pages/teamDetail/teamDetail.vue:171", "队伍详情：", teamInfo.value);
+          }
+        } catch (error) {
+          formatAppLog("error", "at pages/teamDetail/teamDetail.vue:174", "获取队伍详情失败：", error);
+          uni.showToast({
+            title: "获取队伍信息失败",
+            icon: "none"
+          });
+        }
+      };
+      const deleteTeam = async (id) => {
+        const res = await deleteTeamAPI(id);
+        formatAppLog("log", "at pages/teamDetail/teamDetail.vue:184", res.data);
       };
       onLoad((option) => {
-        toaValue.value = option.toaPageValue;
-        tobValue.value = option.tobPageValue;
-        tocValue.value = option.tocPageValue;
+        if (option.id) {
+          getTeamDetail(option.id);
+          deleteID.value = option.id;
+        }
+        toValue.value = option.tocPageValue;
       });
       const toChatPage = () => {
         uni.navigateTo({
@@ -14223,7 +15246,7 @@ ${i3}
       return (_ctx, _cache) => {
         const _component_detailTitle = resolveEasycom(vue.resolveDynamicComponent("detailTitle"), __easycom_0);
         const _component_dash = resolveEasycom(vue.resolveDynamicComponent("dash"), __easycom_1$2);
-        const _component_uni_icons = resolveEasycom(vue.resolveDynamicComponent("uni-icons"), __easycom_2$1);
+        const _component_uni_icons = resolveEasycom(vue.resolveDynamicComponent("uni-icons"), __easycom_0$4);
         const _component_fcButton = resolveEasycom(vue.resolveDynamicComponent("fcButton"), __easycom_3);
         const _component_uni_popup_message = resolveEasycom(vue.resolveDynamicComponent("uni-popup-message"), __easycom_4);
         const _component_uni_popup = resolveEasycom(vue.resolveDynamicComponent("uni-popup"), __easycom_5$1);
@@ -14243,9 +15266,9 @@ ${i3}
                 }),
                 vue.createElementVNode("image", {
                   class: "teamImg",
-                  src: _imports_0$5,
+                  src: teamInfo.value.icon || "../../static/images/队伍图标1.jpg",
                   mode: ""
-                })
+                }, null, 8, ["src"])
               ]),
               vue.createElementVNode("view", null, [
                 vue.createCommentVNode(" 队伍名称 "),
@@ -14254,7 +15277,13 @@ ${i3}
                     "img-src": "/static/images/别名.png",
                     "p-title": "队伍名称"
                   }),
-                  vue.createElementVNode("view", { class: "box" }, "一战成名队")
+                  vue.createElementVNode(
+                    "view",
+                    { class: "box" },
+                    vue.toDisplayString(teamInfo.value.name || "鸭鸭小队"),
+                    1
+                    /* TEXT */
+                  )
                 ]),
                 vue.createCommentVNode(" 队伍口号 "),
                 vue.createElementVNode("view", { class: "slogan" }, [
@@ -14262,7 +15291,13 @@ ${i3}
                     "img-src": "/static/images/文字.png",
                     "p-title": "队伍口号"
                   }),
-                  vue.createElementVNode("view", { class: "box" }, "Bug 克星，代码任我行！")
+                  vue.createElementVNode(
+                    "view",
+                    { class: "box" },
+                    vue.toDisplayString(teamInfo.value.slogan || "加油加油"),
+                    1
+                    /* TEXT */
+                  )
                 ])
               ])
             ]),
@@ -14272,7 +15307,13 @@ ${i3}
                 "img-src": "/static/images/简介.png",
                 "p-title": "队伍简介"
               }),
-              vue.createElementVNode("view", { class: "desArea" }, "我们致力于在 [组队相关领域，如竞赛领域、项目开发领域等] 中崭露头角。无论是面对复杂的挑战还是紧迫的时间限制，我们都秉持着团结协作的精神，充分发挥各自的专业知识和技能。成员们擅长 [列举团队成员主要擅长的方面，比如数据分析、创意构思、编程开发等]，在过往的经历中已经积累了一定的经验，为我们在本次组队活动中的表现奠定了坚实的基础")
+              vue.createElementVNode(
+                "view",
+                { class: "desArea" },
+                vue.toDisplayString(teamInfo.value.introduction || "这是一条队伍简介"),
+                1
+                /* TEXT */
+              )
             ])
           ]),
           vue.createCommentVNode(" 分割线 "),
@@ -14290,7 +15331,7 @@ ${i3}
             vue.createElementVNode("view", { class: "avatarsList" }, [
               vue.createElementVNode("image", {
                 class: "avatar",
-                src: _imports_1$6,
+                src: _imports_0$5,
                 mode: ""
               })
             ])
@@ -14318,7 +15359,7 @@ ${i3}
               vue.createElementVNode(
                 "view",
                 { class: "box" },
-                vue.toDisplayString(numbers.value),
+                vue.toDisplayString(teamInfo.value.numbers || "4"),
                 1
                 /* TEXT */
               )
@@ -14332,7 +15373,7 @@ ${i3}
               vue.createElementVNode(
                 "view",
                 { class: "box" },
-                vue.toDisplayString(time.value),
+                vue.toDisplayString(teamInfo.value.endTime || "2025.3.29"),
                 1
                 /* TEXT */
               )
@@ -14354,7 +15395,7 @@ ${i3}
                 vue.createElementVNode(
                   "p",
                   null,
-                  vue.toDisplayString(address.value),
+                  vue.toDisplayString(teamInfo.value.matchLocation || "四会市人民政府"),
                   1
                   /* TEXT */
                 )
@@ -14362,7 +15403,7 @@ ${i3}
             ])
           ]),
           vue.createElementVNode("view", { class: "btnArea" }, [
-            toaValue.value === "a" ? (vue.openBlock(), vue.createElementBlock("view", {
+            toValue.value === "a" ? (vue.openBlock(), vue.createElementBlock("view", {
               key: 0,
               class: "enter"
             }, [
@@ -14372,7 +15413,7 @@ ${i3}
                 Color: "#FF5733"
               })
             ])) : vue.createCommentVNode("v-if", true),
-            toaValue.value === "a" ? (vue.openBlock(), vue.createElementBlock("view", {
+            toValue.value === "a" ? (vue.openBlock(), vue.createElementBlock("view", {
               key: 1,
               class: "chat",
               onClick: _cache[1] || (_cache[1] = ($event) => toChatPage())
@@ -14383,7 +15424,7 @@ ${i3}
                 Color: "#F3705A"
               })
             ])) : vue.createCommentVNode("v-if", true),
-            tobValue.value === "b" ? (vue.openBlock(), vue.createElementBlock("view", {
+            toValue.value === "b" ? (vue.openBlock(), vue.createElementBlock("view", {
               key: 2,
               class: "out",
               onClick: _cache[2] || (_cache[2] = ($event) => toggleDialog("error", "out"))
@@ -14394,7 +15435,7 @@ ${i3}
                 Color: "#D43030"
               })
             ])) : vue.createCommentVNode("v-if", true),
-            tocValue.value === "c" ? (vue.openBlock(), vue.createElementBlock("view", {
+            toValue.value === "c" ? (vue.openBlock(), vue.createElementBlock("view", {
               key: 3,
               class: "invite",
               onClick: _cache[3] || (_cache[3] = ($event) => toInvitePage())
@@ -14405,7 +15446,7 @@ ${i3}
                 Color: "#FF5733"
               })
             ])) : vue.createCommentVNode("v-if", true),
-            tocValue.value === "c" ? (vue.openBlock(), vue.createElementBlock("view", {
+            toValue.value === "c" ? (vue.openBlock(), vue.createElementBlock("view", {
               key: 4,
               class: "dissolve",
               onClick: _cache[4] || (_cache[4] = ($event) => toggleDialog("error", "disband"))
@@ -14465,10 +15506,10 @@ ${i3}
       };
     }
   };
-  const PagesTeamDetailTeamDetail = /* @__PURE__ */ _export_sfc(_sfc_main$4, [["__file", "D:/Github/TeammateApp/pages/teamDetail/teamDetail.vue"]]);
+  const PagesTeamDetailTeamDetail = /* @__PURE__ */ _export_sfc(_sfc_main$5, [["__file", "D:/Github/TeammateApp/pages/teamDetail/teamDetail.vue"]]);
   const _imports_0$1 = "/static/images/邀请海报.png";
   const _imports_1 = "/static/images/code.png";
-  const _sfc_main$3 = {
+  const _sfc_main$4 = {
     __name: "inviteMate",
     setup(__props) {
       return (_ctx, _cache) => {
@@ -14489,8 +15530,8 @@ ${i3}
       };
     }
   };
-  const PagesInviteMateInviteMate = /* @__PURE__ */ _export_sfc(_sfc_main$3, [["__file", "D:/Github/TeammateApp/pages/inviteMate/inviteMate.vue"]]);
-  const _sfc_main$2 = {
+  const PagesInviteMateInviteMate = /* @__PURE__ */ _export_sfc(_sfc_main$4, [["__file", "D:/Github/TeammateApp/pages/inviteMate/inviteMate.vue"]]);
+  const _sfc_main$3 = {
     __name: "test",
     setup(__props) {
       const toValue = vue.ref("a");
@@ -14502,9 +15543,9 @@ ${i3}
       };
     }
   };
-  const PagesTestTest = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["__file", "D:/Github/TeammateApp/pages/test/test.vue"]]);
+  const PagesTestTest = /* @__PURE__ */ _export_sfc(_sfc_main$3, [["__file", "D:/Github/TeammateApp/pages/test/test.vue"]]);
   const _imports_0 = "/static/images/队伍图标3.png";
-  const _sfc_main$1 = {
+  const _sfc_main$2 = {
     __name: "fakedetail",
     setup(__props) {
       vue.ref("");
@@ -14514,13 +15555,13 @@ ${i3}
       const popupMsg = vue.ref("");
       const msgType = vue.ref("success");
       const popupType = vue.ref("success");
-      const toggleDialog = (type, msg2) => {
+      const toggleDialog = (type, msg) => {
         msgType.value = type;
         alertDialog.value.open();
-        if (msg2 == "out") {
+        if (msg == "out") {
           messageText.value = "您确定要退出该团队吗？";
         }
-        if (msg2 == "disband") {
+        if (msg == "disband") {
           messageText.value = "您确定要解散该团队吗?";
         }
       };
@@ -14541,7 +15582,7 @@ ${i3}
       return (_ctx, _cache) => {
         const _component_detailTitle = resolveEasycom(vue.resolveDynamicComponent("detailTitle"), __easycom_0);
         const _component_dash = resolveEasycom(vue.resolveDynamicComponent("dash"), __easycom_1$2);
-        const _component_uni_icons = resolveEasycom(vue.resolveDynamicComponent("uni-icons"), __easycom_2$1);
+        const _component_uni_icons = resolveEasycom(vue.resolveDynamicComponent("uni-icons"), __easycom_0$4);
         const _component_fcButton = resolveEasycom(vue.resolveDynamicComponent("fcButton"), __easycom_3);
         const _component_uni_popup_message = resolveEasycom(vue.resolveDynamicComponent("uni-popup-message"), __easycom_4);
         const _component_uni_popup = resolveEasycom(vue.resolveDynamicComponent("uni-popup"), __easycom_5$1);
@@ -14741,7 +15782,335 @@ ${i3}
       };
     }
   };
-  const PagesFakedetailFakedetail = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["__file", "D:/Github/TeammateApp/pages/fakedetail/fakedetail.vue"]]);
+  const PagesFakedetailFakedetail = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["__file", "D:/Github/TeammateApp/pages/fakedetail/fakedetail.vue"]]);
+  const _sfc_main$1 = {
+    __name: "editProfile",
+    setup(__props) {
+      const genderArray = ["请选择性别", "男", "女"];
+      const profile = vue.ref({
+        username: "",
+        sex: "",
+        school: "",
+        phone: "",
+        wechatId: "",
+        email: "",
+        introduction: "",
+        location: "",
+        awards: []
+      });
+      const getUserInfo = async () => {
+        try {
+          const res = await getUserInfoAPI();
+          if (res.data) {
+            let awardsArray = [];
+            try {
+              awardsArray = res.data.awards ? JSON.parse(res.data.awards) : [];
+            } catch (e2) {
+              formatAppLog("error", "at pages/editProfile/editProfile.vue:116", "解析 awards 失败：", e2);
+              awardsArray = [];
+            }
+            if (res.data.username) {
+              uni.setStorageSync("username", res.data.username);
+              formatAppLog("log", "at pages/editProfile/editProfile.vue:123", "用户名已保存到本地存储:", res.data.username);
+            }
+            profile.value = {
+              username: res.data.username || "",
+              sex: res.data.sex === "男" ? 1 : res.data.sex === "女" ? 2 : 0,
+              school: res.data.school || "",
+              phone: res.data.phone || "",
+              wechatId: res.data.wechatId || "",
+              email: res.data.email || "",
+              introduction: res.data.introduction || "",
+              location: res.data.location || "",
+              awards: awardsArray.map((award) => ({ name: award }))
+              // 转换为对象数组用于显示
+            };
+          }
+          formatAppLog("log", "at pages/editProfile/editProfile.vue:138", "获取到的用户信息：", profile.value);
+        } catch (error) {
+          formatAppLog("error", "at pages/editProfile/editProfile.vue:140", "获取用户信息失败：", error);
+        }
+      };
+      const saveProfile = async () => {
+        try {
+          if (!profile.value.username.trim()) {
+            uni.showToast({
+              title: "请输入昵称",
+              icon: "none"
+            });
+            return;
+          }
+          const awardsArray = profile.value.awards.map((award) => award.name).filter((name) => name.trim());
+          const formData = {
+            username: String(profile.value.username || ""),
+            sex: String(genderArray[profile.value.sex] || ""),
+            school: String(profile.value.school || ""),
+            phone: String(profile.value.phone || ""),
+            wechatId: String(profile.value.wechatId || ""),
+            email: String(profile.value.email || ""),
+            awards: JSON.stringify(awardsArray),
+            // 将数组转换为字符串
+            location: String(profile.value.location || ""),
+            introduction: String(profile.value.introduction || "")
+          };
+          formatAppLog("log", "at pages/editProfile/editProfile.vue:175", "准备提交的数据：", formData);
+          const res = await editUserInfoAPI(formData);
+          formatAppLog("log", "at pages/editProfile/editProfile.vue:178", res);
+          if (res.code === 200) {
+            uni.setStorageSync("username", formData.username);
+            formatAppLog("log", "at pages/editProfile/editProfile.vue:182", "用户名已更新到本地存储:", formData.username);
+            uni.showToast({
+              title: "保存成功",
+              icon: "success"
+            });
+            setTimeout(() => {
+              uni.navigateBack();
+            }, 1500);
+          } else {
+            throw new Error(res.message || "保存失败");
+          }
+        } catch (error) {
+          formatAppLog("error", "at pages/editProfile/editProfile.vue:196", "保存失败：", error);
+          uni.showToast({
+            title: error.message || "保存失败，请重试",
+            icon: "none"
+          });
+        }
+      };
+      const bindGenderChange = (e2) => {
+        profile.value.sex = parseInt(e2.detail.value);
+      };
+      const addAward = () => {
+        profile.value.awards.push({ name: "" });
+      };
+      const removeAward = (index) => {
+        profile.value.awards.splice(index, 1);
+      };
+      vue.onMounted(() => {
+        getUserInfo();
+      });
+      return (_ctx, _cache) => {
+        const _component_uni_icons = resolveEasycom(vue.resolveDynamicComponent("uni-icons"), __easycom_0$4);
+        return vue.openBlock(), vue.createElementBlock("view", { class: "profile-container" }, [
+          vue.createCommentVNode(" 顶部背景 "),
+          vue.createElementVNode("view", { class: "header-bg" }),
+          vue.createCommentVNode(" 头像区域 "),
+          vue.createElementVNode("view", { class: "avatar-section" }, [
+            vue.createElementVNode("view", { class: "avatar-wrapper" }, [
+              vue.createElementVNode("image", {
+                class: "avatar",
+                src: _imports_0$5,
+                mode: "aspectFill"
+              }),
+              vue.createElementVNode("view", { class: "edit-avatar" }, [
+                vue.createVNode(_component_uni_icons, {
+                  type: "camera-filled",
+                  size: "20",
+                  color: "#fff"
+                })
+              ])
+            ])
+          ]),
+          vue.createCommentVNode(" 表单区域 "),
+          vue.createElementVNode("view", { class: "form-section" }, [
+            vue.createCommentVNode(" 基本信息 "),
+            vue.createElementVNode("view", { class: "section-title" }, "基本信息"),
+            vue.createElementVNode("view", { class: "form-group" }, [
+              vue.createElementVNode("view", { class: "form-item" }, [
+                vue.createElementVNode("text", { class: "label" }, "昵称"),
+                vue.withDirectives(vue.createElementVNode(
+                  "input",
+                  {
+                    type: "text",
+                    "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => profile.value.username = $event),
+                    placeholder: "鸭鸭"
+                  },
+                  null,
+                  512
+                  /* NEED_PATCH */
+                ), [
+                  [vue.vModelText, profile.value.username]
+                ])
+              ]),
+              vue.createElementVNode("view", { class: "form-item" }, [
+                vue.createElementVNode("text", { class: "label" }, "性别"),
+                vue.createElementVNode("picker", {
+                  onChange: bindGenderChange,
+                  value: profile.value.sex,
+                  range: genderArray
+                }, [
+                  vue.createElementVNode(
+                    "view",
+                    { class: "picker" },
+                    vue.toDisplayString(genderArray[profile.value.sex]),
+                    1
+                    /* TEXT */
+                  )
+                ], 40, ["value"])
+              ]),
+              vue.createElementVNode("view", { class: "form-item" }, [
+                vue.createElementVNode("text", { class: "label" }, "学校"),
+                vue.withDirectives(vue.createElementVNode(
+                  "input",
+                  {
+                    type: "text",
+                    "onUpdate:modelValue": _cache[1] || (_cache[1] = ($event) => profile.value.school = $event),
+                    placeholder: "请输入学校"
+                  },
+                  null,
+                  512
+                  /* NEED_PATCH */
+                ), [
+                  [vue.vModelText, profile.value.school]
+                ])
+              ]),
+              vue.createElementVNode("view", { class: "form-item" }, [
+                vue.createElementVNode("text", { class: "label" }, "所在城市"),
+                vue.withDirectives(vue.createElementVNode(
+                  "input",
+                  {
+                    type: "text",
+                    "onUpdate:modelValue": _cache[2] || (_cache[2] = ($event) => profile.value.location = $event),
+                    placeholder: "请输入所在城市"
+                  },
+                  null,
+                  512
+                  /* NEED_PATCH */
+                ), [
+                  [vue.vModelText, profile.value.location]
+                ])
+              ])
+            ]),
+            vue.createCommentVNode(" 联系方式 "),
+            vue.createElementVNode("view", { class: "section-title" }, "联系方式"),
+            vue.createElementVNode("view", { class: "form-group" }, [
+              vue.createElementVNode("view", { class: "form-item" }, [
+                vue.createElementVNode("text", { class: "label" }, "手机号"),
+                vue.withDirectives(vue.createElementVNode(
+                  "input",
+                  {
+                    type: "number",
+                    "onUpdate:modelValue": _cache[3] || (_cache[3] = ($event) => profile.value.phone = $event),
+                    placeholder: "13432439031"
+                  },
+                  null,
+                  512
+                  /* NEED_PATCH */
+                ), [
+                  [vue.vModelText, profile.value.phone]
+                ])
+              ]),
+              vue.createElementVNode("view", { class: "form-item" }, [
+                vue.createElementVNode("text", { class: "label" }, "微信号"),
+                vue.withDirectives(vue.createElementVNode(
+                  "input",
+                  {
+                    type: "text",
+                    "onUpdate:modelValue": _cache[4] || (_cache[4] = ($event) => profile.value.wechatId = $event),
+                    placeholder: "13432439031"
+                  },
+                  null,
+                  512
+                  /* NEED_PATCH */
+                ), [
+                  [vue.vModelText, profile.value.wechatId]
+                ])
+              ]),
+              vue.createElementVNode("view", { class: "form-item" }, [
+                vue.createElementVNode("text", { class: "label" }, "邮箱"),
+                vue.withDirectives(vue.createElementVNode(
+                  "input",
+                  {
+                    type: "text",
+                    "onUpdate:modelValue": _cache[5] || (_cache[5] = ($event) => profile.value.email = $event),
+                    placeholder: "2845510544@QQ.COM"
+                  },
+                  null,
+                  512
+                  /* NEED_PATCH */
+                ), [
+                  [vue.vModelText, profile.value.email]
+                ])
+              ])
+            ]),
+            vue.createCommentVNode(" 获奖经历 "),
+            vue.createElementVNode("view", { class: "section-title" }, "获奖经历"),
+            vue.createElementVNode("view", { class: "form-group" }, [
+              vue.createElementVNode("view", { class: "awards-list" }, [
+                (vue.openBlock(true), vue.createElementBlock(
+                  vue.Fragment,
+                  null,
+                  vue.renderList(profile.value.awards, (award, index) => {
+                    return vue.openBlock(), vue.createElementBlock("view", {
+                      class: "award-item",
+                      key: index
+                    }, [
+                      vue.withDirectives(vue.createElementVNode("input", {
+                        type: "text",
+                        "onUpdate:modelValue": ($event) => award.name = $event,
+                        placeholder: "请输入奖项名称"
+                      }, null, 8, ["onUpdate:modelValue"]), [
+                        [vue.vModelText, award.name]
+                      ]),
+                      vue.createVNode(_component_uni_icons, {
+                        onClick: ($event) => removeAward(index),
+                        type: "trash",
+                        size: "20",
+                        color: "#999"
+                      }, null, 8, ["onClick"])
+                    ]);
+                  }),
+                  128
+                  /* KEYED_FRAGMENT */
+                )),
+                vue.createElementVNode("view", {
+                  class: "add-award",
+                  onClick: addAward
+                }, [
+                  vue.createVNode(_component_uni_icons, {
+                    type: "plus",
+                    size: "20",
+                    color: "#7700ff"
+                  }),
+                  vue.createElementVNode("text", null, "添加获奖经历")
+                ])
+              ])
+            ]),
+            vue.createCommentVNode(" 个人简介 "),
+            vue.createElementVNode("view", { class: "section-title" }, "个人简介"),
+            vue.createElementVNode("view", { class: "form-group" }, [
+              vue.withDirectives(vue.createElementVNode(
+                "textarea",
+                {
+                  "onUpdate:modelValue": _cache[6] || (_cache[6] = ($event) => profile.value.introduction = $event),
+                  placeholder: "请输入个人简介",
+                  maxlength: "200"
+                },
+                null,
+                512
+                /* NEED_PATCH */
+              ), [
+                [vue.vModelText, profile.value.introduction]
+              ]),
+              vue.createElementVNode(
+                "view",
+                { class: "word-count" },
+                vue.toDisplayString(profile.value.introduction.length) + "/200",
+                1
+                /* TEXT */
+              )
+            ])
+          ]),
+          vue.createCommentVNode(" 保存按钮 "),
+          vue.createElementVNode("view", {
+            class: "save-btn",
+            onClick: saveProfile
+          }, "保存")
+        ]);
+      };
+    }
+  };
+  const PagesEditProfileEditProfile = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["__scopeId", "data-v-8a448ed0"], ["__file", "D:/Github/TeammateApp/pages/editProfile/editProfile.vue"]]);
   __definePage("pages/teammateHall/teammateHall", PagesTeammateHallTeammateHall);
   __definePage("pages/seminarRoom/seminarRoom", PagesSeminarRoomSeminarRoom);
   __definePage("pages/home/home", PagesHomeHome);
@@ -14756,6 +16125,7 @@ ${i3}
   __definePage("pages/inviteMate/inviteMate", PagesInviteMateInviteMate);
   __definePage("pages/test/test", PagesTestTest);
   __definePage("pages/fakedetail/fakedetail", PagesFakedetailFakedetail);
+  __definePage("pages/editProfile/editProfile", PagesEditProfileEditProfile);
   const _sfc_main = {
     onLaunch: function() {
       formatAppLog("log", "at App.vue:4", "App Launch");

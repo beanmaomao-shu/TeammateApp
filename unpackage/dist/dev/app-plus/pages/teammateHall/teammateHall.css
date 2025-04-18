@@ -59,18 +59,21 @@
   border: 1px solid #6c5ce7;
   border-top: 0px;
   left: 1.25rem;
-  border-radius: 0.3125rem;
+  top: 2.34375rem;
+  border-radius: 0 0 0.3125rem 0.3125rem;
   background-color: #fff;
   z-index: 1000;
   overflow-y: auto;
-  box-shadow: 0 0.46875rem 0.625rem rgba(0, 0, 0, 0.3);
+  box-shadow: 0 0.125rem 0.375rem rgba(0, 0, 0, 0.1);
 }
 .teammateLayout .suggesstions .list[data-v-305e4dd3] {
-  padding: 0.3125rem;
-  border: 1px solid #f5f5f5;
+  padding: 0.625rem 0.9375rem;
+  font-size: 0.875rem;
+  color: #333;
+  border-bottom: 1px solid #F1E6FF;
 }
-.teammateLayout .suggesstions .list[data-v-305e4dd3]:hover {
-  background-color: #f0f0f0;
+.teammateLayout .suggesstions .list[data-v-305e4dd3]:last-child {
+  border-bottom: none;
 }
 .teammateLayout .suggesstions .tip[data-v-305e4dd3] {
   padding: 0.3125rem;
@@ -91,9 +94,13 @@
 }
 .teammateLayout .banner uni-swiper[data-v-305e4dd3] {
   background-color: #fff;
-  width: 21.875rem;
+  width: 100%;
   height: 14.875rem;
   margin: 0 auto;
+}
+.teammateLayout .banner uni-swiper .img[data-v-305e4dd3] {
+  width: 100%;
+  height: 100%;
 }
 .teammateLayout .banner uni-swiper uni-swiper-item uni-image[data-v-305e4dd3] {
   width: 100%;
@@ -124,7 +131,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 96rpgx;
+  width: 3rem;
   height: 1.6875rem;
 }
 .teammateLayout .teammateList .listHead .right uni-image[data-v-305e4dd3] {
@@ -196,8 +203,18 @@
   height: 1rem;
 }
 .teamInfo .mainInfo .matchName[data-v-305e4dd3] {
-  font-size: 0.9375rem;
-  margin-left: 0.625rem;
+  min-height: 2.5rem;
+  max-height: 2.8125rem;
+  padding: 0.375rem;
+  font-size: 0.875rem;
+  line-height: 1.4;
+  white-space: normal;
+  word-wrap: break-word;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .teamInfo .mainInfo .teamName[data-v-305e4dd3] {
   display: flex;
@@ -209,4 +226,26 @@
 .teamInfo .mainInfo .teamName uni-image[data-v-305e4dd3] {
   width: 1rem;
   height: 1rem;
+}
+.login-container[data-v-305e4dd3] {
+  position: fixed;
+  right: 0.9375rem;
+  bottom: 6.25rem;
+  z-index: 999;
+}
+.login-container .login-btn[data-v-305e4dd3] {
+  width: 4.0625rem;
+  height: 2.5rem;
+  background: linear-gradient(90deg, #6c5ce7, rgba(224, 217, 255, 0.8));
+  color: #fff;
+  border-radius: 0.9375rem;
+  font-size: 0.8125rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0.0625rem solid #fff;
+  padding: 0;
+}
+.login-container .login-btn[data-v-305e4dd3]::after {
+  border: none;
 }
