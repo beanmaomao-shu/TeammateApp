@@ -1,1 +1,169 @@
-"use strict";const e=require("../../common/vendor.js"),v=require("../../common/assets.js"),g=require("../../api/ai.js");if(!Array){const m=e.resolveComponent("uni-icons"),r=e.resolveComponent("transition");(m+r)()}const w=()=>"../../uni_modules/uni-icons/components/uni-icons/uni-icons.js";Math||w();const T={__name:"ai",setup(m){const r=e.ref(0),s=e.ref([{type:1,text:"你好！我是Teammate的AI助手。",time:"9:32"},{type:1,text:"有比赛相关的什么问题请尽管问",time:"9:32",loading:!1},{type:2,text:"Hi！我想问的是.....",time:"9:33"}]),n=e.ref(""),i=e.ref(!1),_=()=>{i.value=!i.value,i.value&&setTimeout(()=>{h()},300)},h=()=>{e.index.nextTick(()=>{setTimeout(()=>{const o=e.index.createSelectorQuery();o.select("#chatScroll").boundingClientRect(),o.select("#chatScroll").scrollOffset(),o.exec(a=>{a[1]&&(r.value=a[1].scrollTop+a[0].height+50)})},100)})},d=async()=>{const o=n.value;if(n.value="",o.trim()){const a=new Date().toLocaleTimeString("zh-CN",{hour12:!1}).slice(0,5);s.value.push({type:2,text:o,time:a,isImage:!1}),s.value.push({type:1,text:"思考中...",time:a,loading:!0});try{const l=(await g.zhipuChat(o)).id;let p=0;const f=20;let u=null;for(;p<f;){await new Promise(y=>setTimeout(y,2e3));const c=await g.zhipuResult(l);if(console.log("智谱回复aiRes",c),c.task_status==="SUCCESS"){u=c;break}if(c.task_status==="FAILED")break;p++}s.value=s.value.filter(c=>!c.loading),u&&u.choices&&u.choices.length>0?s.value.push({type:1,text:u.choices[0].message.content,time:new Date().toLocaleTimeString("zh-CN",{hour12:!1}).slice(0,5),loading:!1}):s.value.push({type:1,text:"抱歉，AI暂时没有返回结果，请稍后再试。",time:new Date().toLocaleTimeString("zh-CN",{hour12:!1}).slice(0,5),loading:!1})}catch{s.value=s.value.filter(l=>!l.loading),s.value.push({type:1,text:"抱歉，AI请求出错，请稍后再试。",time:new Date().toLocaleTimeString("zh-CN",{hour12:!1}).slice(0,5),loading:!1})}}h()};return(o,a)=>({a:e.f(s.value,(t,l,p)=>e.e({a:t.type==1},t.type==1?{b:v._imports_0$8,c:e.t(t.text),d:e.t(t.time)}:{},{e:t.type==2},t.type==2?e.e({f:!t.isImage},t.isImage?{h:t.text,i:e.o(f=>o.previewImage(t.text),l)}:{g:e.t(t.text)},{j:e.t(t.time),k:v._imports_1$2}):{},{l})),b:i.value?1:"",c:r.value,d:e.o((...t)=>o.onScrollToLower&&o.onScrollToLower(...t)),e:e.o([t=>n.value=t.detail.value,(...t)=>o.handleInput&&o.handleInput(...t)]),f:n.value,g:e.o(_),h:!n.value,i:e.p({type:"plus",size:"40"}),j:n.value,k:e.o(d),l:e.p({type:"email",size:"40"}),m:i.value,n:e.p({name:"slide-up"}),o:i.value?1:""})}},x=e._export_sfc(T,[["__scopeId","data-v-fdb58938"]]);wx.createPage(x);
+"use strict";
+const common_vendor = require("../../common/vendor.js");
+const api_ai = require("../../api/ai.js");
+if (!Array) {
+  const _easycom_uni_icons2 = common_vendor.resolveComponent("uni-icons");
+  const _component_transition = common_vendor.resolveComponent("transition");
+  (_easycom_uni_icons2 + _component_transition)();
+}
+const _easycom_uni_icons = () => "../../uni_modules/uni-icons/components/uni-icons/uni-icons.js";
+if (!Math) {
+  _easycom_uni_icons();
+}
+const _sfc_main = {
+  __name: "ai",
+  setup(__props) {
+    const scrollTop = common_vendor.ref(0);
+    const messages = common_vendor.ref([
+      {
+        type: 1,
+        text: "你好！我是Teammate的AI助手。",
+        time: "9:32"
+      },
+      {
+        type: 1,
+        text: "有比赛相关的什么问题请尽管问",
+        time: "9:32",
+        loading: false
+      },
+      { type: 2, text: "Hi！我想问的是.....", time: "9:33" }
+    ]);
+    const message = common_vendor.ref("");
+    const isShowFunction = common_vendor.ref(false);
+    const showFunction = () => {
+      isShowFunction.value = !isShowFunction.value;
+      if (isShowFunction.value) {
+        setTimeout(() => {
+          scrollToBottom();
+        }, 300);
+      }
+    };
+    const scrollToBottom = () => {
+      common_vendor.index.nextTick(() => {
+        setTimeout(() => {
+          const query = common_vendor.index.createSelectorQuery();
+          query.select("#chatScroll").boundingClientRect();
+          query.select("#chatScroll").scrollOffset();
+          query.exec((res) => {
+            if (res[1]) {
+              scrollTop.value = res[1].scrollTop + res[0].height + 50;
+            }
+          });
+        }, 100);
+      });
+    };
+    const sendMessage = async () => {
+      const currentMessage = message.value;
+      message.value = "";
+      if (currentMessage.trim()) {
+        const currentTime = (/* @__PURE__ */ new Date()).toLocaleTimeString("zh-CN", { hour12: false }).slice(0, 5);
+        messages.value.push({
+          type: 2,
+          text: currentMessage,
+          time: currentTime,
+          isImage: false
+        });
+        messages.value.push({
+          type: 1,
+          text: "思考中...",
+          time: currentTime,
+          loading: true
+        });
+        try {
+          const aiChat = await api_ai.zhipuChat(currentMessage);
+          const taskId = aiChat.id;
+          let pollCount = 0;
+          const maxPoll = 20;
+          let result = null;
+          while (pollCount < maxPoll) {
+            await new Promise((resolve) => setTimeout(resolve, 2e3));
+            const aiRes = await api_ai.zhipuResult(taskId);
+            console.log("智谱回复aiRes", aiRes);
+            if (aiRes.task_status === "SUCCESS") {
+              result = aiRes;
+              break;
+            }
+            if (aiRes.task_status === "FAILED") {
+              break;
+            }
+            pollCount++;
+          }
+          messages.value = messages.value.filter((msg) => !msg.loading);
+          if (result && result.choices && result.choices.length > 0) {
+            messages.value.push({
+              type: 1,
+              text: result.choices[0].message.content,
+              time: (/* @__PURE__ */ new Date()).toLocaleTimeString("zh-CN", { hour12: false }).slice(0, 5),
+              loading: false
+            });
+          } else {
+            messages.value.push({
+              type: 1,
+              text: "抱歉，AI暂时没有返回结果，请稍后再试。",
+              time: (/* @__PURE__ */ new Date()).toLocaleTimeString("zh-CN", { hour12: false }).slice(0, 5),
+              loading: false
+            });
+          }
+        } catch (error) {
+          messages.value = messages.value.filter((msg) => !msg.loading);
+          messages.value.push({
+            type: 1,
+            text: "抱歉，AI请求出错，请稍后再试。",
+            time: (/* @__PURE__ */ new Date()).toLocaleTimeString("zh-CN", { hour12: false }).slice(0, 5),
+            loading: false
+          });
+        }
+      }
+      scrollToBottom();
+    };
+    return (_ctx, _cache) => {
+      return {
+        a: common_vendor.f(messages.value, (item, index, i0) => {
+          return common_vendor.e({
+            a: item.type == 1
+          }, item.type == 1 ? {
+            b: common_vendor.t(item.text),
+            c: common_vendor.t(item.time)
+          } : {}, {
+            d: item.type == 2
+          }, item.type == 2 ? common_vendor.e({
+            e: !item.isImage
+          }, !item.isImage ? {
+            f: common_vendor.t(item.text)
+          } : {
+            g: item.text,
+            h: common_vendor.o(($event) => _ctx.previewImage(item.text), index)
+          }, {
+            i: common_vendor.t(item.time)
+          }) : {}, {
+            j: index
+          });
+        }),
+        b: isShowFunction.value ? 1 : "",
+        c: scrollTop.value,
+        d: common_vendor.o((...args) => _ctx.onScrollToLower && _ctx.onScrollToLower(...args)),
+        e: common_vendor.o([($event) => message.value = $event.detail.value, (...args) => _ctx.handleInput && _ctx.handleInput(...args)]),
+        f: message.value,
+        g: common_vendor.o(showFunction),
+        h: !message.value,
+        i: common_vendor.p({
+          type: "plus",
+          size: "40"
+        }),
+        j: message.value,
+        k: common_vendor.o(sendMessage),
+        l: common_vendor.p({
+          type: "email",
+          size: "40"
+        }),
+        m: isShowFunction.value,
+        n: common_vendor.p({
+          name: "slide-up"
+        }),
+        o: isShowFunction.value ? 1 : ""
+      };
+    };
+  }
+};
+const MiniProgramPage = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["__scopeId", "data-v-fdb58938"], ["__file", "C:/Users/黎翠儿/Desktop/TeammateApp/pages/ai/ai.vue"]]);
+wx.createPage(MiniProgramPage);

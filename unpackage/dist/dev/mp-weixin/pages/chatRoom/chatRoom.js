@@ -1,11 +1,559 @@
-"use strict";const e=require("../../common/vendor.js"),D=require("../../common/assets.js"),w=require("../../api/chat.js"),H=require("../../api/userInfo.js");if(!Array){const b=e.resolveComponent("infoCard"),S=e.resolveComponent("uni-icons"),g=e.resolveComponent("transition"),l=e.resolveComponent("uni-popup-dialog"),T=e.resolveComponent("uni-popup");(b+S+g+l+T)()}const $=()=>"../../components/infoCard/infoCard.js",Q=()=>"../../uni_modules/uni-icons/components/uni-icons/uni-icons.js",G=()=>"../../uni_modules/uni-popup/components/uni-popup-dialog/uni-popup-dialog.js",K=()=>"../../uni_modules/uni-popup/components/uni-popup/uni-popup.js";Math||($+Q+G+K)();const V={__name:"chatRoom",setup(b){const S=e.ref(null),g=e.ref(`请遵守团队规则：
-1. 按时完成分配任务
-2. 保持每日签到
-3. 禁止传播无关内容
-4. 服从队长安排
-5. 竞赛期间保持在线`),l=e.ref(!1),T=e.ref(`请遵守团队规则：
-1. 按时完成分配任务
-2. 保持每日签到
-3. 禁止传播无关内容
-4. 服从队长安排
-5. 竞赛期间保持在线`),N=e.ref(0),r=e.ref([{type:1,text:"Hello!",time:"9:32"},{type:2,text:"Hi!",time:"9:33"}]),u=e.ref(""),d=e.ref(!1),C=e.ref(null);e.ref("");let a=!1;const c=e.ref(null),I=e.ref({}),v=e.ref(0),m=e.ref("");e.onLoad(o=>{c.value=o.chatRoomId,z()});const z=async()=>{try{const o=await H.getUserInfoAPI();o&&o.data&&o.data.username?(m.value=o.data.username,e.index.setStorageSync("username",o.data.username),console.log("获取到的用户名:",m.value)):console.error("获取用户信息失败或用户名为空")}catch(o){console.error("获取用户名出错:",o)}},W=()=>{g.value=T.value,l.value=!0},L=()=>{l.value=!1,g.value=T.value},A=()=>{T.value=g.value,l.value=!1,e.index.showToast({title:"公告修改成功",icon:"success"})};e.onMounted(()=>{console.log("聊天室ID:",c.value),console.log("当前用户名:",m.value),c.value?(O(),R(),x(),_(),E()):e.index.showToast({title:"聊天室ID不存在",icon:"none"})});const F=()=>{d.value=!d.value,d.value&&setTimeout(()=>{h()},300)},O=()=>{I.value={name:"对一题就队",icon:"../../static/images/队伍图标2.jpg"}},R=async()=>{try{if(!c.value)return;const o=await w.getUnreadCount([c.value]);if(o.code===200&&o.data){const s=o.data.find(t=>t.chatRoomId===parseInt(c.value));s&&(v.value=s.count)}}catch(o){console.error("获取未读消息数量失败:",o)}},E=async()=>{try{if(!c.value)return;(await w.markMessagesAsRead(c.value)).code===200&&(v.value=0)}catch(o){console.error("标记消息为已读失败:",o)}};e.onUnmounted(()=>{U()});const j=()=>{C.value.open()},x=()=>{try{const o=e.index.getStorageSync("token"),s=`ws://117.72.54.182:8898/chat/${c.value}`;if(a){console.log("WebSocket已连接，无需重新连接");return}e.index.connectSocket({url:s,success:()=>{console.log("WebSocket连接请求发送成功")},fail:t=>{console.error("WebSocket连接请求失败:",t)}}),e.index.onSocketOpen(function(){console.log("WebSocket连接已打开"),a=!0}),e.index.onSocketError(function(t){console.error("WebSocket连接错误:",t),a=!1,e.index.showToast({title:"WebSocket连接失败",icon:"none"}),setTimeout(()=>{a||(console.log("尝试重新连接WebSocket"),x())},5e3)}),e.index.onSocketMessage(function(t){try{const n=JSON.parse(t.data);if(console.log("收到消息:",n),n.messageType){const f=n.messageType==="img";let i="";if(n.sendTime){const y=n.sendTime.match(/\d{2}:\d{2}:\d{2}/);y?i=y[0].substring(0,5):i=new Date().toLocaleTimeString("zh-CN",{hour12:!1}).slice(0,5)}else i=new Date().toLocaleTimeString("zh-CN",{hour12:!1}).slice(0,5);const M=m.value||e.index.getStorageSync("username");console.log("消息判断使用的用户名:",M,"消息中的用户名:",n.username);const k={type:n.username===M?2:1,text:n.content,time:i,isImage:f};r.value.some(y=>y.text===k.text&&y.type===k.type&&y.time===k.time)||(r.value.push(k),h())}}catch(n){console.error("解析消息失败:",n)}}),e.index.onSocketClose(function(){console.log("WebSocket连接已关闭"),a=!1,setTimeout(()=>{a||(console.log("连接已关闭，尝试重新连接"),x())},3e3)}),P()}catch(o){console.error("初始化WebSocket失败:",o)}};let p=null;const P=()=>{p&&clearInterval(p),p=setInterval(()=>{a?(console.log("发送心跳包"),e.index.sendSocketMessage({data:JSON.stringify({type:"heartbeat",chatRoomId:c.value}),fail:o=>{console.error("心跳发送失败:",o),a=!1,clearInterval(p),setTimeout(()=>{x()},1e3)}})):(console.log("WebSocket未连接，尝试重连"),clearInterval(p),x())},3e4)},U=()=>{try{a&&e.index.closeSocket({success:()=>{console.log("WebSocket关闭成功"),a=!1},fail:o=>{console.error("WebSocket关闭失败:",o)},complete:()=>{a=!1,p&&(clearInterval(p),p=null)}})}catch(o){console.error("关闭WebSocket出错:",o)}},_=async()=>{try{const o=await w.getChatMessages(c.value);if(o&&o.code===200&&o.data){r.value=[];const s=m.value||e.index.getStorageSync("username");console.log("历史消息判断使用的用户名:",s),o.data.forEach(t=>{let n="";if(t.sendTime){const i=t.sendTime.match(/\d{2}:\d{2}:\d{2}/);i?n=i[0].substring(0,5):n=new Date(t.timestamp).toLocaleTimeString("zh-CN",{hour12:!1}).slice(0,5)}else n=new Date(t.timestamp).toLocaleTimeString("zh-CN",{hour12:!1}).slice(0,5);const f=t.messageType==="img";r.value.push({type:t.username===s?2:1,text:t.content,time:n,isImage:f})}),h()}}catch(o){console.error("获取历史消息失败:",o),e.index.showToast({title:"获取历史消息失败",icon:"none"})}},h=()=>{setTimeout(()=>{const o=e.index.createSelectorQuery();o.select(".chat-content").boundingClientRect(),o.exec(function(s){s&&s[0]&&e.index.pageScrollTo({scrollTop:s[0].height,duration:300})})},100)},J=()=>{if(u.value.trim()){const o=new Date().toLocaleTimeString("zh-CN",{hour12:!1}).slice(0,5),s={messageType:"text",content:u.value,username:m.value||e.index.getStorageSync("username")};console.log("发送消息:",JSON.stringify(s)),e.index.sendSocketMessage({data:JSON.stringify(s),success:()=>{const t={type:2,text:u.value,time:o,isImage:!1};r.value.push(t),u.value="",h(),setTimeout(()=>{_()},1e3)},fail:t=>{console.error("发送消息失败:",t),e.index.showToast({title:"发送消息失败",icon:"none"})}})}},q=()=>{const o="我的微信是: yangbaba",s=new Date().toLocaleTimeString("zh-CN",{hour12:!1}).slice(0,5),t={messageType:"text",content:o,username:m.value||e.index.getStorageSync("username")};e.index.sendSocketMessage({data:JSON.stringify(t),success:()=>{r.value.push({type:2,text:o,time:s}),h(),setTimeout(()=>{_()},1e3)}})},B=()=>{e.index.chooseImage({count:1,sizeType:["compressed"],sourceType:["album"],success:o=>{const s=o.tempFilePaths[0],t=new Date().toLocaleTimeString("zh-CN",{hour12:!1}).slice(0,5);e.index.showLoading({title:"图片上传中..."}),w.uploadFile(s).then(n=>{if(n.code===200){const f=n.data.url,i={messageType:"img",content:f,username:m.value||e.index.getStorageSync("username")};e.index.sendSocketMessage({data:JSON.stringify(i),success:()=>{r.value.push({type:2,text:f,time:t,isImage:!0}),h(),setTimeout(()=>{_()},1e3)}})}else e.index.showToast({title:"图片上传失败: "+(n.msg||"未知错误"),icon:"none"})}).catch(n=>{console.error("上传图片失败:",n),e.index.showToast({title:"图片上传失败",icon:"none"})}).finally(()=>{e.index.hideLoading()}),d.value=!1}})};return(o,s)=>e.e({a:e.t(I.value.name||"对一题就队"),b:I.value.icon||"../../static/images/队伍图标2.jpg",c:v.value>0},v.value>0?{d:e.t(v.value>99?"99+":v.value)}:{},{e:e.f(r.value,(t,n,f)=>e.e({a:t.type==1},t.type==1?{b:D._imports_1$1,c:e.t(t.text),d:e.t(t.time)}:{},{e:t.type==2},t.type==2?e.e({f:!t.isImage},t.isImage?{i:t.text,j:e.o(i=>o.previewImage(t.text),n),k:e.t(t.time)}:{g:e.t(t.text),h:e.t(t.time)},{l:D._imports_1$2}):{},{m:n})),f:d.value?1:"",g:N.value,h:e.o((...t)=>o.onScrollToLower&&o.onScrollToLower(...t)),i:e.o([t=>u.value=t.detail.value,(...t)=>o.handleInput&&o.handleInput(...t)]),j:u.value,k:e.o(F),l:!u.value,m:e.p({type:"plus",size:"40"}),n:u.value,o:e.o(J),p:e.p({type:"image",size:"40"}),q:e.o(B),r:e.p({type:"camera",size:"40"}),s:e.p({type:"email",size:"40"}),t:e.p({type:"phone",size:"40"}),v:e.p({type:"location",size:"40"}),w:e.p({type:"weixin",size:"40"}),x:e.o(j),y:e.p({type:"mail-open",size:"40"}),z:e.o(()=>{S.value.open()}),A:d.value,B:e.p({name:"slide-up"}),C:d.value?1:"",D:e.o(q),E:e.p({type:"success",cancelText:"取消",confirmText:"确定",content:"您确定要交换联系方式吗?"}),F:e.sr(C,"9b186cfb-10",{k:"isOpen"}),G:e.p({type:"dialog"}),H:!l.value,I:l.value?"":1,J:g.value,K:e.o(t=>g.value=t.detail.value),L:!l.value},l.value?{O:e.o(L),P:e.o(A)}:{M:e.o(t=>S.value.close()),N:e.o(W)},{Q:e.sr(S,"9b186cfb-12",{k:"showNotice"}),R:e.p({type:"center"})})}},X=e._export_sfc(V,[["__scopeId","data-v-9b186cfb"]]);wx.createPage(X);
+"use strict";
+const common_vendor = require("../../common/vendor.js");
+const api_chat = require("../../api/chat.js");
+const api_userInfo = require("../../api/userInfo.js");
+require("../../utils/request.js");
+if (!Array) {
+  const _easycom_infoCard2 = common_vendor.resolveComponent("infoCard");
+  const _easycom_uni_icons2 = common_vendor.resolveComponent("uni-icons");
+  const _component_transition = common_vendor.resolveComponent("transition");
+  const _easycom_uni_popup_dialog2 = common_vendor.resolveComponent("uni-popup-dialog");
+  const _easycom_uni_popup2 = common_vendor.resolveComponent("uni-popup");
+  (_easycom_infoCard2 + _easycom_uni_icons2 + _component_transition + _easycom_uni_popup_dialog2 + _easycom_uni_popup2)();
+}
+const _easycom_infoCard = () => "../../components/infoCard/infoCard.js";
+const _easycom_uni_icons = () => "../../uni_modules/uni-icons/components/uni-icons/uni-icons.js";
+const _easycom_uni_popup_dialog = () => "../../uni_modules/uni-popup/components/uni-popup-dialog/uni-popup-dialog.js";
+const _easycom_uni_popup = () => "../../uni_modules/uni-popup/components/uni-popup/uni-popup.js";
+if (!Math) {
+  (_easycom_infoCard + _easycom_uni_icons + _easycom_uni_popup_dialog + _easycom_uni_popup)();
+}
+const _sfc_main = {
+  __name: "chatRoom",
+  setup(__props) {
+    const showNotice = common_vendor.ref(null);
+    const tempNoticeMsg = common_vendor.ref("请遵守团队规则：\n1. 按时完成分配任务\n2. 保持每日签到\n3. 禁止传播无关内容\n4. 服从队长安排\n5. 竞赛期间保持在线");
+    const isEditing = common_vendor.ref(false);
+    const noticeMsg = common_vendor.ref("请遵守团队规则：\n1. 按时完成分配任务\n2. 保持每日签到\n3. 禁止传播无关内容\n4. 服从队长安排\n5. 竞赛期间保持在线");
+    const scrollTop = common_vendor.ref(0);
+    const messages = common_vendor.ref([
+      { type: 1, text: "Hello!", time: "9:32" },
+      { type: 2, text: "Hi!", time: "9:33" }
+    ]);
+    const message = common_vendor.ref("");
+    const isShowFunction = common_vendor.ref(false);
+    const isOpen = common_vendor.ref(null);
+    common_vendor.ref("");
+    let socket = false;
+    const chatRoomId = common_vendor.ref(null);
+    const teamInfo = common_vendor.ref({});
+    const unreadCount = common_vendor.ref(0);
+    const currentUsername = common_vendor.ref("");
+    common_vendor.onLoad((options) => {
+      chatRoomId.value = options.chatRoomId;
+      getUsernameFromAPI();
+    });
+    const getUsernameFromAPI = async () => {
+      try {
+        const res = await api_userInfo.getUserInfoAPI();
+        if (res && res.data && res.data.username) {
+          currentUsername.value = res.data.username;
+          common_vendor.index.setStorageSync("username", res.data.username);
+          console.log("获取到的用户名:", currentUsername.value);
+        } else {
+          console.error("获取用户信息失败或用户名为空");
+        }
+      } catch (error) {
+        console.error("获取用户名出错:", error);
+      }
+    };
+    const startEditing = () => {
+      tempNoticeMsg.value = noticeMsg.value;
+      isEditing.value = true;
+    };
+    const cancelEditing = () => {
+      isEditing.value = false;
+      tempNoticeMsg.value = noticeMsg.value;
+    };
+    const saveNotice = () => {
+      noticeMsg.value = tempNoticeMsg.value;
+      isEditing.value = false;
+      common_vendor.index.showToast({
+        title: "公告修改成功",
+        icon: "success"
+      });
+    };
+    common_vendor.onMounted(() => {
+      console.log("聊天室ID:", chatRoomId.value);
+      console.log("当前用户名:", currentUsername.value);
+      if (chatRoomId.value) {
+        getTeamInfo();
+        getUnreadMessageCount();
+        initWebSocket();
+        loadHistoryMessages();
+        markAsRead();
+      } else {
+        common_vendor.index.showToast({
+          title: "聊天室ID不存在",
+          icon: "none"
+        });
+      }
+    });
+    const showFunction = () => {
+      isShowFunction.value = !isShowFunction.value;
+      if (isShowFunction.value) {
+        setTimeout(() => {
+          scrollToBottom();
+        }, 300);
+      }
+    };
+    const getTeamInfo = () => {
+      teamInfo.value = {
+        name: "对一题就队",
+        icon: "../../static/images/队伍图标2.jpg"
+      };
+    };
+    const getUnreadMessageCount = async () => {
+      try {
+        if (!chatRoomId.value)
+          return;
+        const res = await api_chat.getUnreadCount([chatRoomId.value]);
+        if (res.code === 200 && res.data) {
+          const chatRoomData = res.data.find((item) => item.chatRoomId === parseInt(chatRoomId.value));
+          if (chatRoomData) {
+            unreadCount.value = chatRoomData.count;
+          }
+        }
+      } catch (error) {
+        console.error("获取未读消息数量失败:", error);
+      }
+    };
+    const markAsRead = async () => {
+      try {
+        if (!chatRoomId.value)
+          return;
+        const res = await api_chat.markMessagesAsRead(chatRoomId.value);
+        if (res.code === 200) {
+          unreadCount.value = 0;
+        }
+      } catch (error) {
+        console.error("标记消息为已读失败:", error);
+      }
+    };
+    common_vendor.onUnmounted(() => {
+      closeWebSocket();
+    });
+    const exchangeWechat = () => {
+      isOpen.value.open();
+    };
+    const initWebSocket = () => {
+      try {
+        const token = common_vendor.index.getStorageSync("token");
+        const wsUrl = `ws://117.72.54.182:8898/chat/${chatRoomId.value}`;
+        if (socket) {
+          console.log("WebSocket已连接，无需重新连接");
+          return;
+        }
+        common_vendor.index.connectSocket({
+          url: wsUrl,
+          success: () => {
+            console.log("WebSocket连接请求发送成功");
+          },
+          fail: (error) => {
+            console.error("WebSocket连接请求失败:", error);
+          }
+        });
+        common_vendor.index.onSocketOpen(function() {
+          console.log("WebSocket连接已打开");
+          socket = true;
+        });
+        common_vendor.index.onSocketError(function(error) {
+          console.error("WebSocket连接错误:", error);
+          socket = false;
+          common_vendor.index.showToast({
+            title: "WebSocket连接失败",
+            icon: "none"
+          });
+          setTimeout(() => {
+            if (!socket) {
+              console.log("尝试重新连接WebSocket");
+              initWebSocket();
+            }
+          }, 5e3);
+        });
+        common_vendor.index.onSocketMessage(function(res) {
+          try {
+            const data = JSON.parse(res.data);
+            console.log("收到消息:", data);
+            if (data.messageType) {
+              const isImage = data.messageType === "img";
+              let currentTime = "";
+              if (data.sendTime) {
+                const timeMatch = data.sendTime.match(/\d{2}:\d{2}:\d{2}/);
+                if (timeMatch) {
+                  currentTime = timeMatch[0].substring(0, 5);
+                } else {
+                  currentTime = (/* @__PURE__ */ new Date()).toLocaleTimeString("zh-CN", { hour12: false }).slice(0, 5);
+                }
+              } else {
+                currentTime = (/* @__PURE__ */ new Date()).toLocaleTimeString("zh-CN", { hour12: false }).slice(0, 5);
+              }
+              const username = currentUsername.value || common_vendor.index.getStorageSync("username");
+              console.log("消息判断使用的用户名:", username, "消息中的用户名:", data.username);
+              const newMessage = {
+                type: data.username === username ? 2 : 1,
+                text: data.content,
+                time: currentTime,
+                isImage
+              };
+              const isDuplicate = messages.value.some(
+                (msg) => msg.text === newMessage.text && msg.type === newMessage.type && msg.time === newMessage.time
+              );
+              if (!isDuplicate) {
+                messages.value.push(newMessage);
+                scrollToBottom();
+              }
+            }
+          } catch (error) {
+            console.error("解析消息失败:", error);
+          }
+        });
+        common_vendor.index.onSocketClose(function() {
+          console.log("WebSocket连接已关闭");
+          socket = false;
+          setTimeout(() => {
+            if (!socket) {
+              console.log("连接已关闭，尝试重新连接");
+              initWebSocket();
+            }
+          }, 3e3);
+        });
+        startHeartbeat();
+      } catch (error) {
+        console.error("初始化WebSocket失败:", error);
+      }
+    };
+    let heartbeatTimer = null;
+    const startHeartbeat = () => {
+      if (heartbeatTimer) {
+        clearInterval(heartbeatTimer);
+      }
+      heartbeatTimer = setInterval(() => {
+        if (socket) {
+          console.log("发送心跳包");
+          common_vendor.index.sendSocketMessage({
+            data: JSON.stringify({ type: "heartbeat", chatRoomId: chatRoomId.value }),
+            fail: (error) => {
+              console.error("心跳发送失败:", error);
+              socket = false;
+              clearInterval(heartbeatTimer);
+              setTimeout(() => {
+                initWebSocket();
+              }, 1e3);
+            }
+          });
+        } else {
+          console.log("WebSocket未连接，尝试重连");
+          clearInterval(heartbeatTimer);
+          initWebSocket();
+        }
+      }, 3e4);
+    };
+    const closeWebSocket = () => {
+      try {
+        if (socket) {
+          common_vendor.index.closeSocket({
+            success: () => {
+              console.log("WebSocket关闭成功");
+              socket = false;
+            },
+            fail: (error) => {
+              console.error("WebSocket关闭失败:", error);
+            },
+            complete: () => {
+              socket = false;
+              if (heartbeatTimer) {
+                clearInterval(heartbeatTimer);
+                heartbeatTimer = null;
+              }
+            }
+          });
+        }
+      } catch (error) {
+        console.error("关闭WebSocket出错:", error);
+      }
+    };
+    const loadHistoryMessages = async () => {
+      try {
+        const result = await api_chat.getChatMessages(chatRoomId.value);
+        if (result && result.code === 200 && result.data) {
+          messages.value = [];
+          const username = currentUsername.value || common_vendor.index.getStorageSync("username");
+          console.log("历史消息判断使用的用户名:", username);
+          result.data.forEach((item) => {
+            let messageTime = "";
+            if (item.sendTime) {
+              const timeMatch = item.sendTime.match(/\d{2}:\d{2}:\d{2}/);
+              if (timeMatch) {
+                messageTime = timeMatch[0].substring(0, 5);
+              } else {
+                messageTime = new Date(item.timestamp).toLocaleTimeString("zh-CN", { hour12: false }).slice(0, 5);
+              }
+            } else {
+              messageTime = new Date(item.timestamp).toLocaleTimeString("zh-CN", { hour12: false }).slice(0, 5);
+            }
+            const isImage = item.messageType === "img";
+            messages.value.push({
+              type: item.username === username ? 2 : 1,
+              // 使用username判断是否为自己发送的消息
+              text: item.content,
+              time: messageTime,
+              isImage
+              // 使用正确的判断条件
+            });
+          });
+          scrollToBottom();
+        }
+      } catch (error) {
+        console.error("获取历史消息失败:", error);
+        common_vendor.index.showToast({
+          title: "获取历史消息失败",
+          icon: "none"
+        });
+      }
+    };
+    const scrollToBottom = () => {
+      setTimeout(() => {
+        const query = common_vendor.index.createSelectorQuery();
+        query.select(".chat-content").boundingClientRect();
+        query.exec(function(res) {
+          if (res && res[0]) {
+            common_vendor.index.pageScrollTo({
+              scrollTop: res[0].height,
+              duration: 300
+            });
+          }
+        });
+      }, 100);
+    };
+    const sendMessage = () => {
+      if (message.value.trim()) {
+        const currentTime = (/* @__PURE__ */ new Date()).toLocaleTimeString("zh-CN", { hour12: false }).slice(0, 5);
+        const messageData = {
+          messageType: "text",
+          content: message.value,
+          username: currentUsername.value || common_vendor.index.getStorageSync("username")
+          // 添加用户名
+        };
+        console.log("发送消息:", JSON.stringify(messageData));
+        common_vendor.index.sendSocketMessage({
+          data: JSON.stringify(messageData),
+          success: () => {
+            const newMessage = {
+              type: 2,
+              // 2表示自己发送的消息
+              text: message.value,
+              time: currentTime,
+              isImage: false
+            };
+            messages.value.push(newMessage);
+            message.value = "";
+            scrollToBottom();
+            setTimeout(() => {
+              loadHistoryMessages();
+            }, 1e3);
+          },
+          fail: (error) => {
+            console.error("发送消息失败:", error);
+            common_vendor.index.showToast({
+              title: "发送消息失败",
+              icon: "none"
+            });
+          }
+        });
+      }
+    };
+    const dialogConfirm = () => {
+      const msgText = "我的微信是: yangbaba";
+      const currentTime = (/* @__PURE__ */ new Date()).toLocaleTimeString("zh-CN", { hour12: false }).slice(0, 5);
+      const messageData = {
+        messageType: "text",
+        content: msgText,
+        username: currentUsername.value || common_vendor.index.getStorageSync("username")
+        // 添加用户名
+      };
+      common_vendor.index.sendSocketMessage({
+        data: JSON.stringify(messageData),
+        success: () => {
+          messages.value.push({
+            type: 2,
+            text: msgText,
+            time: currentTime
+          });
+          scrollToBottom();
+          setTimeout(() => {
+            loadHistoryMessages();
+          }, 1e3);
+        }
+      });
+    };
+    const chooseAndSendImage = () => {
+      common_vendor.index.chooseImage({
+        count: 1,
+        sizeType: ["compressed"],
+        sourceType: ["album"],
+        success: (res) => {
+          const tempFilePath = res.tempFilePaths[0];
+          const currentTime = (/* @__PURE__ */ new Date()).toLocaleTimeString("zh-CN", { hour12: false }).slice(0, 5);
+          common_vendor.index.showLoading({
+            title: "图片上传中..."
+          });
+          api_chat.uploadFile(tempFilePath).then((data) => {
+            if (data.code === 200) {
+              const imageUrl = data.data.url;
+              const messageData = {
+                messageType: "img",
+                content: imageUrl,
+                username: currentUsername.value || common_vendor.index.getStorageSync("username")
+              };
+              common_vendor.index.sendSocketMessage({
+                data: JSON.stringify(messageData),
+                success: () => {
+                  messages.value.push({
+                    type: 2,
+                    text: imageUrl,
+                    time: currentTime,
+                    isImage: true
+                  });
+                  scrollToBottom();
+                  setTimeout(() => {
+                    loadHistoryMessages();
+                  }, 1e3);
+                }
+              });
+            } else {
+              common_vendor.index.showToast({
+                title: "图片上传失败: " + (data.msg || "未知错误"),
+                icon: "none"
+              });
+            }
+          }).catch((error) => {
+            console.error("上传图片失败:", error);
+            common_vendor.index.showToast({
+              title: "图片上传失败",
+              icon: "none"
+            });
+          }).finally(() => {
+            common_vendor.index.hideLoading();
+          });
+          isShowFunction.value = false;
+        }
+      });
+    };
+    return (_ctx, _cache) => {
+      return common_vendor.e({
+        a: common_vendor.t(teamInfo.value.name || "对一题就队"),
+        b: teamInfo.value.icon || "../../static/images/队伍图标2.jpg",
+        c: unreadCount.value > 0
+      }, unreadCount.value > 0 ? {
+        d: common_vendor.t(unreadCount.value > 99 ? "99+" : unreadCount.value)
+      } : {}, {
+        e: common_vendor.f(messages.value, (item, index, i0) => {
+          return common_vendor.e({
+            a: item.type == 1
+          }, item.type == 1 ? {
+            b: common_vendor.t(item.text),
+            c: common_vendor.t(item.time)
+          } : {}, {
+            d: item.type == 2
+          }, item.type == 2 ? common_vendor.e({
+            e: !item.isImage
+          }, !item.isImage ? {
+            f: common_vendor.t(item.text),
+            g: common_vendor.t(item.time)
+          } : {
+            h: item.text,
+            i: common_vendor.o(($event) => _ctx.previewImage(item.text), index),
+            j: common_vendor.t(item.time)
+          }) : {}, {
+            k: index
+          });
+        }),
+        f: isShowFunction.value ? 1 : "",
+        g: scrollTop.value,
+        h: common_vendor.o((...args) => _ctx.onScrollToLower && _ctx.onScrollToLower(...args)),
+        i: common_vendor.o([($event) => message.value = $event.detail.value, (...args) => _ctx.handleInput && _ctx.handleInput(...args)]),
+        j: message.value,
+        k: common_vendor.o(showFunction),
+        l: !message.value,
+        m: common_vendor.p({
+          type: "plus",
+          size: "40"
+        }),
+        n: message.value,
+        o: common_vendor.o(sendMessage),
+        p: common_vendor.p({
+          type: "image",
+          size: "40"
+        }),
+        q: common_vendor.o(chooseAndSendImage),
+        r: common_vendor.p({
+          type: "camera",
+          size: "40"
+        }),
+        s: common_vendor.p({
+          type: "email",
+          size: "40"
+        }),
+        t: common_vendor.p({
+          type: "phone",
+          size: "40"
+        }),
+        v: common_vendor.p({
+          type: "location",
+          size: "40"
+        }),
+        w: common_vendor.p({
+          type: "weixin",
+          size: "40"
+        }),
+        x: common_vendor.o(exchangeWechat),
+        y: common_vendor.p({
+          type: "mail-open",
+          size: "40"
+        }),
+        z: common_vendor.o(() => {
+          showNotice.value.open();
+        }),
+        A: isShowFunction.value,
+        B: common_vendor.p({
+          name: "slide-up"
+        }),
+        C: isShowFunction.value ? 1 : "",
+        D: common_vendor.o(dialogConfirm),
+        E: common_vendor.p({
+          type: "success",
+          cancelText: "取消",
+          confirmText: "确定",
+          content: "您确定要交换联系方式吗?"
+        }),
+        F: common_vendor.sr(isOpen, "9b186cfb-10", {
+          "k": "isOpen"
+        }),
+        G: common_vendor.p({
+          type: "dialog"
+        }),
+        H: !isEditing.value,
+        I: !isEditing.value ? 1 : "",
+        J: tempNoticeMsg.value,
+        K: common_vendor.o(($event) => tempNoticeMsg.value = $event.detail.value),
+        L: !isEditing.value
+      }, !isEditing.value ? {
+        M: common_vendor.o(($event) => showNotice.value.close()),
+        N: common_vendor.o(startEditing)
+      } : {
+        O: common_vendor.o(cancelEditing),
+        P: common_vendor.o(saveNotice)
+      }, {
+        Q: common_vendor.sr(showNotice, "9b186cfb-12", {
+          "k": "showNotice"
+        }),
+        R: common_vendor.p({
+          type: "center"
+        })
+      });
+    };
+  }
+};
+const MiniProgramPage = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["__scopeId", "data-v-9b186cfb"], ["__file", "C:/Users/黎翠儿/Desktop/TeammateApp/pages/chatRoom/chatRoom.vue"]]);
+wx.createPage(MiniProgramPage);

@@ -1,1 +1,694 @@
-"use strict";const r=require("../../../../common/vendor.js"),l=require("./i18n/index.js"),d=require("./util.js"),{t:c}=r.initVueI18n(l.i18nMessages),o={name:"UniDatetimePicker",data(){return{indicatorStyle:"height: 50px;",visible:!1,fixNvueBug:{},dateShow:!0,timeShow:!0,title:"日期和时间",time:"",year:1920,month:0,day:0,hour:0,minute:0,second:0,startYear:1920,startMonth:1,startDay:1,startHour:0,startMinute:0,startSecond:0,endYear:2120,endMonth:12,endDay:31,endHour:23,endMinute:59,endSecond:59}},options:{virtualHost:!0},props:{type:{type:String,default:"datetime"},value:{type:[String,Number],default:""},modelValue:{type:[String,Number],default:""},start:{type:[Number,String],default:""},end:{type:[Number,String],default:""},returnType:{type:String,default:"string"},disabled:{type:[Boolean,String],default:!1},border:{type:[Boolean,String],default:!0},hideSecond:{type:[Boolean,String],default:!1}},watch:{modelValue:{handler(e){e?(this.parseValue(d.fixIosDateFormat(e)),this.initTime(!1)):(this.time="",this.parseValue(Date.now()))},immediate:!0},type:{handler(e){e==="date"?(this.dateShow=!0,this.timeShow=!1,this.title="日期"):e==="time"?(this.dateShow=!1,this.timeShow=!0,this.title="时间"):(this.dateShow=!0,this.timeShow=!0,this.title="日期和时间")},immediate:!0},start:{handler(e){this.parseDatetimeRange(d.fixIosDateFormat(e),"start")},immediate:!0},end:{handler(e){this.parseDatetimeRange(d.fixIosDateFormat(e),"end")},immediate:!0},months(e){this.checkValue("month",this.month,e)},days(e){this.checkValue("day",this.day,e)},hours(e){this.checkValue("hour",this.hour,e)},minutes(e){this.checkValue("minute",this.minute,e)},seconds(e){this.checkValue("second",this.second,e)}},computed:{years(){return this.getCurrentRange("year")},months(){return this.getCurrentRange("month")},days(){return this.getCurrentRange("day")},hours(){return this.getCurrentRange("hour")},minutes(){return this.getCurrentRange("minute")},seconds(){return this.getCurrentRange("second")},ymd(){return[this.year-this.minYear,this.month-this.minMonth,this.day-this.minDay]},hms(){return[this.hour-this.minHour,this.minute-this.minMinute,this.second-this.minSecond]},currentDateIsStart(){return this.year===this.startYear&&this.month===this.startMonth&&this.day===this.startDay},currentDateIsEnd(){return this.year===this.endYear&&this.month===this.endMonth&&this.day===this.endDay},minYear(){return this.startYear},maxYear(){return this.endYear},minMonth(){return this.year===this.startYear?this.startMonth:1},maxMonth(){return this.year===this.endYear?this.endMonth:12},minDay(){return this.year===this.startYear&&this.month===this.startMonth?this.startDay:1},maxDay(){return this.year===this.endYear&&this.month===this.endMonth?this.endDay:this.daysInMonth(this.year,this.month)},minHour(){if(this.type==="datetime")return this.currentDateIsStart?this.startHour:0;if(this.type==="time")return this.startHour},maxHour(){if(this.type==="datetime")return this.currentDateIsEnd?this.endHour:23;if(this.type==="time")return this.endHour},minMinute(){if(this.type==="datetime")return this.currentDateIsStart&&this.hour===this.startHour?this.startMinute:0;if(this.type==="time")return this.hour===this.startHour?this.startMinute:0},maxMinute(){if(this.type==="datetime")return this.currentDateIsEnd&&this.hour===this.endHour?this.endMinute:59;if(this.type==="time")return this.hour===this.endHour?this.endMinute:59},minSecond(){if(this.type==="datetime")return this.currentDateIsStart&&this.hour===this.startHour&&this.minute===this.startMinute?this.startSecond:0;if(this.type==="time")return this.hour===this.startHour&&this.minute===this.startMinute?this.startSecond:0},maxSecond(){if(this.type==="datetime")return this.currentDateIsEnd&&this.hour===this.endHour&&this.minute===this.endMinute?this.endSecond:59;if(this.type==="time")return this.hour===this.endHour&&this.minute===this.endMinute?this.endSecond:59},selectTimeText(){return c("uni-datetime-picker.selectTime")},okText(){return c("uni-datetime-picker.ok")},clearText(){return c("uni-datetime-picker.clear")},cancelText(){return c("uni-datetime-picker.cancel")}},mounted(){},methods:{lessThanTen(e){return e<10?"0"+e:e},parseTimeType(e){if(e){let t=e.split(":");this.hour=Number(t[0]),this.minute=Number(t[1]),this.second=Number(t[2])}},initPickerValue(e){let t=null;e?t=this.compareValueWithStartAndEnd(e,this.start,this.end):(t=Date.now(),t=this.compareValueWithStartAndEnd(t,this.start,this.end)),this.parseValue(t)},compareValueWithStartAndEnd(e,t,i){let a=null;return e=this.superTimeStamp(e),t=this.superTimeStamp(t),i=this.superTimeStamp(i),t&&i?e<t?a=new Date(t):e>i?a=new Date(i):a=new Date(e):t&&!i?a=t<=e?new Date(e):new Date(t):!t&&i?a=e<=i?new Date(e):new Date(i):a=new Date(e),a},superTimeStamp(e){let t="";if(this.type==="time"&&e&&typeof e=="string"){const i=new Date,a=i.getFullYear(),n=i.getMonth()+1,s=i.getDate();t=a+"/"+n+"/"+s+" "}return Number(e)&&(e=parseInt(e),t=0),this.createTimeStamp(t+e)},parseValue(e){if(e){if(this.type==="time"&&typeof e=="string")this.parseTimeType(e);else{let t=null;t=new Date(e),this.type!=="time"&&(this.year=t.getFullYear(),this.month=t.getMonth()+1,this.day=t.getDate()),this.type!=="date"&&(this.hour=t.getHours(),this.minute=t.getMinutes(),this.second=t.getSeconds())}this.hideSecond&&(this.second=0)}},parseDatetimeRange(e,t){if(!e){t==="start"&&(this.startYear=1920,this.startMonth=1,this.startDay=1,this.startHour=0,this.startMinute=0,this.startSecond=0),t==="end"&&(this.endYear=2120,this.endMonth=12,this.endDay=31,this.endHour=23,this.endMinute=59,this.endSecond=59);return}if(this.type==="time"){const i=e.split(":");this[t+"Hour"]=Number(i[0]),this[t+"Minute"]=Number(i[1]),this[t+"Second"]=Number(i[2])}else{if(!e){t==="start"?this.startYear=this.year-60:this.endYear=this.year+60;return}Number(e)&&(e=parseInt(e));const i=/[0-9]:[0-9]/;this.type==="datetime"&&t==="end"&&typeof e=="string"&&!i.test(e)&&(e=e+" 23:59:59");const a=new Date(e);this[t+"Year"]=a.getFullYear(),this[t+"Month"]=a.getMonth()+1,this[t+"Day"]=a.getDate(),this.type==="datetime"&&(this[t+"Hour"]=a.getHours(),this[t+"Minute"]=a.getMinutes(),this[t+"Second"]=a.getSeconds())}},getCurrentRange(e){const t=[];for(let i=this["min"+this.capitalize(e)];i<=this["max"+this.capitalize(e)];i++)t.push(i);return t},capitalize(e){return e.charAt(0).toUpperCase()+e.slice(1)},checkValue(e,t,i){i.indexOf(t)===-1&&(this[e]=i[0])},daysInMonth(e,t){return new Date(e,t,0).getDate()},createTimeStamp(e){if(e)return typeof e=="number"?e:(e=e.replace(/-/g,"/"),this.type==="date"&&(e=e+" 00:00:00"),Date.parse(e))},createDomSting(){const e=this.year+"-"+this.lessThanTen(this.month)+"-"+this.lessThanTen(this.day);let t=this.lessThanTen(this.hour)+":"+this.lessThanTen(this.minute);return this.hideSecond||(t=t+":"+this.lessThanTen(this.second)),this.type==="date"?e:this.type==="time"?t:e+" "+t},initTime(e=!0){this.time=this.createDomSting(),e&&(this.returnType==="timestamp"&&this.type!=="time"?(this.$emit("change",this.createTimeStamp(this.time)),this.$emit("input",this.createTimeStamp(this.time)),this.$emit("update:modelValue",this.createTimeStamp(this.time))):(this.$emit("change",this.time),this.$emit("input",this.time),this.$emit("update:modelValue",this.time)))},bindDateChange(e){const t=e.detail.value;this.year=this.years[t[0]],this.month=this.months[t[1]],this.day=this.days[t[2]]},bindTimeChange(e){const t=e.detail.value;this.hour=this.hours[t[0]],this.minute=this.minutes[t[1]],this.second=this.seconds[t[2]]},initTimePicker(){if(this.disabled)return;const e=d.fixIosDateFormat(this.time);this.initPickerValue(e),this.visible=!this.visible},tiggerTimePicker(e){this.visible=!this.visible},clearTime(){this.time="",this.$emit("change",this.time),this.$emit("input",this.time),this.$emit("update:modelValue",this.time),this.tiggerTimePicker()},setTime(){this.initTime(),this.tiggerTimePicker()}}};function f(e,t,i,a,n,s){return r.e({a:r.t(n.time),b:!n.time},n.time?{}:{c:r.t(s.selectTimeText)},{d:i.disabled?1:"",e:i.border?1:"",f:r.o((...h)=>s.initTimePicker&&s.initTimePicker(...h)),g:n.visible},n.visible?{h:r.o((...h)=>s.tiggerTimePicker&&s.tiggerTimePicker(...h))}:{},{i:n.visible},n.visible?r.e({j:r.t(s.selectTimeText),k:n.dateShow},n.dateShow?{l:r.f(s.years,(h,u,m)=>({a:r.t(s.lessThanTen(h)),b:u})),m:r.f(s.months,(h,u,m)=>({a:r.t(s.lessThanTen(h)),b:u})),n:r.f(s.days,(h,u,m)=>({a:r.t(s.lessThanTen(h)),b:u})),o:n.indicatorStyle,p:s.ymd,q:r.o((...h)=>s.bindDateChange&&s.bindDateChange(...h))}:{},{r:n.timeShow},n.timeShow?r.e({s:r.f(s.hours,(h,u,m)=>({a:r.t(s.lessThanTen(h)),b:u})),t:r.f(s.minutes,(h,u,m)=>({a:r.t(s.lessThanTen(h)),b:u})),v:!i.hideSecond},i.hideSecond?{}:{w:r.f(s.seconds,(h,u,m)=>({a:r.t(s.lessThanTen(h)),b:u}))},{x:r.n(i.hideSecond?"time-hide-second":""),y:n.indicatorStyle,z:s.hms,A:r.o((...h)=>s.bindTimeChange&&s.bindTimeChange(...h)),B:r.n(i.hideSecond?"sign-center":"sign-left"),C:!i.hideSecond},i.hideSecond?{}:{}):{},{D:r.t(s.clearText),E:r.o((...h)=>s.clearTime&&s.clearTime(...h)),F:r.t(s.cancelText),G:r.o((...h)=>s.tiggerTimePicker&&s.tiggerTimePicker(...h)),H:r.t(s.okText),I:r.o((...h)=>s.setTime&&s.setTime(...h)),J:r.n(n.dateShow&&n.timeShow?"":"fix-nvue-height"),K:r.s(n.fixNvueBug)}):{})}const y=r._export_sfc(o,[["render",f]]);wx.createComponent(y);
+"use strict";
+const common_vendor = require("../../../../common/vendor.js");
+const uni_modules_uniDatetimePicker_components_uniDatetimePicker_i18n_index = require("./i18n/index.js");
+const uni_modules_uniDatetimePicker_components_uniDatetimePicker_util = require("./util.js");
+const {
+  t
+} = common_vendor.initVueI18n(uni_modules_uniDatetimePicker_components_uniDatetimePicker_i18n_index.i18nMessages);
+const _sfc_main = {
+  name: "UniDatetimePicker",
+  data() {
+    return {
+      indicatorStyle: `height: 50px;`,
+      visible: false,
+      fixNvueBug: {},
+      dateShow: true,
+      timeShow: true,
+      title: "日期和时间",
+      // 输入框当前时间
+      time: "",
+      // 当前的年月日时分秒
+      year: 1920,
+      month: 0,
+      day: 0,
+      hour: 0,
+      minute: 0,
+      second: 0,
+      // 起始时间
+      startYear: 1920,
+      startMonth: 1,
+      startDay: 1,
+      startHour: 0,
+      startMinute: 0,
+      startSecond: 0,
+      // 结束时间
+      endYear: 2120,
+      endMonth: 12,
+      endDay: 31,
+      endHour: 23,
+      endMinute: 59,
+      endSecond: 59
+    };
+  },
+  options: {
+    virtualHost: true
+  },
+  props: {
+    type: {
+      type: String,
+      default: "datetime"
+    },
+    value: {
+      type: [String, Number],
+      default: ""
+    },
+    modelValue: {
+      type: [String, Number],
+      default: ""
+    },
+    start: {
+      type: [Number, String],
+      default: ""
+    },
+    end: {
+      type: [Number, String],
+      default: ""
+    },
+    returnType: {
+      type: String,
+      default: "string"
+    },
+    disabled: {
+      type: [Boolean, String],
+      default: false
+    },
+    border: {
+      type: [Boolean, String],
+      default: true
+    },
+    hideSecond: {
+      type: [Boolean, String],
+      default: false
+    }
+  },
+  watch: {
+    modelValue: {
+      handler(newVal) {
+        if (newVal) {
+          this.parseValue(uni_modules_uniDatetimePicker_components_uniDatetimePicker_util.fixIosDateFormat(newVal));
+          this.initTime(false);
+        } else {
+          this.time = "";
+          this.parseValue(Date.now());
+        }
+      },
+      immediate: true
+    },
+    type: {
+      handler(newValue) {
+        if (newValue === "date") {
+          this.dateShow = true;
+          this.timeShow = false;
+          this.title = "日期";
+        } else if (newValue === "time") {
+          this.dateShow = false;
+          this.timeShow = true;
+          this.title = "时间";
+        } else {
+          this.dateShow = true;
+          this.timeShow = true;
+          this.title = "日期和时间";
+        }
+      },
+      immediate: true
+    },
+    start: {
+      handler(newVal) {
+        this.parseDatetimeRange(uni_modules_uniDatetimePicker_components_uniDatetimePicker_util.fixIosDateFormat(newVal), "start");
+      },
+      immediate: true
+    },
+    end: {
+      handler(newVal) {
+        this.parseDatetimeRange(uni_modules_uniDatetimePicker_components_uniDatetimePicker_util.fixIosDateFormat(newVal), "end");
+      },
+      immediate: true
+    },
+    // 月、日、时、分、秒可选范围变化后，检查当前值是否在范围内，不在则当前值重置为可选范围第一项
+    months(newVal) {
+      this.checkValue("month", this.month, newVal);
+    },
+    days(newVal) {
+      this.checkValue("day", this.day, newVal);
+    },
+    hours(newVal) {
+      this.checkValue("hour", this.hour, newVal);
+    },
+    minutes(newVal) {
+      this.checkValue("minute", this.minute, newVal);
+    },
+    seconds(newVal) {
+      this.checkValue("second", this.second, newVal);
+    }
+  },
+  computed: {
+    // 当前年、月、日、时、分、秒选择范围
+    years() {
+      return this.getCurrentRange("year");
+    },
+    months() {
+      return this.getCurrentRange("month");
+    },
+    days() {
+      return this.getCurrentRange("day");
+    },
+    hours() {
+      return this.getCurrentRange("hour");
+    },
+    minutes() {
+      return this.getCurrentRange("minute");
+    },
+    seconds() {
+      return this.getCurrentRange("second");
+    },
+    // picker 当前值数组
+    ymd() {
+      return [this.year - this.minYear, this.month - this.minMonth, this.day - this.minDay];
+    },
+    hms() {
+      return [this.hour - this.minHour, this.minute - this.minMinute, this.second - this.minSecond];
+    },
+    // 当前 date 是 start
+    currentDateIsStart() {
+      return this.year === this.startYear && this.month === this.startMonth && this.day === this.startDay;
+    },
+    // 当前 date 是 end
+    currentDateIsEnd() {
+      return this.year === this.endYear && this.month === this.endMonth && this.day === this.endDay;
+    },
+    // 当前年、月、日、时、分、秒的最小值和最大值
+    minYear() {
+      return this.startYear;
+    },
+    maxYear() {
+      return this.endYear;
+    },
+    minMonth() {
+      if (this.year === this.startYear) {
+        return this.startMonth;
+      } else {
+        return 1;
+      }
+    },
+    maxMonth() {
+      if (this.year === this.endYear) {
+        return this.endMonth;
+      } else {
+        return 12;
+      }
+    },
+    minDay() {
+      if (this.year === this.startYear && this.month === this.startMonth) {
+        return this.startDay;
+      } else {
+        return 1;
+      }
+    },
+    maxDay() {
+      if (this.year === this.endYear && this.month === this.endMonth) {
+        return this.endDay;
+      } else {
+        return this.daysInMonth(this.year, this.month);
+      }
+    },
+    minHour() {
+      if (this.type === "datetime") {
+        if (this.currentDateIsStart) {
+          return this.startHour;
+        } else {
+          return 0;
+        }
+      }
+      if (this.type === "time") {
+        return this.startHour;
+      }
+    },
+    maxHour() {
+      if (this.type === "datetime") {
+        if (this.currentDateIsEnd) {
+          return this.endHour;
+        } else {
+          return 23;
+        }
+      }
+      if (this.type === "time") {
+        return this.endHour;
+      }
+    },
+    minMinute() {
+      if (this.type === "datetime") {
+        if (this.currentDateIsStart && this.hour === this.startHour) {
+          return this.startMinute;
+        } else {
+          return 0;
+        }
+      }
+      if (this.type === "time") {
+        if (this.hour === this.startHour) {
+          return this.startMinute;
+        } else {
+          return 0;
+        }
+      }
+    },
+    maxMinute() {
+      if (this.type === "datetime") {
+        if (this.currentDateIsEnd && this.hour === this.endHour) {
+          return this.endMinute;
+        } else {
+          return 59;
+        }
+      }
+      if (this.type === "time") {
+        if (this.hour === this.endHour) {
+          return this.endMinute;
+        } else {
+          return 59;
+        }
+      }
+    },
+    minSecond() {
+      if (this.type === "datetime") {
+        if (this.currentDateIsStart && this.hour === this.startHour && this.minute === this.startMinute) {
+          return this.startSecond;
+        } else {
+          return 0;
+        }
+      }
+      if (this.type === "time") {
+        if (this.hour === this.startHour && this.minute === this.startMinute) {
+          return this.startSecond;
+        } else {
+          return 0;
+        }
+      }
+    },
+    maxSecond() {
+      if (this.type === "datetime") {
+        if (this.currentDateIsEnd && this.hour === this.endHour && this.minute === this.endMinute) {
+          return this.endSecond;
+        } else {
+          return 59;
+        }
+      }
+      if (this.type === "time") {
+        if (this.hour === this.endHour && this.minute === this.endMinute) {
+          return this.endSecond;
+        } else {
+          return 59;
+        }
+      }
+    },
+    /**
+     * for i18n
+     */
+    selectTimeText() {
+      return t("uni-datetime-picker.selectTime");
+    },
+    okText() {
+      return t("uni-datetime-picker.ok");
+    },
+    clearText() {
+      return t("uni-datetime-picker.clear");
+    },
+    cancelText() {
+      return t("uni-datetime-picker.cancel");
+    }
+  },
+  mounted() {
+  },
+  methods: {
+    /**
+     * @param {Object} item
+     * 小于 10 在前面加个 0
+     */
+    lessThanTen(item) {
+      return item < 10 ? "0" + item : item;
+    },
+    /**
+     * 解析时分秒字符串，例如：00:00:00
+     * @param {String} timeString
+     */
+    parseTimeType(timeString) {
+      if (timeString) {
+        let timeArr = timeString.split(":");
+        this.hour = Number(timeArr[0]);
+        this.minute = Number(timeArr[1]);
+        this.second = Number(timeArr[2]);
+      }
+    },
+    /**
+     * 解析选择器初始值，类型可以是字符串、时间戳，例如：2000-10-02、'08:30:00'、 1610695109000
+     * @param {String | Number} datetime
+     */
+    initPickerValue(datetime) {
+      let defaultValue = null;
+      if (datetime) {
+        defaultValue = this.compareValueWithStartAndEnd(datetime, this.start, this.end);
+      } else {
+        defaultValue = Date.now();
+        defaultValue = this.compareValueWithStartAndEnd(defaultValue, this.start, this.end);
+      }
+      this.parseValue(defaultValue);
+    },
+    /**
+     * 初始值规则：
+     * - 用户设置初始值 value
+     * 	- 设置了起始时间 start、终止时间 end，并 start < value < end，初始值为 value， 否则初始值为 start
+     * 	- 只设置了起始时间 start，并 start < value，初始值为 value，否则初始值为 start
+     * 	- 只设置了终止时间 end，并 value < end，初始值为 value，否则初始值为 end
+     * 	- 无起始终止时间，则初始值为 value
+     * - 无初始值 value，则初始值为当前本地时间 Date.now()
+     * @param {Object} value
+     * @param {Object} dateBase
+     */
+    compareValueWithStartAndEnd(value, start, end) {
+      let winner = null;
+      value = this.superTimeStamp(value);
+      start = this.superTimeStamp(start);
+      end = this.superTimeStamp(end);
+      if (start && end) {
+        if (value < start) {
+          winner = new Date(start);
+        } else if (value > end) {
+          winner = new Date(end);
+        } else {
+          winner = new Date(value);
+        }
+      } else if (start && !end) {
+        winner = start <= value ? new Date(value) : new Date(start);
+      } else if (!start && end) {
+        winner = value <= end ? new Date(value) : new Date(end);
+      } else {
+        winner = new Date(value);
+      }
+      return winner;
+    },
+    /**
+     * 转换为可比较的时间戳，接受日期、时分秒、时间戳
+     * @param {Object} value
+     */
+    superTimeStamp(value) {
+      let dateBase = "";
+      if (this.type === "time" && value && typeof value === "string") {
+        const now = /* @__PURE__ */ new Date();
+        const year = now.getFullYear();
+        const month = now.getMonth() + 1;
+        const day = now.getDate();
+        dateBase = year + "/" + month + "/" + day + " ";
+      }
+      if (Number(value)) {
+        value = parseInt(value);
+        dateBase = 0;
+      }
+      return this.createTimeStamp(dateBase + value);
+    },
+    /**
+     * 解析默认值 value，字符串、时间戳
+     * @param {Object} defaultTime
+     */
+    parseValue(value) {
+      if (!value) {
+        return;
+      }
+      if (this.type === "time" && typeof value === "string") {
+        this.parseTimeType(value);
+      } else {
+        let defaultDate = null;
+        defaultDate = new Date(value);
+        if (this.type !== "time") {
+          this.year = defaultDate.getFullYear();
+          this.month = defaultDate.getMonth() + 1;
+          this.day = defaultDate.getDate();
+        }
+        if (this.type !== "date") {
+          this.hour = defaultDate.getHours();
+          this.minute = defaultDate.getMinutes();
+          this.second = defaultDate.getSeconds();
+        }
+      }
+      if (this.hideSecond) {
+        this.second = 0;
+      }
+    },
+    /**
+     * 解析可选择时间范围 start、end，年月日字符串、时间戳
+     * @param {Object} defaultTime
+     */
+    parseDatetimeRange(point, pointType) {
+      if (!point) {
+        if (pointType === "start") {
+          this.startYear = 1920;
+          this.startMonth = 1;
+          this.startDay = 1;
+          this.startHour = 0;
+          this.startMinute = 0;
+          this.startSecond = 0;
+        }
+        if (pointType === "end") {
+          this.endYear = 2120;
+          this.endMonth = 12;
+          this.endDay = 31;
+          this.endHour = 23;
+          this.endMinute = 59;
+          this.endSecond = 59;
+        }
+        return;
+      }
+      if (this.type === "time") {
+        const pointArr = point.split(":");
+        this[pointType + "Hour"] = Number(pointArr[0]);
+        this[pointType + "Minute"] = Number(pointArr[1]);
+        this[pointType + "Second"] = Number(pointArr[2]);
+      } else {
+        if (!point) {
+          pointType === "start" ? this.startYear = this.year - 60 : this.endYear = this.year + 60;
+          return;
+        }
+        if (Number(point)) {
+          point = parseInt(point);
+        }
+        const hasTime = /[0-9]:[0-9]/;
+        if (this.type === "datetime" && pointType === "end" && typeof point === "string" && !hasTime.test(
+          point
+        )) {
+          point = point + " 23:59:59";
+        }
+        const pointDate = new Date(point);
+        this[pointType + "Year"] = pointDate.getFullYear();
+        this[pointType + "Month"] = pointDate.getMonth() + 1;
+        this[pointType + "Day"] = pointDate.getDate();
+        if (this.type === "datetime") {
+          this[pointType + "Hour"] = pointDate.getHours();
+          this[pointType + "Minute"] = pointDate.getMinutes();
+          this[pointType + "Second"] = pointDate.getSeconds();
+        }
+      }
+    },
+    // 获取 年、月、日、时、分、秒 当前可选范围
+    getCurrentRange(value) {
+      const range = [];
+      for (let i = this["min" + this.capitalize(value)]; i <= this["max" + this.capitalize(value)]; i++) {
+        range.push(i);
+      }
+      return range;
+    },
+    // 字符串首字母大写
+    capitalize(str) {
+      return str.charAt(0).toUpperCase() + str.slice(1);
+    },
+    // 检查当前值是否在范围内，不在则当前值重置为可选范围第一项
+    checkValue(name, value, values) {
+      if (values.indexOf(value) === -1) {
+        this[name] = values[0];
+      }
+    },
+    // 每个月的实际天数
+    daysInMonth(year, month) {
+      return new Date(year, month, 0).getDate();
+    },
+    /**
+     * 生成时间戳
+     * @param {Object} time
+     */
+    createTimeStamp(time) {
+      if (!time)
+        return;
+      if (typeof time === "number") {
+        return time;
+      } else {
+        time = time.replace(/-/g, "/");
+        if (this.type === "date") {
+          time = time + " 00:00:00";
+        }
+        return Date.parse(time);
+      }
+    },
+    /**
+     * 生成日期或时间的字符串
+     */
+    createDomSting() {
+      const yymmdd = this.year + "-" + this.lessThanTen(this.month) + "-" + this.lessThanTen(this.day);
+      let hhmmss = this.lessThanTen(this.hour) + ":" + this.lessThanTen(this.minute);
+      if (!this.hideSecond) {
+        hhmmss = hhmmss + ":" + this.lessThanTen(this.second);
+      }
+      if (this.type === "date") {
+        return yymmdd;
+      } else if (this.type === "time") {
+        return hhmmss;
+      } else {
+        return yymmdd + " " + hhmmss;
+      }
+    },
+    /**
+     * 初始化返回值，并抛出 change 事件
+     */
+    initTime(emit = true) {
+      this.time = this.createDomSting();
+      if (!emit)
+        return;
+      if (this.returnType === "timestamp" && this.type !== "time") {
+        this.$emit("change", this.createTimeStamp(this.time));
+        this.$emit("input", this.createTimeStamp(this.time));
+        this.$emit("update:modelValue", this.createTimeStamp(this.time));
+      } else {
+        this.$emit("change", this.time);
+        this.$emit("input", this.time);
+        this.$emit("update:modelValue", this.time);
+      }
+    },
+    /**
+     * 用户选择日期或时间更新 data
+     * @param {Object} e
+     */
+    bindDateChange(e) {
+      const val = e.detail.value;
+      this.year = this.years[val[0]];
+      this.month = this.months[val[1]];
+      this.day = this.days[val[2]];
+    },
+    bindTimeChange(e) {
+      const val = e.detail.value;
+      this.hour = this.hours[val[0]];
+      this.minute = this.minutes[val[1]];
+      this.second = this.seconds[val[2]];
+    },
+    /**
+     * 初始化弹出层
+     */
+    initTimePicker() {
+      if (this.disabled)
+        return;
+      const value = uni_modules_uniDatetimePicker_components_uniDatetimePicker_util.fixIosDateFormat(this.time);
+      this.initPickerValue(value);
+      this.visible = !this.visible;
+    },
+    /**
+     * 触发或关闭弹框
+     */
+    tiggerTimePicker(e) {
+      this.visible = !this.visible;
+    },
+    /**
+     * 用户点击“清空”按钮，清空当前值
+     */
+    clearTime() {
+      this.time = "";
+      this.$emit("change", this.time);
+      this.$emit("input", this.time);
+      this.$emit("update:modelValue", this.time);
+      this.tiggerTimePicker();
+    },
+    /**
+     * 用户点击“确定”按钮
+     */
+    setTime() {
+      this.initTime();
+      this.tiggerTimePicker();
+    }
+  }
+};
+function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
+  return common_vendor.e({
+    a: common_vendor.t($data.time),
+    b: !$data.time
+  }, !$data.time ? {
+    c: common_vendor.t($options.selectTimeText)
+  } : {}, {
+    d: $props.disabled ? 1 : "",
+    e: $props.border ? 1 : "",
+    f: common_vendor.o((...args) => $options.initTimePicker && $options.initTimePicker(...args)),
+    g: $data.visible
+  }, $data.visible ? {
+    h: common_vendor.o((...args) => $options.tiggerTimePicker && $options.tiggerTimePicker(...args))
+  } : {}, {
+    i: $data.visible
+  }, $data.visible ? common_vendor.e({
+    j: common_vendor.t($options.selectTimeText),
+    k: $data.dateShow
+  }, $data.dateShow ? {
+    l: common_vendor.f($options.years, (item, index, i0) => {
+      return {
+        a: common_vendor.t($options.lessThanTen(item)),
+        b: index
+      };
+    }),
+    m: common_vendor.f($options.months, (item, index, i0) => {
+      return {
+        a: common_vendor.t($options.lessThanTen(item)),
+        b: index
+      };
+    }),
+    n: common_vendor.f($options.days, (item, index, i0) => {
+      return {
+        a: common_vendor.t($options.lessThanTen(item)),
+        b: index
+      };
+    }),
+    o: $data.indicatorStyle,
+    p: $options.ymd,
+    q: common_vendor.o((...args) => $options.bindDateChange && $options.bindDateChange(...args))
+  } : {}, {
+    r: $data.timeShow
+  }, $data.timeShow ? common_vendor.e({
+    s: common_vendor.f($options.hours, (item, index, i0) => {
+      return {
+        a: common_vendor.t($options.lessThanTen(item)),
+        b: index
+      };
+    }),
+    t: common_vendor.f($options.minutes, (item, index, i0) => {
+      return {
+        a: common_vendor.t($options.lessThanTen(item)),
+        b: index
+      };
+    }),
+    v: !$props.hideSecond
+  }, !$props.hideSecond ? {
+    w: common_vendor.f($options.seconds, (item, index, i0) => {
+      return {
+        a: common_vendor.t($options.lessThanTen(item)),
+        b: index
+      };
+    })
+  } : {}, {
+    x: common_vendor.n($props.hideSecond ? "time-hide-second" : ""),
+    y: $data.indicatorStyle,
+    z: $options.hms,
+    A: common_vendor.o((...args) => $options.bindTimeChange && $options.bindTimeChange(...args)),
+    B: common_vendor.n($props.hideSecond ? "sign-center" : "sign-left"),
+    C: !$props.hideSecond
+  }, !$props.hideSecond ? {} : {}) : {}, {
+    D: common_vendor.t($options.clearText),
+    E: common_vendor.o((...args) => $options.clearTime && $options.clearTime(...args)),
+    F: common_vendor.t($options.cancelText),
+    G: common_vendor.o((...args) => $options.tiggerTimePicker && $options.tiggerTimePicker(...args)),
+    H: common_vendor.t($options.okText),
+    I: common_vendor.o((...args) => $options.setTime && $options.setTime(...args)),
+    J: common_vendor.n($data.dateShow && $data.timeShow ? "" : "fix-nvue-height"),
+    K: common_vendor.s($data.fixNvueBug)
+  }) : {});
+}
+const Component = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["render", _sfc_render], ["__file", "C:/Users/黎翠儿/Desktop/TeammateApp/uni_modules/uni-datetime-picker/components/uni-datetime-picker/time-picker.vue"]]);
+wx.createComponent(Component);

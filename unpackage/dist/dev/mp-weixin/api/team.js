@@ -1,1 +1,51 @@
-"use strict";const t=require("../utils/request.js");function r(e){const n={name:String(e.name||""),icon:String(e.icon||""),slogan:String(e.slogan||""),introduction:String(e.introduction||""),numbers:Number(e.numbers||0),endTime:String(e.endTime||""),matchLocation:String(e.matchLocation||""),matchId:Number(e.matchId||0)};return console.log(n,"api"),t.request({url:"/teams",method:"POST",header:{"Content-Type":"application/json"},data:e})}function i(){return t.request({url:"/teams/create/list",method:"GET"})}function o(){return t.request({url:"/teams/join/list",method:"GET"})}function m(e){return t.request({url:`/teams/${e}`})}function u(e){return t.request({url:`/teams/${e}`,method:"DELETE"})}exports.createTeamAPI=r;exports.deleteTeamAPI=u;exports.getCreateTeamAPI=i;exports.getDetailTeamAPI=m;exports.getJoinTeamAPI=o;
+"use strict";
+const utils_request = require("../utils/request.js");
+function createTeamAPI(data) {
+  const formattedData = {
+    name: String(data.name || ""),
+    icon: String(data.icon || ""),
+    slogan: String(data.slogan || ""),
+    introduction: String(data.introduction || ""),
+    numbers: Number(data.numbers || 0),
+    endTime: String(data.endTime || ""),
+    matchLocation: String(data.matchLocation || ""),
+    matchId: Number(data.matchId || 0)
+  };
+  console.log(formattedData, "api");
+  return utils_request.request({
+    url: "/teams",
+    method: "POST",
+    header: {
+      "Content-Type": "application/json"
+    },
+    data
+  });
+}
+function getCreateTeamAPI() {
+  return utils_request.request({
+    url: "/teams/create/list",
+    method: "GET"
+  });
+}
+function getJoinTeamAPI() {
+  return utils_request.request({
+    url: "/teams/join/list",
+    method: "GET"
+  });
+}
+function getDetailTeamAPI(id) {
+  return utils_request.request({
+    url: `/teams/${id}`
+  });
+}
+function deleteTeamAPI(id) {
+  return utils_request.request({
+    url: `/teams/${id}`,
+    method: "DELETE"
+  });
+}
+exports.createTeamAPI = createTeamAPI;
+exports.deleteTeamAPI = deleteTeamAPI;
+exports.getCreateTeamAPI = getCreateTeamAPI;
+exports.getDetailTeamAPI = getDetailTeamAPI;
+exports.getJoinTeamAPI = getJoinTeamAPI;
