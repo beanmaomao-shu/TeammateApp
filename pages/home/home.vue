@@ -1,7 +1,7 @@
 <template>
 	<view class="homeLayout">
 		<!-- 头像板块 -->
-		<view class="infoCard">
+		<view class="infoCard" @click="goToUserRating">
 			<view class="peopleCard">
 				<view class="info">
 					<view class="avatar">
@@ -105,6 +105,11 @@
 			console.log('111222',error);
 		}
 	}
+const goToUserRating=()=>{
+	uni.navigateTo({
+		url: '/pages/userRating/userRating'
+	});
+}
 	console.log('111',contestList.value);
 	onMounted(()=>{
 		getContestList()

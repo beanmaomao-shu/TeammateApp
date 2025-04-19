@@ -18,8 +18,10 @@
             src="../../static/images/人工智能.png"
             mode="aspectFit"
           ></image>
-          <view class="textarea">
-            {{ item.text }}
+          <view class="message-container">
+            <view class="textarea">
+              {{ item.text }}
+            </view>
             <view class="time">
               {{ item.time }}
             </view>
@@ -27,21 +29,20 @@
         </view>
         <!-- 自己发的信息 -->
         <view class="chat-right" v-if="item.type == 2">
-          <!-- 文本消息 -->
-          <view class="textarea" v-if="!item.isImage">
-            {{ item.text }}
-            <view class="time">
-              {{ item.time }}
+          <view class="message-container">
+            <!-- 文本消息 -->
+            <view class="textarea" v-if="!item.isImage">
+              {{ item.text }}
             </view>
-          </view>
-          <!-- 图片消息 -->
-          <view class="img" v-else>
-            <image
-              :src="item.text"
-              mode="widthFix"
-              class="chat-image"
-              @tap="previewImage(item.text)"
-            />
+            <!-- 图片消息 -->
+            <view class="img" v-else>
+              <image
+                :src="item.text"
+                mode="widthFix"
+                class="chat-image"
+                @tap="previewImage(item.text)"
+              />
+            </view>
             <view class="time">
               {{ item.time }}
             </view>
@@ -364,28 +365,34 @@ const sendMessage = async () => {
       padding-right: 30rpx;
       flex-shrink: 0;
     }
-    .textarea {
-      max-width: 70vw; // 限制最大宽度为屏幕70%
-      min-width: 80rpx;
-      min-height: 60rpx;
-      // height: 80rpx;  // 删除这一行
-      background-color: #fff;
-      border-radius: 15rpx 0% 15rpx 15rpx;
-      font-size: 30rpx;
-      line-height: 48rpx;
-      padding: 20rpx 24rpx;
-      box-shadow: 0 12rpx 12rpx rgba(0, 0, 0, 0.1);
-      word-break: break-all; // 强制长单词换行
-      white-space: pre-wrap; // 保留换行
-      box-sizing: border-box;
-      position: relative;
-      display: block; // 保证块级元素
-    }
-    .time {
-      font-size: 24rpx;
-      color: #ccc;
-      margin-top: 8rpx;
-      margin-left: 10rpx;
+    .message-container {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      
+      .textarea {
+        max-width: 70vw; // 限制最大宽度为屏幕70%
+        min-width: 80rpx;
+        min-height: 60rpx;
+        background-color: #fff;
+        border-radius: 15rpx 0% 15rpx 15rpx;
+        font-size: 30rpx;
+        line-height: 48rpx;
+        padding: 20rpx 24rpx;
+        box-shadow: 0 12rpx 12rpx rgba(0, 0, 0, 0.1);
+        word-break: break-all; // 强制长单词换行
+        white-space: pre-wrap; // 保留换行
+        box-sizing: border-box;
+        position: relative;
+        display: block; // 保证块级元素
+      }
+      
+      .time {
+        font-size: 24rpx;
+        color: #ccc;
+        margin-top: 8rpx;
+        margin-left: 10rpx;
+      }
     }
   }
 
@@ -400,29 +407,47 @@ const sendMessage = async () => {
       padding-right: 30rpx;
       flex-shrink: 0;
     }
-    .textarea {
-      max-width: 70vw; // 限制最大宽度为屏幕70%
-      min-width: 80rpx;
-      min-height: 60rpx;
-      // height: 80rpx;  // 删除这一行
-      background-color: #95ec69;
-      border-radius: 15rpx 0% 15rpx 15rpx;
-      font-size: 30rpx;
-      line-height: 48rpx;
-      padding: 20rpx 24rpx;
-      box-shadow: 0 12rpx 12rpx rgba(0, 0, 0, 0.1);
-      word-break: break-all;
-      white-space: pre-wrap;
-      box-sizing: border-box;
+    .message-container {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
       margin-right: 30rpx;
-      position: relative;
-      display: block;
-    }
-    .time {
-      font-size: 24rpx;
-      color: #ccc;
-      margin-top: 8rpx;
-      margin-right: 10rpx;
+      
+      .textarea {
+        max-width: 70vw; // 限制最大宽度为屏幕70%
+        min-width: 80rpx;
+        min-height: 60rpx;
+        background-color: #95ec69;
+        border-radius: 15rpx 0% 15rpx 15rpx;
+        font-size: 30rpx;
+        line-height: 48rpx;
+        padding: 20rpx 24rpx;
+        box-shadow: 0 12rpx 12rpx rgba(0, 0, 0, 0.1);
+        word-break: break-all;
+        white-space: pre-wrap;
+        box-sizing: border-box;
+        position: relative;
+        display: block;
+      }
+      
+      .img {
+        max-width: 70vw;
+        background-color: #95ec69;
+        border-radius: 15rpx 0% 15rpx 15rpx;
+        padding: 10rpx;
+        
+        .chat-image {
+          width: 100%;
+          border-radius: 8rpx;
+        }
+      }
+      
+      .time {
+        font-size: 24rpx;
+        color: #ccc;
+        margin-top: 8rpx;
+        margin-right: 10rpx;
+      }
     }
   }
 }

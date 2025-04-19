@@ -55,14 +55,14 @@
 			<!-- 截止时间 -->
 			<view class="time">
 				<detailTitle img-src='/static/images/timeout.png' p-title="截止时间"></detailTitle>
-				<view class="box">{{ teamInfo.endTime ||'2025.3.29'}}</view>
+				<view class="box">{{ teamInfo.endTime ||'2025.4.21'}}</view>
 			</view>
 			<!-- 定位地址 -->
 			<view class="region">
 				<detailTitle img-src='/static/images/地点.png' p-title="赛区地点"></detailTitle>
 				<view class="box" @click="getMapLocation">
 					<uni-icons type="map-pin-ellipse" size="20"></uni-icons>
-					<p>{{ teamInfo.matchLocation ||'四会市人民政府'}}</p>
+					<p>{{ teamInfo.matchLocation ||'湛江市霞山区'}}</p>
 				</view>
 			</view>
 		</view>

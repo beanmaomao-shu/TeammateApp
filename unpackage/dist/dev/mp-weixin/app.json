@@ -15,7 +15,8 @@
     "pages/test/test",
     "pages/fakedetail/fakedetail",
     "pages/editProfile/editProfile",
-    "pages/ai/ai"
+    "pages/ai/ai",
+    "pages/userRating/userRating"
   ],
   "usingComponents": {
     "van-popup": "/wxcomponents/dist/popup/index",

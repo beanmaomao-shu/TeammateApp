@@ -20,22 +20,6 @@
       </infoCard>
     </view>
 
-    <!-- 群公告栏 -->
-    <transition name="fade">
-      <view v-if="showAnnouncementBar" class="announcement-bar">
-        <view class="announcement-content">
-          <uni-icons type="volume-up" size="28" color="#AC33C1" style="margin-right: 12rpx;" />
-          <view class="announcement-text">
-            {{ announcement || '暂无群公告' }}
-          </view>
-          <view v-if="isLeader" class="edit-btn" @click="openAnnouncementDialog">
-            <uni-icons type="compose" size="24" color="#888" />
-          </view>
-        </view>
-        <uni-icons type="closeempty" size="28" class="close-btn" @click="showAnnouncementBar = false" />
-      </view>
-    </transition>
-
     <!-- 聊天内容区域 -->
     <scroll-view class="chat-content" :class="{ 'content-shrink': isShowFunction }" scroll-y :scroll-top="scrollTop"
       @scrolltolower="onScrollToLower" id="chatScroll">
@@ -115,8 +99,7 @@
             <uni-icons type="weixin" size="40"></uni-icons>
             <view class="font">交换微信</view>
           </view>
-          <!-- 群公告按钮 -->
-          <view class="icon" @click="showAnnouncementDialog">
+          <view class="icon" @click="()=>{showNotice.open()}">
             <uni-icons type="mail-open" size="40"></uni-icons>
             <view class="font">查看群公告</view>
           </view>
@@ -127,22 +110,24 @@
       <uni-popup-dialog type="success" cancelText="取消" confirmText="确定" content="您确定要交换联系方式吗?"
         @confirm="dialogConfirm"></uni-popup-dialog>
     </uni-popup>
-
-    <!-- 群公告弹窗 -->
-    <uni-popup ref="announcementPopup" type="dialog">
-      <uni-popup-dialog
-        :type="isLeader ? 'info' : 'success'"
-        :title="isLeader ? '编辑群公告' : '群公告'"
-        :mode="isLeader ? 'input' : 'base'"
-        :value="announcementEdit"
-        :content="!isLeader ? (announcement || '暂无群公告') : ''"
-        :placeholder="'请输入群公告内容'"
-        :showCancelButton="isLeader"
-        cancelText="取消"
-        confirmText="确定"
-        @confirm="onAnnouncementConfirm"
-        @input="onAnnouncementInput"
-      ></uni-popup-dialog>
+    <!-- //群公告 -->
+    <uni-popup ref="showNotice" type="center" class="notice">
+      <view class="notice-content">
+        <view class="notice-title">群公告</view>
+        <textarea v-model="tempNoticeMsg" class="notice-input" :disabled="!isEditing"
+          :class="{ 'read-only': !isEditing }" placeholder="群公告内容" auto-height />
+        <view class="notice-buttons">
+          <!-- 根据编辑状态显示不同按钮 -->
+          <template v-if="!isEditing">
+            <button class="btn-cancel" @click="showNotice.close()">关闭</button>
+            <button class="btn-edit" @click="startEditing">编辑公告</button>
+          </template>
+          <template v-else>
+            <button class="btn-cancel" @click="cancelEditing">取消</button>
+            <button class="btn-confirm" @click="saveNotice">保存</button>
+          </template>
+        </view>
+      </view>
     </uni-popup>
   </view>
 </template>
@@ -153,6 +138,11 @@ import { getChatMessages, markMessagesAsRead, getUnreadCount, uploadFile } from 
 import {onLoad} from '@dcloudio/uni-app';
 import {  getUserInfoAPI } from '@/api/userInfo';
 
+//群公告
+const showNotice = ref(null);
+const tempNoticeMsg = ref('请遵守团队规则：\n1. 按时完成分配任务\n2. 保持每日签到\n3. 禁止传播无关内容\n4. 服从队长安排\n5. 竞赛期间保持在线'); // 临时存储编辑中的公告内容
+const isEditing = ref(false); // 是否处于编辑状态
+const noticeMsg = ref('请遵守团队规则：\n1. 按时完成分配任务\n2. 保持每日签到\n3. 禁止传播无关内容\n4. 服从队长安排\n5. 竞赛期间保持在线');
 // 添加scrollTop变量
 const scrollTop = ref(0);
 
@@ -208,6 +198,28 @@ const getUsernameFromAPI = async () => {
   }
 };
 
+// 开始编辑公告
+const startEditing = () => {
+  tempNoticeMsg.value = noticeMsg.value; // 复制当前公告内容到临时变量
+  isEditing.value = true;
+};
+
+// 取消编辑
+const cancelEditing = () => {
+  isEditing.value = false;
+  tempNoticeMsg.value = noticeMsg.value; // 恢复原始内容
+};
+
+// 保存公告
+const saveNotice = () => {
+  noticeMsg.value = tempNoticeMsg.value; // 更新公告内容
+  isEditing.value = false;
+
+  uni.showToast({
+    title: '公告修改成功',
+    icon: 'success'
+  });
+}
 // 获取页面参数
 onMounted(() => {
   console.log('聊天室ID:', chatRoomId.value);
@@ -290,6 +302,9 @@ const markAsRead = async () => {
 onUnmounted(() => {
   closeWebSocket();
 });
+const exchangeWechat=()=>{
+  isOpen.value.open();
+}
 
 // 初始化WebSocket连接
 const initWebSocket = () => {
@@ -711,7 +726,7 @@ const chooseAndSendImage = () => {
   flex-direction: column;
   height: 100vh;
   background-color: #f5f5f5;
-
+  
   .header {
     padding: 20rpx;
 	.avatar{
@@ -730,56 +745,24 @@ const chooseAndSendImage = () => {
 	}
   }
 
-  // 群公告栏样式
-  .announcement-bar {
-    display: flex;
-    align-items: center;
-    background: linear-gradient(90deg, #f9e6ff 0%, #f5f5f5 100%);
-    border-bottom: 1px solid #e5e5e5;
-    padding: 18rpx 32rpx 18rpx 24rpx;
-    font-size: 28rpx;
-    color: #AC33C1;
-    position: relative;
-    .announcement-content {
-      display: flex;
-      align-items: center;
-      flex: 1;
-      .announcement-text {
-        flex: 1;
-        font-size: 28rpx;
-        color: #333;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-      .edit-btn {
-        margin-left: 18rpx;
-        cursor: pointer;
-      }
-    }
-    .close-btn {
-      margin-left: 18rpx;
-      color: #bbb;
-      cursor: pointer;
-    }
-  }
-
   .chat-content {
     flex: 1;
     overflow-y: auto;
     padding: 10px;
     border-top: 1px solid #ddd;
-    height: calc(100vh - 260rpx);
+    height: calc(100vh - 260rpx); // 使用计算高度，减去头部和输入框高度
     transition: height 0.3s ease;
+    
+    // 当功能区显示时，减小聊天内容区域高度
     &.content-shrink {
-      height: calc(100vh - 630rpx);
+      height: calc(100vh - 630rpx); // 减去头部、输入框和功能区高度
     }
-    .historyTime {
-      padding-top: 20rpx;
-      padding-bottom: 40rpx;
-      text-align: center;
-      color: #adadad;
-    }
+	.historyTime{
+		padding-top: 20rpx;
+		padding-bottom: 40rpx;
+		text-align: center;
+		color: #adadad;
+	}
     .chat-left {
       display: flex;
       align-items: start;
@@ -927,18 +910,98 @@ const chooseAndSendImage = () => {
       }
     }
   }
-}
-/* 群公告渐变动画 */
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.3s;
-}
-
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
+     .notice-content {
+       background: #fff;
+       width: 80vw;
+       padding: 30rpx;
+       border-radius: 16rpx;
+       box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.1);
+     }
+  
+     .notice-title {
+       font-size: 40rpx;
+       font-weight: bold;
+       text-align: center;
+       margin-bottom: 30rpx;
+       color: #333;
+       position: relative;
+  
+       &::after {
+         content: '';
+         display: block;
+         width: 80rpx;
+         height: 6rpx;
+         background: linear-gradient(90deg, #AC33C1, #7B68EE);
+         border-radius: 3rpx;
+         margin: 16rpx auto 0;
+       }
+     }
+  
+     .notice-input {
+       width: 100%;
+       min-height: 300rpx;
+       padding: 20rpx;
+       border: 2rpx solid #eee;
+       border-radius: 12rpx;
+       font-size: 30rpx;
+       line-height: 1.5;
+       margin-bottom: 30rpx;
+       transition: all 0.3s ease;
+  
+       &.read-only {
+         background-color: #f9f9f9;
+         color: #333;
+         border-color: transparent;
+       }
+  
+       &:focus {
+         border-color: #AC33C1;
+         box-shadow: 0 0 8rpx rgba(172, 51, 193, 0.2);
+       }
+     }
+  
+     .notice-buttons {
+       display: flex;
+       gap: 20rpx;
+     }
+  
+     .btn-cancel,
+     .btn-edit,
+     .btn-confirm {
+       flex: 1;
+       padding: 16rpx 0;
+       border-radius: 40rpx;
+       font-size: 28rpx;
+       border: none;
+       transition: all 0.3s ease;
+     }
+  
+     .btn-cancel {
+       background-color: #f5f5f5;
+       color: #666;
+  
+       &:active {
+         background-color: #e0e0e0;
+       }
+     }
+  
+     .btn-edit {
+       background-color: #8707ff;
+       color: #fff;
+  
+       &:active {
+         background-color: #7006cc;
+       }
+     }
+  
+     .btn-confirm {
+       background-color: #AC33C1;
+       color: #fff;
+  
+       &:active {
+         background-color: #8a289a;
+       }
+     }
 }
 </style>
-
-
 

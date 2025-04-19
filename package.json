@@ -10,7 +10,10 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@qiun/ucharts": "^2.5.0-20230101",
+    "@qiun/wx-ucharts": "^2.5.0-20230101",
     "@vant/weapp": "^1.11.7",
+    "echarts": "^5.6.0",
     "sass": "^1.86.0"
   }
 }
