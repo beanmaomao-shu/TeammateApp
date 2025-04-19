@@ -20,9 +20,25 @@
       </infoCard>
     </view>
 
+    <!-- 群公告栏 -->
+    <transition name="fade">
+      <view v-if="showAnnouncementBar" class="announcement-bar">
+        <view class="announcement-content">
+          <uni-icons type="volume-up" size="28" color="#AC33C1" style="margin-right: 12rpx;" />
+          <view class="announcement-text">
+            {{ announcement || '暂无群公告' }}
+          </view>
+          <view v-if="isLeader" class="edit-btn" @click="openAnnouncementDialog">
+            <uni-icons type="compose" size="24" color="#888" />
+          </view>
+        </view>
+        <uni-icons type="closeempty" size="28" class="close-btn" @click="showAnnouncementBar = false" />
+      </view>
+    </transition>
+
     <!-- 聊天内容区域 -->
-    <scroll-view class="chat-content" :class="{ 'content-shrink': isShowFunction }" scroll-y 
-      :scroll-top="scrollTop" @scrolltolower="onScrollToLower" id="chatScroll">
+    <scroll-view class="chat-content" :class="{ 'content-shrink': isShowFunction }" scroll-y :scroll-top="scrollTop"
+      @scrolltolower="onScrollToLower" id="chatScroll">
       <view class="historyTime">
         今天 8:36
       </view>
@@ -49,12 +65,7 @@
           </view>
           <!-- 图片消息 -->
           <view class="img" v-else>
-            <image 
-              :src="item.text"
-              mode="widthFix" 
-              class="chat-image"
-              @tap="previewImage(item.text)"
-            />
+            <image :src="item.text" mode="widthFix" class="chat-image" @tap="previewImage(item.text)" />
             <view class="time">
               {{ item.time }}
             </view>
@@ -68,21 +79,22 @@
 
     <!-- 输入框和发送按钮 -->
     <view class="input-area" :class="{ 'show-function': isShowFunction }">
-		<!-- 输入框 -->
+      <!-- 输入框 -->
       <view class="top-area">
         <input type="text" v-model="message" placeholder="输入消息..." @input="handleInput" />
-        <uni-icons @click="showFunction" type="plus" size="40" v-show="!message" style="margin-left: 20rpx;"></uni-icons>
+        <uni-icons @click="showFunction" type="plus" size="40" v-show="!message"
+          style="margin-left: 20rpx;"></uni-icons>
         <button class="sendMessage" v-show="message" @click="sendMessage">
           <view class="font">发送</view>
         </button>
       </view>
-	  <!-- 功能模块 -->
+      <!-- 功能模块 -->
       <transition name="slide-up">
         <view class="function" v-show="isShowFunction">
-         <view class="icon" @click="chooseAndSendImage">
-           <uni-icons type="image" size="40"></uni-icons>
-           <view class="font">相册</view>
-         </view>
+          <view class="icon" @click="chooseAndSendImage">
+            <uni-icons type="image" size="40"></uni-icons>
+            <view class="font">相册</view>
+          </view>
           <view class="icon">
             <uni-icons type="camera" size="40"></uni-icons>
             <view class="font">拍摄</view>
@@ -103,19 +115,35 @@
             <uni-icons type="weixin" size="40"></uni-icons>
             <view class="font">交换微信</view>
           </view>
-         
+          <!-- 群公告按钮 -->
+          <view class="icon" @click="showAnnouncementDialog">
+            <uni-icons type="mail-open" size="40"></uni-icons>
+            <view class="font">查看群公告</view>
+          </view>
         </view>
       </transition>
     </view>
-	<uni-popup ref="isOpen" type="dialog" >
-		<uni-popup-dialog
-		type="success"
-		cancelText="取消"
-		confirmText="确定"
-		content="您确定要交换联系方式吗?"
-		@confirm="dialogConfirm"
-		></uni-popup-dialog>
-	</uni-popup>
+    <uni-popup ref="isOpen" type="dialog">
+      <uni-popup-dialog type="success" cancelText="取消" confirmText="确定" content="您确定要交换联系方式吗?"
+        @confirm="dialogConfirm"></uni-popup-dialog>
+    </uni-popup>
+
+    <!-- 群公告弹窗 -->
+    <uni-popup ref="announcementPopup" type="dialog">
+      <uni-popup-dialog
+        :type="isLeader ? 'info' : 'success'"
+        :title="isLeader ? '编辑群公告' : '群公告'"
+        :mode="isLeader ? 'input' : 'base'"
+        :value="announcementEdit"
+        :content="!isLeader ? (announcement || '暂无群公告') : ''"
+        :placeholder="'请输入群公告内容'"
+        :showCancelButton="isLeader"
+        cancelText="取消"
+        confirmText="确定"
+        @confirm="onAnnouncementConfirm"
+        @input="onAnnouncementInput"
+      ></uni-popup-dialog>
+    </uni-popup>
   </view>
 </template>
 
@@ -683,7 +711,7 @@ const chooseAndSendImage = () => {
   flex-direction: column;
   height: 100vh;
   background-color: #f5f5f5;
-  
+
   .header {
     padding: 20rpx;
 	.avatar{
@@ -702,24 +730,56 @@ const chooseAndSendImage = () => {
 	}
   }
 
+  // 群公告栏样式
+  .announcement-bar {
+    display: flex;
+    align-items: center;
+    background: linear-gradient(90deg, #f9e6ff 0%, #f5f5f5 100%);
+    border-bottom: 1px solid #e5e5e5;
+    padding: 18rpx 32rpx 18rpx 24rpx;
+    font-size: 28rpx;
+    color: #AC33C1;
+    position: relative;
+    .announcement-content {
+      display: flex;
+      align-items: center;
+      flex: 1;
+      .announcement-text {
+        flex: 1;
+        font-size: 28rpx;
+        color: #333;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .edit-btn {
+        margin-left: 18rpx;
+        cursor: pointer;
+      }
+    }
+    .close-btn {
+      margin-left: 18rpx;
+      color: #bbb;
+      cursor: pointer;
+    }
+  }
+
   .chat-content {
     flex: 1;
     overflow-y: auto;
     padding: 10px;
     border-top: 1px solid #ddd;
-    height: calc(100vh - 260rpx); // 使用计算高度，减去头部和输入框高度
+    height: calc(100vh - 260rpx);
     transition: height 0.3s ease;
-    
-    // 当功能区显示时，减小聊天内容区域高度
     &.content-shrink {
-      height: calc(100vh - 630rpx); // 减去头部、输入框和功能区高度
+      height: calc(100vh - 630rpx);
     }
-	.historyTime{
-		padding-top: 20rpx;
-		padding-bottom: 40rpx;
-		text-align: center;
-		color: #adadad;
-	}
+    .historyTime {
+      padding-top: 20rpx;
+      padding-bottom: 40rpx;
+      text-align: center;
+      color: #adadad;
+    }
     .chat-left {
       display: flex;
       align-items: start;
@@ -868,5 +928,17 @@ const chooseAndSendImage = () => {
     }
   }
 }
+/* 群公告渐变动画 */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
 </style>
+
+
 
