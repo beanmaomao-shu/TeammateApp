@@ -1,5 +1,4 @@
 <template>
-  <<<<<<< HEAD
   <view class="teammateLayout">
     <!-- 搜索框 -->
     <view class="search">
