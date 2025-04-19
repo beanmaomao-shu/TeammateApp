@@ -1,5 +1,206 @@
 <template>
- 
+  <view class="teammateLayout">
+    <!-- 搜索框 -->
+    <view class="search">
+      <input
+        v-model="inputValue"
+        type="text"
+        placeholder="搜索在线赛事组队信息"
+        @input="handleSearch"
+        @focus="showSuggestion = true"
+        @blur="handleBlur"
+      />
+      <view class="searchButton" @click="navigateToDetail">
+        <image src="../../static/images/搜索.png" mode=""></image>
+      </view>
+    </view>
+    <!-- 搜索建议列表 -->
+    <ul class="suggesstions" v-if="showSuggestion && searchResults.length">
+      <li
+        class="list"
+        v-for="(suggestion, index) in searchResults"
+        :key="index"
+        @click.stop="selectSuggestion(suggestion)"
+      >
+        {{ suggestion.name }}
+      </li>
+      <view class="tip">
+        没有找到想要的比赛?
+        <view class="tipNav"> 点这里试试-> </view>
+      </view>
+    </ul>
+    <!-- 通知栏 -->
+    <van-notice-bar scrollable color="#AC33C1" background="#F1E6FF">
+      2024年第十四届亚太地区大学生数学建模竞赛(以下简称"竞赛")是由中国国际科技促进会物联网工作委员会和北京图象图形学学会联合主办的亚太地区大学生学科类竞赛，竞赛由亚太地区大学生数学建模竞赛组委会负责组织，欢迎各高等院校按照竞赛章程及有关规定组织同学报名参赛。
+      2023年第十三届亚太地区大学生数学建模竞赛共有9700支队伍969所高校2万7千多名学生报名参赛。参赛高校覆盖北京大学、清华大学、浙江大学、同济大学、上海交通大学、复旦大学、四川大学、大连理工大学等全部的39所985高校和114所211高校。除中国大陆高校外本次竞赛还有数十所国外高校参赛。
+    </van-notice-bar>
+    <!-- 轮播图 -->
+    <view class="banner">
+      <swiper
+        class="swiper"
+        circular
+        :indicator-dots="true"
+        indicator-color="#fff"
+        :autoplay="true"
+        :interval="3000"
+        :duration="500"
+      >
+        <swiper-item v-for="(item, index) in contestList" :key="index">
+          <image :src="item.poster" class="img" mode="aspectFit"></image>
+        </swiper-item>
+      </swiper>
+    </view>
+    <!-- 分割线 -->
+    <dash Color="#E5E5E5" Width="780rpx" Height="10rpx"></dash>
+    <view class="teammateList">
+      <view class="listHead">
+        <view class="left">
+          <image src="../../static/images/people.png" mode=""></image>
+          <text>正在组队</text>
+        </view>
+        <view class="right">
+          <navigator url="/pages/moreDetail/moreDetail" class="moreDetail">
+            <text>更多</text>
+            <image src="../../static/images/more.png" mode=""></image>
+          </navigator>
+        </view>
+      </view>
+      <dash Color="#F1E6FF" Width="700rpx" Height="8rpx"></dash>
+      <!-- 新组建的 -->
+      <view class="teamInfo" v-if="create">
+        <navigator :url="`/pages/teamDetail/teamDetail?tocPageValue=c`">
+          <!--比赛图片 -->
+          <view class="matchImg">
+            <image src="../../static/images/match9.png" mode="widthFix"></image>
+          </view>
+          <view class="mainInfo">
+            <!-- 比赛名 -->
+            <view class="matchName"> 第二届大学生高校物理挑战赛 </view>
+            <!-- 队名 -->
+            <view class="teamName">
+              <image src="../../static/images/队伍.png" mode=""></image>
+              <p>一战成名队</p>
+            </view>
+            <!-- 头像列表//研讨室跳转 -->
+            <view class="bottom">
+              <view class="avatars">
+                <img src="../../static/images/avatar.png" alt="" />
+              </view>
+              <view class="goChat">
+                <navigator url="/pages/chatRoom/chatRoom">
+                  <image src="../../static/images/trending.png" mode=""></image>
+                  <p>一起讨论></p>
+                </navigator>
+              </view>
+            </view>
+          </view>
+        </navigator>
+      </view>
+      <!-- 演示 -->
+      <view class="teamInfo">
+        <navigator url="/pages/fakedetail/fakedetail">
+          <!--比赛图片 -->
+          <view class="matchImg">
+            <image src="../../static/images/match5.png" mode="widthFix"></image>
+          </view>
+          <view class="mainInfo">
+            <!-- 比赛名 -->
+            <view class="matchName"> 2024第十届中西部外语翻译大赛 </view>
+            <!-- 队名 -->
+            <view class="teamName">
+              <image src="../../static/images/队伍.png" mode=""></image>
+              <p>一战成名队</p>
+            </view>
+            <!-- 头像列表//研讨室跳转 -->
+            <view class="bottom">
+              <view class="avatars">
+                <image
+                  class="avatar"
+                  src="../../static/images/avatar1 (1).jpg"
+                  mode=""
+                ></image>
+                <image
+                  class="avatar"
+                  src="../../static/images/avatar1 (2).jpg"
+                  mode=""
+                ></image>
+                <image
+                  class="avatar"
+                  src="../../static/images/avatar1 (6).jpg"
+                  mode=""
+                ></image>
+              </view>
+              <view class="goChat">
+                <navigator url="/pages/chatRoom/chatRoom">
+                  <image src="../../static/images/trending.png" mode=""></image>
+                  <p>一起讨论></p>
+                </navigator>
+              </view>
+            </view>
+          </view>
+        </navigator>
+      </view>
+      <!-- 默认生成 -->
+      <view
+        class="teamInfo"
+        v-for="(item, index) in contestList"
+        :key="item.id"
+      >
+        <navigator
+          :url="`/pages/teamDetail/teamDetail?id=${item.id}&toaPageValue=a`"
+        >
+          <!--比赛图片 -->
+          <view class="matchImg">
+            <image :src="item.poster" mode="widthFix"></image>
+          </view>
+          <view class="mainInfo">
+            <!-- 比赛名 -->
+            <view class="matchName">
+              {{ item.name }}
+            </view>
+            <!-- 队名 -->
+            <view class="teamName">
+              <image src="../../static/images/队伍.png" mode=""></image>
+              <p>鸭鸭小队</p>
+            </view>
+            <!-- 头像列表//研讨室跳转 -->
+            <view class="bottom">
+              <view class="avatars">
+                <img src="../../static/images/avatar3.png" alt="" />
+                <img src="../../static/images/avatar1.png" alt="" />
+                <img src="../../static/images/avatar.png" alt="" />
+                <img src="../../static/images/avatar.png" alt="" />
+                <img src="../../static/images/avatar2.png" alt="" />
+              </view>
+              <view class="goChat">
+                <navigator url="/pages/chatRoom/chatRoom">
+                  <image src="../../static/images/trending.png" mode=""></image>
+                  <p>一起讨论></p>
+                </navigator>
+              </view>
+            </view>
+          </view>
+        </navigator>
+      </view>
+    </view>
+    <!-- 登录按钮 -->
+    <view class="login-container" v-if="!isLoggedIn">
+      <button
+        class="login-btn"
+        open-type="getUserProfile"
+        @click="handleUserProfile"
+      >
+        微信登录
+      </button>
+    </view>
+    <view class="issue" @click="toMakeTeam">
+      <navigator url="../makeTeam/makeTeam">组队</navigator>
+    </view>
+    <view class="ai">
+      <navigator url="../ai/ai">AI智能</navigator>
+    </view>
+  </view>
+  =======
   <view class="teammateLayout">
     <!-- 搜索框 -->
     <view class="search">
